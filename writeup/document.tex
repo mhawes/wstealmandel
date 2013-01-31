@@ -54,10 +54,38 @@ hello reference of fig \ref{fig1}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Background Research}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Scheduling Techniques for Concurrent Programs}
+\section{Scheduling Techniques for Multi-Threaded Computations}
+This section briefly describes the problems associated with scheduling Multi-Threaded Algorithms and 
+the major paradigms that have surfaced.
+
+% explain problems here...... is this better off in the intro??
+In order to efficiently utilize a parallel computer architecture it is desirable to minimize
+the amount of time a processor spends idle or performing other logistical tasks, I.e not doing work. 
+When a computation's \textit{concurrent sub-tasks} or \textit{threads} incur a regular cost in processor
+time, each processor can simply have the same amount of work assigned to them. When the computation has
+more irregular or dynamically growing sub-tasks a problem arises that results in 
+processors becoming idle while others still remain working. This problem is refereed to as
+\textit{load balancing} and can be described as a form of dynamic scheduling that ensures each processor 
+spends approximately the same amount of time working. However, this introduces a new overhead in that 
+processors now have to deal with these scheduling tasks as well. 
+
+When considering the scheduling of multi-threaded computation, two major techniques have been used.
+These are \textit{work-sharing} and \textit{work-stealing}.
+When scheduling using a work-sharing approach, a thread that creates new threads
+attempts to migrate these to another underutilised processor. In work-stealing a
+thread that is starved of work, attempts to ``steal'' work from other processors. Both 
+techniques intend to promote balanced work-load across all processors, however in Work-Stealing
+the frequency of thread migrations is lower\cite[p.~2]{blumleis}. When all processors have a 
+high work-load and no need to "steal" this is extremely useful because threads need not get 
+migrated at all. With work-sharing thread migration occurs each time a thread spawns \cite[p.~2]{blumleis}.
+
+
+
+%This is especially the case
+%when all processors have a high work-load and no reason to "steal" from others. 
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{The Work-Stealing Technique}
+\section{The Work-Stealing Technique - Described in Depth}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Mandelbrot Set}

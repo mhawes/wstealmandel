@@ -1,0 +1,22 @@
+Graph Layout 
+
+Concurrent Directed Acyclic graph (eg data flow) layout argorithm with description language. 
+Concurrent tree graph layout algorithm with description language.
+
+
+SaC
+
+Library of functions for audio manipulation with example application.
+Some kind of application written in SaC
+
+
+Snet
+
+Trace file analysis tool
+
+
+Distributed Systems.
+
+Work stealing algorithm (simulator most likely)
+Weighted Work node scheduling system (i.e. each node is weighted by its available resources and current work load)
+Distribution system for a cluster of raspberry Pis

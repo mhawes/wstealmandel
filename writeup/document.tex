@@ -64,21 +64,26 @@ the amount of time a processor spends idle or performing other logistical tasks,
 When a computation's \textit{concurrent sub-tasks} or \textit{threads} incur a regular cost in processor
 time, each processor can simply have the same amount of work assigned to them. When the computation has
 more irregular or dynamically growing sub-tasks a problem arises that results in 
-processors becoming idle while others still remain working. This problem is refereed to as
+processors becoming idle while others still remain working. The solution to this problem is refereed to as
 \textit{load balancing} and can be described as a form of dynamic scheduling that ensures each processor 
-spends approximately the same amount of time working. However, this introduces a new overhead in that 
-processors now have to deal with these scheduling tasks as well. 
+spends approximately the same amount of time working. This means processors generally spend
+less time idle, however have to deal with scheduling overheads as a trade-off.
 
-When considering the scheduling of multi-threaded computation, two major techniques have been used.
+When considering the scheduling of multi-threaded computations, two major load balancing techniques have been used.
 These are \textit{work-sharing} and \textit{work-stealing}.
-When scheduling using a work-sharing approach, a thread that creates new threads
-attempts to migrate these to another underutilised processor. In work-stealing a
-thread that is starved of work, attempts to ``steal'' work from other processors. Both 
-techniques intend to promote balanced work-load across all processors, however in Work-Stealing
-the frequency of thread migrations is lower\cite[p.~2]{blumleis}. When all processors have a 
-high work-load and no need to "steal" this is extremely useful because threads need not get 
-migrated at all. With work-sharing thread migration occurs each time a thread spawns \cite[p.~2]{blumleis}.
 
+\begin{itemize}
+\item \textbf{Work-Sharing:} When scheduling using a work-sharing approach, a thread that creates new threads
+	attempts to migrate these to another underutilised processor at creation time. 
+\item \textbf{Work-Stealing:} In work-stealing a thread that is starved of work, attempts to ``steal'' work from other processors. 
+\end{itemize}
+
+Both techniques intend to promote balanced work-load across all processors, however in Work-Stealing
+the frequency of thread migrations is lower. When all processors have a 
+high work-load and no need to ``steal" this becomes useful because threads need not get 
+migrated at all. With work-sharing thread migration occurs each time a new thread is spawned \cite[p.~2]{blumleis}.
+This also suggests that work-stealing promotes better locality and grouping of sub-tasks, as spawned threads stay with the same 
+processor until stolen.
 
 
 %This is especially the case
@@ -87,8 +92,18 @@ migrated at all. With work-sharing thread migration occurs each time a thread sp
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Work-Stealing Technique - Described in Depth}
 
+% explain approaches put forward by various papers. Explain J McGuiness' mandelbrot specific approach last.
+
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Mandelbrot Set}
+
+%\subsection{Background}
+
+\subsection{Fractals}
+\subsection{Julia Sets}
+\subsection{Complex Numbers}
+\subsection{Computing the Mandelbrot Set}
+
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Programming Tools}

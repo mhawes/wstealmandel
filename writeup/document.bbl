@@ -1,5 +1,10 @@
 \begin{thebibliography}{}
 
+\harvarditem[Blumofe \& Leiserson]{Blumofe \& Leiserson}{1994}{blumleis}
+R.~D. Blumofe \& C.~E. Leiserson (1994).
+\newblock `Scheduling Multithreaded Computations by Work Stealing'.
+\newblock Tech. rep., MIT Laboratory for Computer Science.
+
 \harvarditem[McGuiness]{McGuiness}{2006}{jmcguin}
 J.~McGuiness (2006).
 \newblock `Something to do with this or that? who knows...'.

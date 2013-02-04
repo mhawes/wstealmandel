@@ -3,12 +3,11 @@
 \contentsline {chapter}{\numberline {1}Introduction}{3}
 \contentsline {chapter}{\numberline {2}Background Research}{4}
 \contentsline {section}{\numberline {2.1}Scheduling Techniques for Multi-Threaded Computations}{4}
-\contentsline {section}{\numberline {2.2}The Work-Stealing Technique - Described in Depth}{5}
-\contentsline {section}{\numberline {2.3}The Mandelbrot Set}{5}
-\contentsline {subsection}{\numberline {2.3.1}Fractals}{5}
+\contentsline {section}{\numberline {2.2}The Work-Stealing Technique - Described in Depth}{4}
+\contentsline {section}{\numberline {2.3}The Mandelbrot Set}{4}
+\contentsline {subsection}{\numberline {2.3.1}Fractals and Self-Similarity}{5}
 \contentsline {subsection}{\numberline {2.3.2}Julia Sets}{5}
-\contentsline {subsection}{\numberline {2.3.3}Complex Numbers}{5}
-\contentsline {subsection}{\numberline {2.3.4}Computing the Mandelbrot Set}{5}
+\contentsline {subsection}{\numberline {2.3.3}Computing the Mandelbrot Set}{5}
 \contentsline {section}{\numberline {2.4}Programming Tools}{5}
 \contentsline {chapter}{\numberline {3}Main Chapters}{6}
 \contentsline {section}{\numberline {3.1}Design of the Algorithm}{6}

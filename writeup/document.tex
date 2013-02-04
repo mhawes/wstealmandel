@@ -23,20 +23,6 @@
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Abstract}
-This is the abstract. Lets cite something \cite[p.~201]{blank}.
-
-This is another citation which should look a bit nicer \cite{jmcguin}.
-
-%\begin{figure}[p]
-%\centering
-%\includegraphics[scale=0.5]{test}
-%\caption{Test Image}
-%\label{fig1}
-%\end{figure}
-
-hello reference of fig \ref{fig1}
-
-\nocite{another}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Acknowledgements}
@@ -54,6 +40,10 @@ hello reference of fig \ref{fig1}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Background Research}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+% NO-CITES
+%\nocite{jmcguin}
+%-------------
+
 \section{Scheduling Techniques for Multi-Threaded Computations}
 This section briefly describes the problems associated with scheduling Multi-Threaded Algorithms and 
 the major paradigms that have surfaced.
@@ -73,9 +63,8 @@ When considering the scheduling of multi-threaded computations, two major load b
 These are \textit{work-sharing} and \textit{work-stealing}.
 
 \begin{itemize}
-\item \textbf{Work-Sharing:} When scheduling using a work-sharing approach, a thread that creates new threads
-	attempts to migrate these to another underutilised processor at creation time. 
-\item \textbf{Work-Stealing:} In work-stealing a thread that is starved of work, attempts to ``steal'' work from other processors. 
+\item \textbf{Work-Sharing:} A thread which creates new threads attempts to migrate these to another underutilised processor at creation time. 
+\item \textbf{Work-Stealing:} A processor that is starved of work, attempts to ``steal'' work from other processors. 
 \end{itemize}
 
 Both techniques intend to promote balanced work-load across all processors, however in Work-Stealing
@@ -98,10 +87,43 @@ processor until stolen.
 \section{The Mandelbrot Set}
 
 %\subsection{Background}
+The Mandelbrot set is a set of complex numbers which when plotted produce a spectacular and recognisable shape.
+It is often presented as a colourful and striking image and has been described by some as the most beautiful object in all of mathematics \cite[p.~234]{chaosfract}.
+The complex numbers that comprise the set are closely related to \textit{Julia Sets}. 
+In-fact the Mandelbrot set can be described as a catalogue of Julia Sets which, when plotted, all points are \textit{connected}, 
+forming a \textit{single, unbroken shape} \cite[p.~177]{fractimg}.
 
-\subsection{Fractals}
+The set is named for the mathematician \textit{Benoit Mandelbrot}, who discovered it in 1980 \cite{fracnature}\cite{fractimg}. He was a pioneer in the study of 
+fractal geometry and also coined the term \textit{fractal}, of which both the Mandelbrot set, and Julia sets are examples of. 
+
+In this section I will give a more detailed explanation of the areas mentioned above. 
+
+\subsection{Fractals and Self-Similarity} 
+%TODO: this section needs citations all over the shop!
+%TODO: add a figure with the Koch Snowflake 'kochsnow'
+A fractal is a means of describing shapes more complex than classical Euclidian shapes. The leaves of a pine tree or the forks of a lightning bolt are obvious
+examples of real things that fractals allow us to more faithfully describe. These \textit{real world fractals} are similar to \textit{mathematical fractals}, 
+of which the Mandelbrot set is an example, but differ in that they do not display the property of \textit{Scale Invariance}. 
+
+The underlying property of these fractals (but not all) is some level of \textit{Self-Similarity}, where the shape is comprised of smaller ``copies" of itself. 
+This is known as \textit{Exact Self-Similarity} and means that the shape is identical at any scale.
+A simple example of this is the \textit{Triadic Koch Snowflake} which is demonstrated in Figure \ref{kochsnow} showing the fractal developing 
+over three iterations of its construction. It is important to note here that The Mandelbrot set does not quite show the same property, it is said to be 
+\textit{Quasi Self-Similar}. This means that the shape is approximately similar at all scales, in that the shape is repeated but in a slightly distorted
+form with each ``copy".
+
+It turns out there are many rather useful applications for fractals. To name a few; computer game graphics, %FIND MORE EXAMPLES WITH CITATIONS.
+
 \subsection{Julia Sets}
-\subsection{Complex Numbers}
+To understand the basis of the Mandelbrot set it is first necessary to understand it's relation to \textit{Julia Sets}.
+The function in equation~\ref{eq:julia1} is iterated over where \textit{c} is fixed.
+The \textit{filled Julia Set} is comprised of all \textit{f(x)} where the result does not tend towards infinity.
+
+% express the set notation for f(x) -> infinity.
+\begin{equation}\label{eq:julia1}
+f(x) = x^2 + c
+\end{equation}
+
 \subsection{Computing the Mandelbrot Set}
 
 
@@ -145,8 +167,9 @@ processor until stolen.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Resources}
 
+\nocite{*}
+
 % refs\bibs:
-\bibliographystyle{harvard}
 \bibliography{refs}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------

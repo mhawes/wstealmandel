@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.6.8)  4 FEB 2013 21:15
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.6.8)  5 FEB 2013 19:12
 entering extended mode
  %&-line parsing enabled.
 **document.tex
@@ -163,6 +163,21 @@ Package graphics Info: Driver file: pdftex.def on input line 91.
 \Gin@req@height=\dimen117
 \Gin@req@width=\dimen118
 )
+(/usr/share/texmf-texlive/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count101
+\float@exts=\toks17
+\float@box=\box28
+\@float@everytoks=\toks18
+\@floatcapt=\box29
+)
+\@float@every@figure=\toks19
+
+(/usr/share/texmf-texlive/tex/latex/caption/subcaption.sty
+Package: subcaption 2008/08/31 v1.0b Adding subcaptions (AR)
+\c@subfigure=\count102
+\c@subtable=\count103
+)
 (/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2000/07/18 v2.13 AMS math features
 \@mathmargin=\skip52
@@ -173,7 +188,7 @@ Package: amstext 2000/06/29 v2.01
 
 (/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
-\@emptytoks=\toks17
+\@emptytoks=\toks20
 \ex@=\dimen119
 ))
 (/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty
@@ -183,58 +198,59 @@ Package: amsbsy 1999/11/29 v1.2d
 (/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty
 Package: amsopn 1999/12/14 v2.01 operator names
 )
-\inf@bad=\count101
+\inf@bad=\count104
 LaTeX Info: Redefining \frac on input line 211.
-\uproot@=\count102
-\leftroot@=\count103
+\uproot@=\count105
+\leftroot@=\count106
 LaTeX Info: Redefining \overline on input line 307.
-\classnum@=\count104
-\DOTSCASE@=\count105
+\classnum@=\count107
+\DOTSCASE@=\count108
 LaTeX Info: Redefining \ldots on input line 379.
 LaTeX Info: Redefining \dots on input line 382.
 LaTeX Info: Redefining \cdots on input line 467.
-\Mathstrutbox@=\box28
-\strutbox@=\box29
+\Mathstrutbox@=\box30
+\strutbox@=\box31
 \big@size=\dimen121
 LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
-\macc@depth=\count106
-\c@MaxMatrixCols=\count107
+\macc@depth=\count109
+\c@MaxMatrixCols=\count110
 \dotsspace@=\muskip10
-\c@parentequation=\count108
-\dspbrk@lvl=\count109
-\tag@help=\toks18
-\row@=\count110
-\column@=\count111
-\maxfields@=\count112
-\andhelp@=\toks19
+\c@parentequation=\count111
+\dspbrk@lvl=\count112
+\tag@help=\toks21
+\row@=\count113
+\column@=\count114
+\maxfields@=\count115
+\andhelp@=\toks22
 \eqnshift@=\dimen122
 \alignsep@=\dimen123
 \tagshift@=\dimen124
 \tagwidth@=\dimen125
 \totwidth@=\dimen126
 \lineht@=\dimen127
-\@envbody=\toks20
+\@envbody=\toks23
 \multlinegap=\skip53
 \multlinetaggap=\skip54
-\mathdisplay@stack=\toks21
+\mathdisplay@stack=\toks24
 LaTeX Info: Redefining \[ on input line 2666.
 LaTeX Info: Redefining \] on input line 2667.
-)) (./document.aux)
+)) (./document.aux
+(./juliafig.aux))
 \openout1 = `document.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
 
 *geometry auto-detecting driver*
 *geometry detected driver: pdftex*
@@ -244,8 +260,8 @@ landscape: --
 twocolumn: --
 twoside: --
 asymmetric: --
-h-parts: 72.26999pt, 452.9679pt, 72.26999pt
-v-parts: 72.26999pt, 700.50687pt, 72.26999pt
+h-parts: 113.81102pt, 412.56497pt, 71.13188pt
+v-parts: 71.13188pt, 702.78308pt, 71.13188pt
 hmarginratio: --
 vmarginratio: --
 lines: --
@@ -259,11 +275,11 @@ driver: pdftex
 -------------------- Page layout dimensions and switches
 \paperwidth  597.50787pt
 \paperheight 845.04684pt
-\textwidth  452.9679pt
-\textheight 700.50687pt
-\oddsidemargin  0.0pt
-\evensidemargin 0.0pt
-\topmargin  -37.0pt
+\textwidth  412.56497pt
+\textheight 702.78308pt
+\oddsidemargin  41.54103pt
+\evensidemargin 41.54103pt
+\topmargin  -38.1381pt
 \headheight 12.0pt
 \headsep    25.0pt
 \footskip   30.0pt
@@ -279,19 +295,20 @@ driver: pdftex
 -----------------------
 (/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count113
+\scratchcounter=\count116
 \scratchdimen=\dimen128
-\scratchbox=\box30
-\nofMPsegments=\count114
-\nofMParguments=\count115
-\everyMPshowfont=\toks22
-\MPscratchCnt=\count116
+\scratchbox=\box32
+\nofMPsegments=\count117
+\nofMParguments=\count118
+\everyMPshowfont=\toks25
+\MPscratchCnt=\count119
 \MPscratchDim=\dimen129
-\MPnumerator=\count117
-\everyMPtoPDFconversion=\toks23
+\MPnumerator=\count120
+\everyMPtoPDFconversion=\toks26
 )
-\c@lstlisting=\count118
+\c@lstlisting=\count121
 Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
 Package caption Info: End \AtBeginDocument code.
  [1
 
@@ -308,39 +325,65 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 \tf@toc=\write3
 \openout3 = `document.toc'.
 
- [2
+ [1
+
 
 ]
 Chapter 1.
-[3
+[2
 
 ]
 Chapter 2.
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 66.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 76.
 (/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 66.
- [4
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 76.
+ [3
 
 ]
+<./imgs/mandelbrot.jpeg, id=25, 1028.34187pt x 578.16pt>
+File: ./imgs/mandelbrot.jpeg Graphic file (type jpg)
 
-LaTeX Warning: Reference `kochsnow' on page 5 undefined on input line 110.
+<use ./imgs/mandelbrot.jpeg>
 
-[5]
+LaTeX Warning: Reference `kochsnow' on page 4 undefined on input line 127.
+
+
+Overfull \hbox (0.1984pt too wide) in paragraph at lines 125--131
+[]\OT1/cmr/m/n/10.95 The un-der-ly-ing prop-erty of these frac-tals (but not al
+l) is some level of \OT1/cmr/m/it/10.95 Self-Similarity\OT1/cmr/m/n/10.95 ,
+ []
+
+[4 <./imgs/mandelbrot.jpeg>] [5]
+\openout2 = `juliafig.aux'.
+
+ (./juliafig.tex
+<./imgs/julia-con.jpeg, id=36, 1028.34187pt x 578.16pt>
+File: ./imgs/julia-con.jpeg Graphic file (type jpg)
+
+<use ./imgs/julia-con.jpeg>
+<./imgs/julia-ncon.jpeg, id=37, 1028.34187pt x 578.16pt>
+File: ./imgs/julia-ncon.jpeg Graphic file (type jpg)
+
+<use ./imgs/julia-ncon.jpeg>) [6
+
+ <./imgs/julia-con.jpeg> <./imgs/julia-ncon.jpeg>] [7
+
+]
 Chapter 3.
-[6
+[8
 
 ]
 Chapter 4.
-[7
+[9
 
 ]
 Chapter 5.
-(./document.bbl [8
+(./document.bbl [10
 
-]) [9
+]) [11
 
 ]
 Chapter 6.
@@ -348,33 +391,37 @@ Chapter 6.
 Package caption Warning: Unused \captionsetup[lstlisting] on input line 37.
 See the caption package documentation for explanation.
 
-[10
+[12
 
-] (./document.aux)
+] (./document.aux (./juliafig.aux))
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 4814 strings out of 495061
- 67597 string characters out of 1182622
- 153759 words of memory out of 3000000
- 7956 multiletter control sequences out of 15000+50000
- 11620 words of font info for 41 fonts, out of 3000000 for 9000
+ 4972 strings out of 495061
+ 70060 string characters out of 1182622
+ 153793 words of memory out of 3000000
+ 8092 multiletter control sequences out of 15000+50000
+ 12543 words of font info for 44 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 40i,11n,60p,245b,259s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 40i,12n,60p,291b,538s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
 re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-te
 xlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts
-/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/publi
-c/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
-m/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb><
-/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr/share/
-texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texli
-ve/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on document.pdf (11 pages, 151054 bytes).
+/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texmf-texlive/fonts/type1/publi
+c/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
+m/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr17.pfb>
+</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/t
+exmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/
+fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr/share/texmf-texlive/fonts/type1
+/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/ams
+fonts/cm/cmsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmt
+i10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti12.pfb></u
+sr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti7.pfb>
+Output written on document.pdf (14 pages, 505324 bytes).
 PDF statistics:
- 78 PDF objects out of 1000 (max. 8388607)
+ 111 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

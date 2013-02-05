@@ -1,6 +1,7 @@
 This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
 The top-level auxiliary file: document.aux
 The style file: plain.bst
+A level-1 auxiliary file: juliafig.aux
 Database file #1: refs.bib
 Warning--can't use both author and editor fields in fractimg
 Warning--can't use both author and editor fields in chaosfract
@@ -8,7 +9,7 @@ Warning--can't use both author and editor fields in fracfcd
 Warning--can't use both author and editor fields in fracnature
 You've used 6 entries,
             2118 wiz_defined-function locations,
-            527 strings with 4682 characters,
+            528 strings with 4694 characters,
 and the built_in function-call counts, 1459 in all, are:
 = -- 130
 > -- 69

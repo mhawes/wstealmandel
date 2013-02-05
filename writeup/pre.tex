@@ -3,10 +3,10 @@
 
 % sans serif font 
 %\renewcommand{\familydefault}{\sfdefault}
+\usepackage[top=2.5cm, bottom=2.5cm, left=4cm, right=2.5cm]{geometry}
 
-\usepackage{geometry} % to change the page dimensions
 \geometry{a4paper} % or letterpaper (US) or a5paper or....
-\geometry{margin=1in}
+%\geometry{margin=1in}
 
 \usepackage{fancyhdr}
 \pagestyle{fancyplain}
@@ -58,8 +58,14 @@ breakatwhitespace=false,    % sets if automatic breaks should only happen at whi
 % ------------------------------------------------------------------------------
 % Graphics stuff for images
 \usepackage{graphicx}
-\DeclareGraphicsExtensions{.jpg}
+\DeclareGraphicsExtensions{.jpg,.jpeg}
 \graphicspath{ {./imgs/} }
+
+\usepackage{float}
+%\floatstyle{boxed}
+\restylefloat{figure}
+\usepackage{caption}
+\usepackage{subcaption}
 
 % ------------------------------------------------------------------------------
 % Maths packages

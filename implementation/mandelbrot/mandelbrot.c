@@ -22,10 +22,10 @@ main()
 /* -------------------------------------------------------------------------- */
 void initialise( Complex *c_max, Complex *c_min, Complex *c_factor)
 {
-    c_min->re = -2.0;
-    c_max->re = 1.0;
+    c_min->re = -2;
+    c_max->re = 2;
 
-    c_min->im = -1.2;
+    c_min->im = -2;
     c_max->im = c_min->im + (c_max->re - c_min->re) * HEIGHT / WIDTH;
 
     /* used to convert x, y of the raster plane into a complex number */
@@ -68,7 +68,13 @@ void compute_plane( Complex *c_max,
         {
             c_cur.re = convert_x_coord( c_min->re, c_factor->re, x);
             
-            plane[y][x] = is_member( &c_cur);
+            if( is_outside_rad2( &c_cur)){
+                plane[y][x] = MAX_ITERATIONS / 2;  /* make the outer grey */
+            }
+            else{
+                /* compute c_cur checking if it is in the set */
+                plane[y][x] = is_member( &c_cur);
+            }
         }
     }
     
@@ -77,27 +83,38 @@ void compute_plane( Complex *c_max,
 }
 
 /* -------------------------------------------------------------------------- */
+/* returns PPM_BLACK if in the mandelbrot set. 
+/* returns the iteration count when not in the set. This produces a nice gradient effect.
+ */
 char is_member(Complex *c)
 {
-    unsigned int i;
+    char i;
     Complex z;
 
     z.re = c->re; 
     z.im = c->im;
 
-    for(i = 0; i < MAX_ITERATIONS; i++)
+    for(i = MAX_ITERATIONS; i >= 0; i--)
     {
         if( ((z.re * z.re) + (z.im * z.im)) > 4)
         {
             /* c is not a member of the set */
-            return PPM_WHITE;
+            return i;
         }
         
         z = julia_func( &z, c);
     }
     
     /* if it gets this far c is a member of the set */
-    return PPM_BLACK;
+    return MAX_ITERATIONS;
+}
+
+/* -------------------------------------------------------------------------- */
+/* returns 1 if outside the circle of radius 2 */
+inline char is_outside_rad2( Complex *c)
+{
+    /* if the number is outside the radius 2 we know it cant be in the set */
+    return( sqrt((c->re * c->re) + (c->im * c->im)) > 2);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -130,7 +147,7 @@ void write_to_ppm( char plane[HEIGHT][WIDTH])
     unsigned int x, y;
 
     FILE *fp = fopen("out.ppm", "w+");
-    fprintf(fp, "P2\n%d %d\n1\n", WIDTH, HEIGHT);
+    fprintf(fp, "P2\n%d %d\n%d\n", WIDTH, HEIGHT, MAX_ITERATIONS);
     
     /* classic nested for loop approach */
     for(y = 0; y < HEIGHT; ++y)    

@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <math.h>
 
-#define HEIGHT 8000
-#define WIDTH  10000
+#define HEIGHT 15000
+#define WIDTH  15000
 
-#define PPM_WHITE 1
 #define PPM_BLACK 0
 
-#define MAX_ITERATIONS 25
+/* between: 1-127 */
+#define MAX_ITERATIONS 70
 
 /* struct for nicely containing Complex numbers */
 typedef struct Complex{
@@ -19,6 +19,7 @@ typedef struct Complex{
 void initialise                 ( Complex *, Complex *, Complex *);
 inline double convert_x_coord   ( double, double, unsigned int);
 inline double convert_y_coord   ( double, double, unsigned int);
+inline char is_outside_rad2     ( Complex *);
 void compute_plane              ( Complex *, Complex *, Complex *);
 char is_member                  ( Complex *);
 Complex julia_func              ( Complex *, Complex *);

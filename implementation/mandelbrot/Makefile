@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I.
+CFLAGS=-I. -lm
 DEPS = mandelbrot.h
 OBJ = mandelbrot.o
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.6.8)  5 FEB 2013 19:12
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.6.8)  5 FEB 2013 22:31
 entering extended mode
  %&-line parsing enabled.
 **document.tex
@@ -346,17 +346,7 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
 <./imgs/mandelbrot.jpeg, id=25, 1028.34187pt x 578.16pt>
 File: ./imgs/mandelbrot.jpeg Graphic file (type jpg)
 
-<use ./imgs/mandelbrot.jpeg>
-
-LaTeX Warning: Reference `kochsnow' on page 4 undefined on input line 127.
-
-
-Overfull \hbox (0.1984pt too wide) in paragraph at lines 125--131
-[]\OT1/cmr/m/n/10.95 The un-der-ly-ing prop-erty of these frac-tals (but not al
-l) is some level of \OT1/cmr/m/it/10.95 Self-Similarity\OT1/cmr/m/n/10.95 ,
- []
-
-[4 <./imgs/mandelbrot.jpeg>] [5]
+<use ./imgs/mandelbrot.jpeg> [4 <./imgs/mandelbrot.jpeg>] [5]
 \openout2 = `juliafig.aux'.
 
  (./juliafig.tex
@@ -383,45 +373,47 @@ Chapter 4.
 Chapter 5.
 (./document.bbl [10
 
-]) [11
+]
+Underfull \hbox (badness 10000) in paragraph at lines 4--7
+[]\OT1/cmr/m/n/10.95 Fraqtive - man-del-brot fam-ily frac-tal gen-er-a-tor.  ON
+-LINE.
+ []
+
+) [11
 
 ]
 Chapter 6.
 
-Package caption Warning: Unused \captionsetup[lstlisting] on input line 37.
+Package caption Warning: Unused \captionsetup[lstlisting] on input line 39.
 See the caption package documentation for explanation.
 
 [12
 
-] (./document.aux (./juliafig.aux))
-
-LaTeX Warning: There were undefined references.
-
- ) 
+] (./document.aux (./juliafig.aux)) ) 
 Here is how much of TeX's memory you used:
- 4972 strings out of 495061
- 70060 string characters out of 1182622
+ 4970 strings out of 495061
+ 70041 string characters out of 1182622
  153793 words of memory out of 3000000
- 8092 multiletter control sequences out of 15000+50000
- 12543 words of font info for 44 fonts, out of 3000000 for 9000
+ 8091 multiletter control sequences out of 15000+50000
+ 12194 words of font info for 43 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 40i,12n,60p,291b,538s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
-re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-te
-xlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts
-/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texmf-texlive/fonts/type1/publi
-c/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
-m/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr17.pfb>
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/t
-exmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/
-fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr/share/texmf-texlive/fonts/type1
-/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/ams
-fonts/cm/cmsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmt
-i10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti12.pfb></u
-sr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti7.pfb>
-Output written on document.pdf (14 pages, 505324 bytes).
+ 40i,11n,60p,340b,524s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type1/publ
+ic/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts
+/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.
+pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/sh
+are/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-te
+xlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/
+type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public
+/amsfonts/cm/cmr6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
+cmr8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsl10.pfb></
+usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/t
+exmf-texlive/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texmf-texlive
+/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type
+1/public/amsfonts/cm/cmti12.pfb>
+Output written on document.pdf (14 pages, 492582 bytes).
 PDF statistics:
- 111 PDF objects out of 1000 (max. 8388607)
+ 107 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,0 +1,2 @@
+The two subdirectories of implementation house the serial implementation (mandelbrot)
+and the work stealing implementation (wsmandelbrot).

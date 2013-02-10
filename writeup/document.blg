@@ -1,53 +1,53 @@
-This is BibTeX, Version 0.99d (TeX Live 2012/Debian)
-Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
 The top-level auxiliary file: document.aux
 The style file: plain.bst
 A level-1 auxiliary file: juliafig.aux
 Database file #1: refs.bib
 Warning--to sort, need author or key in fraqtive
+Warning--to sort, need author or key in ppmspec
+Warning--to sort, need author or key in gnuplot
+Warning--to sort, need author or key in gnuplotcppint
+Warning--to sort, need author or key in gnuplotjint
 Warning--can't use both author and editor fields in fractimg
-Warning--can't use both author and editor fields in chaosfract
-Warning--can't use both author and editor fields in fracfcd
-Warning--can't use both author and editor fields in fracnature
-You've used 7 entries,
+You've used 16 entries,
             2118 wiz_defined-function locations,
-            532 strings with 4807 characters,
-and the built_in function-call counts, 1627 in all, are:
-= -- 147
-> -- 70
+            566 strings with 5878 characters,
+and the built_in function-call counts, 3486 in all, are:
+= -- 331
+> -- 136
 < -- 0
-+ -- 31
-- -- 22
-* -- 86
-:= -- 290
-add.period$ -- 21
-call.type$ -- 7
-change.case$ -- 29
++ -- 60
+- -- 42
+* -- 152
+:= -- 589
+add.period$ -- 50
+call.type$ -- 16
+change.case$ -- 66
 chr.to.int$ -- 0
-cite$ -- 12
-duplicate$ -- 71
-empty$ -- 141
-format.name$ -- 22
-if$ -- 333
+cite$ -- 22
+duplicate$ -- 141
+empty$ -- 328
+format.name$ -- 42
+if$ -- 748
 int.to.chr$ -- 0
-int.to.str$ -- 7
-missing$ -- 8
-newline$ -- 38
-num.names$ -- 12
-pop$ -- 49
+int.to.str$ -- 16
+missing$ -- 10
+newline$ -- 85
+num.names$ -- 22
+pop$ -- 129
 preamble$ -- 1
-purify$ -- 25
+purify$ -- 53
 quote$ -- 0
-skip$ -- 41
+skip$ -- 88
 stack$ -- 0
-substring$ -- 37
-swap$ -- 9
+substring$ -- 82
+swap$ -- 13
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 20
-warning$ -- 5
-while$ -- 12
-width$ -- 8
-write$ -- 73
-(There were 5 warnings)
+type$ -- 54
+warning$ -- 6
+while$ -- 22
+width$ -- 18
+write$ -- 164
+(There were 6 warnings)

@@ -158,6 +158,55 @@ Figure~\ref{fig:juliaimgs} illustrates some examples of such sets.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Programming Tools}
 
+In this section I will discuss some of the programming tools which are candidates
+for use in my implementation. 
+The tools discussed in this section are all viable options for a Linux platform.
+
+\subsection*{Languages}
+
+\begin{itemize}
+\item \textbf{C:} 
+\item \textbf{C++:}
+\item \textbf{Java:}
+\end{itemize}
+
+\subsection*{Concurrent Programming Libraries}
+In order to implement Work-Stealing, support for programming threads 
+with a suitable level of control is required.
+
+\begin{itemize}
+\item \textbf{POSIX Threads (pthreads):} Provides low level manipulation of threads for the C programming language \cite{pthreadover}. 
+              It is a library based on IEEE standard 1003.1. Thread programming is achieved through use of a set of functions and data
+              structures provided, such as \textit{mutexes}, \textit{semaphores}, \textit{ }. %TODO
+             
+\item \textbf{Open Multiprocessing (OpenMP):} Provides abstract thread programming interfaces for C, C++, and fortran.
+              In general OpenMP only allows coarse grained manipulation of threads through features such as parallel loops %TODO
+              \cite{ompvspthr}
+
+\item \textbf{Java Threads:}
+\end{itemize}
+
+\subsection*{Graphical Output}
+For the purpose of demonstrating that the program correctly generates a raster plane
+of the Mandelbrot set, a graphical rendering of the plane will be output.
+
+\begin{itemize}
+\item \textbf{PPM Output File:} The simplest option is to output to a Portable Pixel Map (PPM) file. It is 
+              text-file based and easy to implement but produces rather large files. 
+              The process of outputting to a text file is inherently serial in nature,
+              so with large image resolutions processing takes a long time.
+              There is support for both grey-scale (Portable Grey-scale Map format) and colour images. 
+              \cite{ppmspec}
+              
+\item \textbf{GNU Plot:} A graph plotting package available for multiple operating systems. 
+              Supports screen display or file output of both 2d and 3d graphics \cite{gnuplot}.
+              There are programming interfaces available for various languages such as C \cite{gnuplotcint}, C++ \cite{gnuplotcppint}, 
+              and Java \cite{gnuplotjint}.
+              
+%\item \textbf{OpenGL}
+\end{itemize}
+
+
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------

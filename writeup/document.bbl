@@ -1,4 +1,39 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
+
+\bibitem{gnuplotjint}
+About javaplot.
+\newblock ONLINE.
+\newblock http://gnujavaplot.sourceforge.net/JavaPlot/About.html accessed: 10th
+  Febuary 2013.
+
+\bibitem{fraqtive}
+Fraqtive - mandelbrot family fractal generator.
+\newblock ONLINE.
+\newblock http://fraqtive.mimec.org/ accessed: 5th Febuary 2013.
+
+\bibitem{gnuplot}
+Gnuplot homepage.
+\newblock ONLINE.
+\newblock http://www.gnuplot.info/ accessed: 10th Febuary 2013.
+
+\bibitem{gnuplotcppint}
+Gnuplot-iostream interface - c++.
+\newblock ONLINE.
+\newblock http://www.stahlke.org/dan/gnuplot-iostream/ accessed: 10th Febuary
+  2013.
+
+\bibitem{ppmspec}
+Ppm format specification.
+\newblock ONLINE.
+\newblock http://netpbm.sourceforge.net/doc/ppm.html accessed: 10th Febuary
+  2013.
+
+\bibitem{pthreadover}
+Blaise Barney.
+\newblock Posix threads programming.
+\newblock ONLINE, 2013.
+\newblock https://computing.llnl.gov/tutorials/pthreads/ accessed: 10th Febuary
+  2013.
 
 \bibitem{fractimg}
 Micheal~F Barnsley, Robert~L Devany, Benoit~B Mandelbrot, Heinz-Otto Peitgen,
@@ -11,10 +46,22 @@ Robert Blumofe and Charles~E Leiserson.
 \newblock Scheduling multithreaded computations by work stealing.
 \newblock Technical report, MIT Laboratory for Computer Science, 1994.
 
+\bibitem{gnuplotcint}
+Nicolas Devillard.
+\newblock Gnuplot interfaces in ansi c.
+\newblock ONLINE.
+\newblock http://ndevilla.free.fr/gnuplot/ accessed: 10th Febuary 2013.
+
 \bibitem{chaosfract}
 David Feldman.
 \newblock {\em Chaos and Fractals: An Elementary Introduction}.
 \newblock OUP Oxford, 2012.
+
+\bibitem{ompvspthr}
+Bob Kuhn, Paul Petersen, and Eamonn O’Toole.
+\newblock Openmp versus threading in c/c++.
+\newblock Technical report, Kuck and Associates Inc, Compaq Computer
+  Corporation, 2000.
 
 \bibitem{fracfcd}
 Benoit~B Mandelbrot.
@@ -31,5 +78,16 @@ Jason McGuiness.
 \newblock Atomic code-generation techniques for micro-threaded risc
   architectures.
 \newblock Master's thesis, University of Hertfordshire, 2006.
+
+\bibitem{partools}
+Michael~M Resch, Alexander Schulz, Matthias~S Muller, and Wolfgang~E Nagel.
+\newblock {\em Tools for High Performance Computing 2009}.
+\newblock Springer-Verlag, 2010.
+
+\bibitem{toolcompmast}
+Waide~B Tristram.
+\newblock Investigating tools and techniques for improving software performance
+  on multiprocessor computer systems.
+\newblock Master's thesis, Rhodes University, 2011.
 
 \end{thebibliography}

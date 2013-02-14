@@ -73,7 +73,7 @@ void compute_plane( Complex *c_max,
             }
             else{
                 /* compute c_cur checking if it is in the set */
-                plane[y][x] = is_member( &c_cur);
+                plane[y][x] = is_member( c_cur);
             }
         }
     }
@@ -86,13 +86,13 @@ void compute_plane( Complex *c_max,
 /* returns PPM_BLACK if in the mandelbrot set. 
 /* returns the iteration count when not in the set. This produces a nice gradient effect.
  */
-char is_member(Complex *c)
+char is_member(Complex c)
 {
     char i;
     Complex z;
 
-    z.re = c->re; 
-    z.im = c->im;
+    z.re = c.re; 
+    z.im = c.im;
 
     for(i = MAX_ITERATIONS; i >= 0; i--)
     {
@@ -102,7 +102,7 @@ char is_member(Complex *c)
             return i;
         }
         
-        z = julia_func( &z, c);
+        z = julia_func( z, c);
     }
     
     /* if it gets this far c is a member of the set */
@@ -118,17 +118,13 @@ inline char is_outside_rad2( Complex *c)
 }
 
 /* -------------------------------------------------------------------------- */
-/* calculates the next value of: z = z * z + c */
-Complex julia_func(Complex *z, Complex *c)
+/* calculates the next value of: z = z^2 + c */
+Complex julia_func(Complex z, Complex c)
 {
-    double z_im_p, z_re_p;
     Complex res;
     
-    z_re_p = z->re * z->re;
-    z_im_p = z->im * z->im;
-    
-    res.im = 2 * z->re * z->im + c->im;
-    res.re = z_re_p - z_im_p + c->re;
+    res.im = 2 * z.re * z.im + c.im;
+    res.re = (z.re * z.re) - (z.im *z.im)  + c.re;
 
     return res;
 }

@@ -63,7 +63,7 @@ In order to efficiently utilize a parallel computer architecture it is desirable
 the amount of time a processor spends idle or performing other logistical tasks, I.e not doing work. 
 When a computation's \textit{concurrent sub-tasks} or \textit{threads} incur a regular cost in processor
 time, each processor can simply have the same amount of work assigned to them. When the computation has
-more irregular or dynamically growing sub-tasks a problem arises that results in 
+more irregular or dynamically growing sub-tasks a problem arises resulting in 
 processors becoming idle while others still remain working. The solution to this problem is refereed to as
 \textit{load balancing} and can be described as a form of dynamic scheduling that ensures each processor 
 spends approximately the same amount of time working. This means processors generally spend
@@ -73,20 +73,17 @@ When considering the scheduling of multi-threaded computations, two major load b
 These are \textit{work-sharing} and \textit{work-stealing}.
 
 \begin{itemize}
-\item \textbf{Work-Sharing:} A thread which creates new threads attempts to migrate these to another underutilised processor at creation time. 
-\item \textbf{Work-Stealing:} A processor that is starved of work, attempts to ``steal'' work from other processors. 
+\item \textbf{Work-Sharing:} A processor which creates new work attempts to migrate it to another underutilised processor at creation time. 
+\item \textbf{Work-Stealing:} A processor that is starved of work attempts to ``steal'' work from other processors. 
 \end{itemize}
 
 Both techniques intend to promote balanced work-load across all processors, however in Work-Stealing
-the frequency of thread migrations is lower. When all processors have a 
+the frequency of work migrations is lower. When all processors have a 
 high work-load and no need to ``steal" this becomes useful because threads need not get 
-migrated at all. With work-sharing thread migration occurs each time a new thread is spawned \cite[p.~2]{blumleis}.
-This also suggests that work-stealing promotes better locality and grouping of sub-tasks, as spawned threads stay with the same 
-processor until stolen.
+migrated at all. With work-sharing work migration occurs each time new work is created \cite[p.~2]{blumleis}.
+This also suggests that work-stealing promotes better locality and grouping of sub-tasks, as spawned work 
+stays with the same processor until stolen.
 
-
-%This is especially the case
-%when all processors have a high work-load and no reason to "steal" from others. 
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Work-Stealing Technique - Described in Depth}
@@ -103,7 +100,7 @@ The complex numbers that comprise the set are closely related to \textit{Julia S
 In-fact the Mandelbrot set can be described as a catalogue of Julia Sets which, when plotted, all points are \textit{connected}, 
 forming a \textit{single, unbroken shape} \cite[p.~177]{fractimg}.
 
-The set is named for the mathematician \textit{Benoit Mandelbrot}, who discovered it in 1980 \cite{fracnature}\cite{fractimg}. He was a pioneer in the study of 
+The set is named for the mathematician \textit{Benoit Mandelbrot}, who discovered it in 1980 \cite{fracnature , fractimg}. He was a pioneer in the study of 
 fractal geometry and also coined the term \textit{fractal}, of which both the Mandelbrot set, and Julia sets are examples of. 
 
 In this section I will give a more detailed explanation of the areas mentioned here. 
@@ -117,7 +114,6 @@ In this section I will give a more detailed explanation of the areas mentioned h
 
 \subsection*{Fractals and Self-Similarity} 
 %TODO: this section needs citations all over the shop!
-%TODO: add a figure with the Koch Snowflake 'kochsnow'
 A fractal is a means of describing shapes which are more complex than classical geometric shapes. The leaves of a pine tree or the forks of a 
 lightning bolt are obvious examples of real things that fractals allow us to more faithfully describe. 
 These \textit{real world fractals} are similar to \textit{mathematical fractals}, 
@@ -138,21 +134,54 @@ It turns out there are many rather useful applications for fractals. To name a f
 
 To understand the basis of the Mandelbrot set it is first necessary to understand it's relation to \textit{Julia Sets}.
 The function in equation~\ref{eq:julia1} is iterated infinitely where \(c\) is fixed.
-The \textit{filled Julia Set} is comprised of all values of \(x_0\) where the result is bounded and does not tend towards infinity.
+The \textit{filled Julia Set} is comprised of all values of \(z_0\) where the result is bounded and does not tend towards infinity.
 The \textit{Julia Set} is comprised of those members of the \textit{filled Julia Set} which lie on the boundary \cite{chaosfract}.
+In the interest of keeping this report readable, and because filled Julia Sets are more relevant, filled Julia sets will be 
+referred to simply as \textit{Julia Sets}.
 
 % express the set notation for f(x) -> infinity.???? TODO
 \begin{equation}\label{eq:julia1}
-f(x) = x^2 + c
+f(z) = z^2 + c
 \end{equation}
-
 
 With regards to the Mandelbrot Set I am interested in Julia Sets in which the values \(c\) and \(x\) used are expressed as a complex number. 
 Figure~\ref{fig:juliaimgs} illustrates some examples of such sets. 
 
-\include{juliafig}    %include this because the block is HUGE!!
+\begin{figure}[h]
+%\include{juliafig}    %include this because the block is HUGE!!
+\centering
+\begin{subfigure}[b]{0.48\textwidth}
+  \centering    
+  \includegraphics[width=\textwidth]{julia-con}
+  \caption{
+    \tiny The Julia Set where \(c = -0.1 + 0.649i\)
+  }
+  \label{fig:juliaimgcon}
+\end{subfigure}
+~ %spacer
+\begin{subfigure}[b]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{julia-ncon}
+  \caption{
+    \tiny The Julia Set where \(c = -0.75 + 0.03i\)
+  }
+  \label{fig:juliaimgncon}
+\end{subfigure}
+% full caption
+\caption{
+  Two Julia Sets rendered using the program \textit{fraqtive}\cite{fraqtive}. 
+  Figure~\ref{fig:juliaimgcon} is a member of the Mandelbrot set, 
+  figure~\ref{fig:juliaimgncon} is not.
+}
+\label{fig:juliaimgs}
+\end{figure}
 
 \subsection*{Computing the Mandelbrot Set}
+
+The set is comprised of those Julia Sets which are \textit{connected}. In order to determine whether a Julia Set possesses this property,
+we need only compute the result for \(z_0\). If this tends towards infinity the value \(c\) is not a member of the Mandelbrot Set. If it 
+does not, then it is a member. This is known as the \textit{critical orbit} and is useful because it means we do not have to compute
+the entire Julia Set for each value of \(c\).
 
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -219,6 +248,10 @@ of the Mandelbrot set, a graphical rendering of the plane will be output.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{An Algorithm to Compute the Mandelbrot Set}
+
+% talk about the static keyword in C for the array.
+% talk about inlining some functions
+% talk about 
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{A Concurrent Algorithm to Compute the Mandelbrot Set}

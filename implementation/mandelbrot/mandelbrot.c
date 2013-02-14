@@ -84,7 +84,8 @@ void compute_plane( Complex *c_max,
 
 /* -------------------------------------------------------------------------- */
 /* returns PPM_BLACK if in the mandelbrot set. 
-/* returns the iteration count when not in the set. This produces a nice gradient effect.
+ * returns the iteration count when not in the set. This produces a nice 
+ * gradient effect.
  */
 char is_member(Complex c)
 {
@@ -157,3 +158,4 @@ void write_to_ppm( char plane[HEIGHT][WIDTH])
     
     fclose(fp); 
 }
+

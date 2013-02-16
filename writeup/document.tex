@@ -48,7 +48,7 @@
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\chapter{Background Research}
+\chapter{Problem Background}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % NO-CITES
 %\nocite{jmcguin}
@@ -59,7 +59,7 @@ This section briefly describes the problems associated with scheduling Multi-Thr
 the major paradigms that have surfaced.
 
 % explain problems here...... is this better off in the intro??
-In order to efficiently utilize a parallel computer architecture it is desirable to minimize
+In order to efficiently utilise a parallel computer architecture it is desirable to minimise
 the amount of time a processor spends idle or performing other logistical tasks, I.e not doing work. 
 When a computation's \textit{concurrent sub-tasks} or \textit{threads} incur a regular cost in processor
 time, each processor can simply have the same amount of work assigned to them. When the computation has
@@ -74,7 +74,7 @@ These are \textit{work-sharing} and \textit{work-stealing}.
 
 \begin{itemize}
 \item \textbf{Work-Sharing:} A processor which creates new work attempts to migrate it to another underutilised processor at creation time. 
-\item \textbf{Work-Stealing:} A processor that is starved of work attempts to ``steal'' work from other processors. 
+\item \textbf{Work-Stealing:} A processor which is starved of work attempts to ``steal'' work from other processors. 
 \end{itemize}
 
 Both techniques intend to promote balanced work-load across all processors, however in Work-Stealing
@@ -88,7 +88,55 @@ stays with the same processor until stolen.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Work-Stealing Technique - Described in Depth}
 
-% explain approaches put forward by various papers. Explain J McGuiness' mandelbrot specific approach last.
+As described above, Work-Stealing is a load balancing technique which allows work starved processors to acquire scheduled work from other processors. 
+
+Each processor has a queue of assigned tasks to complete. In general, a processor acquires its work from here.
+However, once this queue is exhausted, the processor becomes a \textit{thief} and chooses a \textit{victim} to steal from. 
+The method used to choose a victim is implementation specific, for instance some implementations adopt a random scheme \cite{blumleis , jliff, narora}.
+If the processor successfully steals work it relinquishes its thief state and returns to doing work.
+If the steal attempt is unsuccessful, for instance when the victim's work queue is empty or blocked, the processor tries again
+until it is determined that there is no work remaining in the entire network. 
+
+Figure~\ref{fig:stealoperation} illustrates the result of a successful steal operation in which work-starved processor \textit{p1} transfers a piece
+of work from \textit{p0's} queue to its own. %do more here.
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.4\textwidth}
+  \centering    
+%  \includegraphics[width=\textwidth]{stealreq}
+  \include{./imgs/stealreq}
+  \caption{
+    \tiny A steal request by the thief processor \textit{p1} on victim \textit{p0}.
+  }
+  \label{fig:stealreq}
+\end{subfigure}
+~~~~~~ %spacer
+\begin{subfigure}[b]{0.4\textwidth}
+  \centering
+%  \includegraphics[width=\textwidth]{stealafter}
+  \include{./imgs/stealafter}
+  \caption{
+    \tiny The attempt was successful and the work was re-assigned to \textit{p1}.
+  }
+  \label{fig:stealsuccess}
+\end{subfigure}
+\caption{
+    A successful steal operation between a thief and its victim.
+  }
+\label{fig:stealoperation}
+\end{figure}
+
+Research has been conducted to explore it's application in programming languages \cite{}, 
+operating systems \cite{}, and high performance parallel computing \cite{}.
+
+This section explores some schemes used to implement work-stealing in various settings. It is focused on overall design and 
+techniques presented in related literature. 
+
+\subsection*{Schemes}
+\subsection*{Stealing Policy}
+\subsection*{The Work Queue}
+
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Mandelbrot Set}
@@ -105,7 +153,7 @@ fractal geometry and also coined the term \textit{fractal}, of which both the Ma
 
 In this section I will give a more detailed explanation of the areas mentioned here. 
 
-\begin{figure}[t]
+\begin{figure}[h]
   \caption{A rendering of The Mandelbrot Set generated using the program ``fraqtive"\cite{fraqtive}.}
   \label{fig:mandelimg}
   \centering
@@ -144,11 +192,10 @@ referred to simply as \textit{Julia Sets}.
 f(z) = z^2 + c
 \end{equation}
 
-With regards to the Mandelbrot Set I am interested in Julia Sets in which the values \(c\) and \(x\) used are expressed as a complex number. 
+With regards to the Mandelbrot Set I am interested in Julia Sets in which the values \(c\) and \(z\) used are expressed as a complex number. 
 Figure~\ref{fig:juliaimgs} illustrates some examples of such sets. 
 
 \begin{figure}[h]
-%\include{juliafig}    %include this because the block is HUGE!!
 \centering
 \begin{subfigure}[b]{0.48\textwidth}
   \centering    
@@ -179,16 +226,26 @@ Figure~\ref{fig:juliaimgs} illustrates some examples of such sets.
 \subsection*{Computing the Mandelbrot Set}
 
 The set is comprised of those Julia Sets which are \textit{connected}. In order to determine whether a Julia Set possesses this property,
-we need only compute the result for \(z_0\). If this tends towards infinity the value \(c\) is not a member of the Mandelbrot Set. If it 
-does not, then it is a member. This is known as the \textit{critical orbit} and is useful because it means we do not have to compute
+we need only compute the result for \(z_0\). If this tends towards infinity the value \(c\) is not a member of the Mandelbrot Set. If the result
+is bounded, then it is a member. This is known as the \textit{critical orbit} and is useful because it means we do not have to compute
 the entire Julia Set for each value of \(c\).
 
+So the Mandelbrot set can be computed by iterating all possible values of \(c\) for the function in equation~\ref{eq:julia1} where \(z\) is the \textit{critical
+orbit}. Because the set of all possible values of \(c\) is infinite, and computers have a finite amount of resources, this set needs to be approximated. 
+This can be done using a raster plane which takes samples of the complex plane at regular intervals. 
 
+% TALK ABOUT VARIOUS ALGORITHMS PRESENTED TODO
+Level set method \cite[p.~188]{fractimg} Continuous Potential Method \cite[p.~191]{fractimg}
+
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\chapter{Main Sections}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Programming Tools}
 
-In this section I will discuss some of the programming tools which are candidates
-for use in my implementation. 
+This section discusses some of the programming tools which are candidates
+for use in the implementation.
 The tools discussed in this section are all viable options for a Linux platform.
 
 \subsection*{Languages}
@@ -217,7 +274,7 @@ with a suitable level of control is required.
 
 \subsection*{Graphical Output}
 For the purpose of demonstrating that the program correctly generates a raster plane
-of the Mandelbrot set, a graphical rendering of the plane will be output.
+of the Mandelbrot set, a graphical representation of the plane should be output.
 
 \begin{itemize}
 \item \textbf{PPM Output File:} The simplest option is to output to a Portable Pixel Map (PPM) file. It is 
@@ -234,14 +291,33 @@ of the Mandelbrot set, a graphical rendering of the plane will be output.
               
 %\item \textbf{OpenGL}
 \end{itemize}
-
-
-% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\chapter{Main Chapters}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Design of the Algorithm}
+
+\begin{lstlisting}[label = li:mandelalgo, caption = A sequential algorithm to compute the Mandelbrot Set presented in pseudo code.]
+compute_mandelbrot()
+    FOR y = 0 TO height - 1 DO
+        c_im := im_min + y * (im_max - im_min)/(height - 1)
+        FOR x = 0 TO width - 1 DO
+            c_re := re_min + x * (re_max - re_min)/(width - 1)
+            plane[x][y] := is_in_set(c_re,c_im,max_iterations)
+        END FOR
+    END FOR
+END
+
+is_in_set(c_re,c_im,y,max_iterations)
+    z_re := c_re
+    z_im := c_im
+
+    FOR i = 0 TO max_iterations DO
+        IF( z_re^2 + z_im^2 > 4) THEN
+            RETURN false
+        END IF
+    END FOR
+    RETURN true 
+END
+
+\end{lstlisting}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Implementation}

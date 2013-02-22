@@ -16,6 +16,9 @@ void de_initialise( Deque *d, char thread_id)
     /* initialise of EMPTY and ABORT vals. */
     empty.status = LINE_EMPTY;
     abort_steal.status = LINE_ABORT;
+    
+    /* mutex for top access */
+    pthread_mutex_init( &d->top_mutex, NULL); 
 }
 
 /* -------------------------------------------------------------------------- */
@@ -25,13 +28,13 @@ void de_initialise( Deque *d, char thread_id)
  */
 void de_re_allocate( Deque *d, int old_size)
 {
-    int i, j = 0, size = d->top - d->bot;
+    int i, j = 0, size = d->bot - d->top;
     Line *temp_q = (Line *)malloc(d->mem_size * sizeof(Line));
     
 //    printf("REALLOCATION: %d\n", d->mem_size);
 //    printf("b: %d t:%d\n", d->bot, d->top);
     
-    for( i = d->bot; i < d->top; i++)
+    for( i = d->top; i < d->bot; i++)
     {
         temp_q[i % d->mem_size] = d->queue[i % old_size];
     }
@@ -42,19 +45,10 @@ void de_re_allocate( Deque *d, int old_size)
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-/* This is here for adding initial vals to the queue and doesn't get called 
- * during work-stealing at any point.
- *
- * returns 1 if the push needed to be aborted.
- * returns 0 if completed correctly.
- */
-char de_push_top( Deque *d, Line line)
+void de_push_bottom( Deque *d, Line line)
 {
-    int size;
+    int size = d->bot - d->top;
     
-    size = d->top - d->bot;
-
-    /* in this case we need to grow the array */
     int mem_s = d->mem_size;
     if(size >= mem_s){
         d->mem_size = mem_s * 2;
@@ -62,14 +56,9 @@ char de_push_top( Deque *d, Line line)
     }
     
     line.status = LINE_NORMAL;
-    d->queue[d->top % d->mem_size] = line;
+    d->queue[ d->bot % d->mem_size] = line;
     
-    if( !cas_top( d, d->top, d->top + 1)){
-        /* abort */
-        return 1;
-    }
-    
-    return 0;
+    d->bot++;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -79,18 +68,27 @@ char de_push_top( Deque *d, Line line)
 Line de_pop_bottom( Deque *d)
 {
     Line l;
-    int size = d->top - d->bot;
+    d->bot--;
+
+    int size = d->bot - d->top;
     
-    if( d->bot >= d->top){
+    if( size < 0){
+        d->bot = d->top;
         return empty;
     }
-    
-    /* in this case we want to shrink the array */
-    de_attempt_shrink( d, size);
-    
+
     l = d->queue[d->bot % d->mem_size]; 
-    d->bot++;
-    
+        
+    if( size > 0){
+        /* in this case we want to shrink the array */
+        //de_attempt_shrink( d, size);
+        
+        return l;
+    }
+    if( !de_cas_top( d, d->top, d->top + 1)){
+        l = empty;
+        d->bot = d->top + 1;
+    }
     return l;
 }
 
@@ -99,19 +97,18 @@ Line de_pop_bottom( Deque *d)
  */
 Line de_steal( Deque *d)
 {
-    int size;
-    size = d->top - d->bot;
+    int size = d->bot - d->top;
     
     /* in this case we only have the bottom member therefore do not 
      * want to steal.
      */
-    if(size <= 1){
+    if(size <= 0){
         return empty;
     }
     
-    Line l = d->queue[(d->top - 1) % d->mem_size];
+    Line l = d->queue[d->top % d->mem_size];
     
-    if( !cas_top( d, d->top, d->top - 1)){
+    if( !de_cas_top( d, d->top, d->top + 1)){
         l = abort_steal;
     }
     return l;
@@ -131,16 +128,20 @@ char de_attempt_shrink( Deque *d, int size)
 }
 
 /* -------------------------------------------------------------------------- */
-char cas_top( Deque *d, int old, int new)
+char de_cas_top( Deque *d, int old, int new)
 {
     char pre_cond;
     
-    /* need to sort out atomic task here. ASM.... TODO*/
-    pre_cond = (d->top == old);
-    if(pre_cond == 1){
-        d->top = new;
+    if( pthread_mutex_trylock(&d->top_mutex) == 0)
+    {
+    
+        /* need to sort out atomic task here. ASM.... TODO*/
+        pre_cond = (d->top == old);
+        if(pre_cond == 1){
+            d->top = new;
+        }
+        pthread_mutex_unlock (&d->top_mutex);
     }
-    /* TODO */
     
     return pre_cond;
 }
@@ -156,7 +157,7 @@ void de_free_queue( Deque *d)
 /* -------------------------------------------------------------------------- */
 void de_print_deque( Deque *d)
 {
-    int size = d->top - d->bot;
+    int size = d->bot - d->top;
     int i;
     Line l;
     
@@ -167,12 +168,12 @@ void de_print_deque( Deque *d)
     
     printf("  Members:\n");
     if( size >= 0){
-        for(i = 0; i < d->mem_size; i++)
+        for(i = d->mem_size; i >= 0 ; i--)
         {
             l = d->queue[i];
-            printf( "    i:%d [y:%d xs:%d xe:%d]", i, l.y, l.x_sta, l.x_end);
+            printf( "    i:%d [y:%d]", i, l.y);
             if(i == d->bot % d->mem_size){ printf(" <- bot");}
-            if(i == d->top - 1 % d->mem_size){ printf(" <- top");}
+            if(i == d->top % d->mem_size){ printf(" <- top");}
             printf("\n");
         }
     }
@@ -180,4 +181,34 @@ void de_print_deque( Deque *d)
         printf("    Deque empty\n");
     }
     printf("\n");
+}
+
+void de_test_deque( Deque *d)
+{
+    Line l;
+
+    /* fill up the deque */
+    int i;
+    for( i = 0; i < 700; i++)
+    {
+        l.y = i;
+        
+        if(i % 2 == 0){ de_pop_bottom( d); }
+        if(i % 3 == 0){ de_steal( d); }
+
+        de_push_bottom( d, l);
+    }
+    
+    
+    
+    while(1)
+    {
+        de_print_deque( d);
+    
+        l = de_pop_bottom( d);
+        if( l.status == LINE_EMPTY){
+            printf("GOT EMPTY SIGNAL\n\n");
+            break;
+        }
+    }
 }

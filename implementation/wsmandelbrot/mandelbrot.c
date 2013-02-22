@@ -17,31 +17,12 @@ main()
 
 /* TEST CODE */
 /*    Deque d;
-    Line l;
-    
-    l.y = 0;
-    l.x_sta = 4;
-    l.x_end = 10;
     
     de_initialise( &d, 0);
-
-    //de_print_deque( &d);
     
-    int i;
-    for( i = 0; i < 11; i++)
-    {
-        l.y = i;
-        
-        if(i % 2 == 0){ de_pop_bottom( &d); }
-        if(i % 3 == 0){ de_steal( &d); }
-
-        de_push_top( &d, l);
-    }
+    de_test_deque( &d);   
     
-    printf("END\n");
-    de_print_deque( &d);
-    
-    int rc = pthread_create(&t0, NULL, compute_work, (void *)&d);
+    //int rc = pthread_create(&t0, NULL, compute_work, (void *)&d);
 */
 /* END HERE */
 
@@ -66,6 +47,9 @@ void initialise( Complex *c_max, Complex *c_min, Complex *c_factor)
     /* used to convert x, y of the raster plane into a complex number */
     c_factor->re = (c_max->re - c_min->re) / (WIDTH - 1);
     c_factor->im = (c_max->im - c_min->im) / (HEIGHT - 1);
+    
+    /* set a seed for the rand function */
+    srand( 2938672); /* FIXME */
 }
 
 /* -------------------------------------------------------------------------- */
@@ -95,24 +79,23 @@ void compute_plane( Complex *c_max,
     char rad_flag = 0;
     Complex c_cur;      /* used as the current c value */
     Line line;
-    line.x_sta = 0; line.x_end = 0;
-    
+
     /* initialise all deques */
     for (i = 0; i < WORKER_COUNT; i++)
     {
         de_initialise( &deques[i], i);
     }
-    i = 0;
 
+/* THIS NEEDS SERIOUSLY CLEANING UP! TODO */    
+//    i = 0;
     for( y = 0; y < HEIGHT ; y++)
     {
         line.y = y;
-        line.x_sta = 0;
-        line.x_end = WIDTH;
         
         /* distribute the current line y to one of the deques */
-        de_push_top( &deques[i], line);
+        de_push_bottom( &deques[0], line);
         
+        /*
         if(y % (HEIGHT / WORKER_COUNT) == HEIGHT / WORKER_COUNT - 1){
             printf("upto: %d to %d\n",y,i);
             i++;
@@ -121,6 +104,7 @@ void compute_plane( Complex *c_max,
         if(i == WORKER_COUNT){
             i = 0;
         }
+        */
     }
 
     /* Initialize and set thread detached attribute */
@@ -130,20 +114,21 @@ void compute_plane( Complex *c_max,
     ThreadLoad tl[WORKER_COUNT];
     for (i = 0; i < WORKER_COUNT; i++)
     {
+        tl[i].t_id = i;
         tl[i].c_max = c_max;
         tl[i].c_min = c_min;
         tl[i].c_factor = c_factor;
         tl[i].deq = &deques[i];
-        pthread_create(&threads[i], &attr, compute_work, (void *)&tl[i]);
+        pthread_create(&threads[i], &attr, worker_thread, (void *)&tl[i]);
     }
-
-    /* Free attribute and wait for the other threads */
-//    pthread_attr_destroy(&attr);
 
     for(i=0; i<WORKER_COUNT; i++) {
         pthread_join(threads[i], &status);
     }
 
+    /* Free attribute and wait for the other threads */
+    pthread_attr_destroy( &attr);
+    
     /* write it out to a PPM file */
     write_to_ppm( plane);
 }
@@ -198,20 +183,34 @@ Complex julia_func(Complex z, Complex c)
 /* -------------------------------------------------------------------------- */
 /* thread functions */
 /* -------------------------------------------------------------------------- */
-void *compute_work( void *thread_load)
+void *worker_thread( void *thread_load)
 {
     ThreadLoad *tl = (ThreadLoad *) thread_load;
+    int stealable = 1;
 
-    unsigned int x;
-    Complex c_cur;  /* used as the current c value */
-    Complex *c_max, *c_min, *c_factor;
-    
-    c_max = tl->c_max; c_min = tl->c_min; c_factor = tl->c_factor;
-    
     Deque *deq = tl->deq;
-    Line line_cur;
-    
+
     printf("T_id %d started\n", deq->t_id); 
+    while(stealable == 1)
+    {
+        /* This is where the work is done. */
+        compute_deque( deq, tl->c_max, tl->c_min, tl->c_factor);
+        
+        /* After this the thread turns into a thief */
+        stealable = become_thief( deq);
+    }
+    
+    printf("T_id %d finished\n", deq->t_id);
+    
+    pthread_exit(NULL);
+}
+
+/* -------------------------------------------------------------------------- */
+void compute_deque( Deque *deq, Complex *c_max, Complex *c_min, Complex *c_factor)
+{
+    Complex c_cur;  /* used as the current c value */
+    unsigned int x;
+    Line line_cur;
 
     while(1)
     {
@@ -230,14 +229,70 @@ void *compute_work( void *thread_load)
                 plane[line_cur.y][x] = MAX_ITERATIONS / 2;  /* make the outer grey */
             }
             else{
-                plane[line_cur.y][x] = is_member( c_cur);
+                /* negate shade of grey depending on the thread which processed it. */ 
+                //if( deq->t_id % 2 == 0){
+                    plane[line_cur.y][x] = is_member( c_cur);
+                /*} 
+                else {
+                    plane[line_cur.y][x] = MAX_ITERATIONS - is_member( c_cur);
+                }*/
             }
         }
     }
+
+}
+/* -------------------------------------------------------------------------- */
+char become_thief( Deque *deq)
+{
+    int try_count = 0;  /* at the minute this is used as a timeout for the thief FIXME */
+    int fill_count = 0;
+    int victim_size;
+    char result = 0;
+    Deque *victim;
+    Line line;
+
+    while( try_count < 1000 && result == 0)
+    {
+        victim = random_deque( deq->t_id);
+        line = de_steal( victim);
+        victim_size = victim->bot - victim->top;
+
+        while( line.status != LINE_EMPTY && result == 0)
+        {
+            /* if we have a normal line push it onto this threads deque */
+            if( line.status == LINE_NORMAL){
+                de_push_bottom( deq, line);
+                result = 1;
+                fill_count++;
+            }
+            /* if the thread was blocked try again */
+            if( line.status == LINE_ABORT){
+                line = de_steal( victim);
+            }
+            
+        }
+        
+        try_count++;
+    }
     
-    printf("T_id %d finished\n", tl->deq->t_id);
+    return result;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 
+ * Generates a random number between 0 and WORKER_COUNT (not inclusive)
+ * and returns a deque that is NOT the same is this threads.
+ */
+Deque *random_deque( char this_id)
+{
+    int i;
+
+    do
+    {
+        i = rand() % WORKER_COUNT;
+    } while( i == this_id);
     
-    pthread_exit(NULL);
+    return &deques[i];
 }
 
 /* -------------------------------------------------------------------------- */

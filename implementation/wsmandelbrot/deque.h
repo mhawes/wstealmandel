@@ -17,7 +17,7 @@
  
 typedef struct Line{
     char status;
-    unsigned int y, x_sta, x_end;
+    unsigned int y;
 } Line;
 
 typedef struct Deque{
@@ -27,6 +27,8 @@ typedef struct Deque{
     int top, bot;
 
     Line *queue;
+    
+    pthread_mutex_t top_mutex;
 } Deque;
 
 static Line empty, abort_steal;
@@ -37,11 +39,11 @@ void de_initialise     ( Deque *, char);
 
 /* ------------------------------------- */
 Line de_steal          ( Deque *);
-char de_push_top       ( Deque *, Line);
+void de_push_bottom    ( Deque *, Line);
 Line de_pop_bottom     ( Deque *);
 /* ------------------------------------- */
 
-char cas_top           ( Deque *, int, int);
+char de_cas_top           ( Deque *, int, int);
 
 char de_attempt_shrink ( Deque *, int);
 

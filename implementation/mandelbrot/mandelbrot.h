@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <math.h>
 
-#define HEIGHT 8000
-#define WIDTH  8000
+#define HEIGHT 20000
+#define WIDTH  20000
 
 #define PPM_BLACK 0
 
 /* between: 1-127 */
-#define MAX_ITERATIONS 50
+#define MAX_ITERATIONS 30
 
 /* struct for nicely containing Complex numbers */
 typedef struct Complex{

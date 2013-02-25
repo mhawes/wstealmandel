@@ -1,52 +1,56 @@
-This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+This is BibTeX, Version 0.99d (TeX Live 2012/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: document.aux
 The style file: plain.bst
+A level-1 auxiliary file: ./imgs/stealreq.aux
+A level-1 auxiliary file: ./imgs/stealafter.aux
 Database file #1: refs.bib
+Warning--I didn't find a database entry for ""
 Warning--to sort, need author or key in fraqtive
 Warning--to sort, need author or key in ppmspec
 Warning--to sort, need author or key in gnuplot
 Warning--to sort, need author or key in gnuplotcppint
 Warning--to sort, need author or key in gnuplotjint
 Warning--can't use both author and editor fields in fractimg
-You've used 16 entries,
+You've used 18 entries,
             2118 wiz_defined-function locations,
-            565 strings with 5866 characters,
-and the built_in function-call counts, 3486 in all, are:
-= -- 331
-> -- 136
+            576 strings with 6271 characters,
+and the built_in function-call counts, 4012 in all, are:
+= -- 383
+> -- 172
 < -- 0
-+ -- 60
-- -- 42
-* -- 152
-:= -- 589
-add.period$ -- 50
-call.type$ -- 16
-change.case$ -- 66
++ -- 74
+- -- 54
+* -- 184
+:= -- 693
+add.period$ -- 56
+call.type$ -- 18
+change.case$ -- 80
 chr.to.int$ -- 0
-cite$ -- 22
-duplicate$ -- 141
-empty$ -- 328
-format.name$ -- 42
-if$ -- 748
+cite$ -- 24
+duplicate$ -- 157
+empty$ -- 358
+format.name$ -- 54
+if$ -- 850
 int.to.chr$ -- 0
-int.to.str$ -- 16
+int.to.str$ -- 18
 missing$ -- 10
-newline$ -- 85
-num.names$ -- 22
-pop$ -- 129
+newline$ -- 95
+num.names$ -- 26
+pop$ -- 139
 preamble$ -- 1
-purify$ -- 53
+purify$ -- 63
 quote$ -- 0
-skip$ -- 88
+skip$ -- 98
 stack$ -- 0
-substring$ -- 82
+substring$ -- 92
 swap$ -- 13
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 54
+type$ -- 62
 warning$ -- 6
-while$ -- 22
-width$ -- 18
-write$ -- 164
-(There were 6 warnings)
+while$ -- 26
+width$ -- 20
+write$ -- 186
+(There were 7 warnings)

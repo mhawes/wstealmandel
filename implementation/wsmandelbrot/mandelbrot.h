@@ -8,12 +8,12 @@
 #define WORKER_COUNT 4        /* the total number of worker threads */
 
 /* dimensions of the raster plane */
-#define HEIGHT 2210
-#define WIDTH  2210
+#define HEIGHT 10000
+#define WIDTH  10000
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 
-#define MAX_ITERATIONS 30  /* between: 1-127 */
+#define MAX_ITERATIONS 127  /* between: 1-127 */
 
 /* struct for nicely containing Complex numbers */
 typedef struct Complex{

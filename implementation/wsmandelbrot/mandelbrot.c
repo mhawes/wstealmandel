@@ -231,11 +231,11 @@ void compute_deque( Deque *deq, Complex *c_max, Complex *c_min, Complex *c_facto
             else{
                 /* negate shade of grey depending on the thread which processed it. */ 
                 //if( deq->t_id % 2 == 0){
-                    plane[line_cur.y][x] = is_member( c_cur);
-                /*} 
-                else {
+                //    plane[line_cur.y][x] = is_member( c_cur);
+                //} 
+                //else {
                     plane[line_cur.y][x] = MAX_ITERATIONS - is_member( c_cur);
-                }*/
+                //}
             }
         }
     }

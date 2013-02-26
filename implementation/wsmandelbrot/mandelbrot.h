@@ -15,6 +15,7 @@
 
 #define MAX_ITERATIONS 70  /* between: 1-127 */
 
+
 /* struct for nicely containing Complex numbers */
 typedef struct Complex{
     double re, im;

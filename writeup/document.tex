@@ -54,8 +54,8 @@
 %\nocite{jmcguin}
 %-------------
 
-\section{Scheduling Techniques for Multi-Threaded Computations}
-This section briefly describes the problems associated with scheduling Multi-Threaded Algorithms and 
+\section{Dynamic Scheduling Techniques for Multi-Threaded Computations}
+This section briefly describes the problems associated with scheduling Multi-Threaded Algorithms at run-time and, 
 the major paradigms that have surfaced.
 
 % explain problems here...... is this better off in the intro??
@@ -64,7 +64,7 @@ the amount of time a processor spends idle or performing other logistical tasks,
 When a computation's \textit{concurrent sub-tasks} or \textit{threads} incur a regular cost in processor
 time, each processor can simply have the same amount of work assigned to them. When the computation has
 more irregular or dynamically growing sub-tasks a problem arises resulting in 
-processors becoming idle while others still remain working. The solution to this problem is refereed to as
+processors becoming idle while others still remain working. The solution to this problem is referred to as
 \textit{load balancing} and can be described as a form of dynamic scheduling that ensures each processor 
 spends approximately the same amount of time working. This means processors generally spend
 less time idle, however have to deal with scheduling overheads as a trade-off.

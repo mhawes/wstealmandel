@@ -28,11 +28,10 @@ void de_initialise( Deque *d, char thread_id)
  */
 void de_re_allocate( Deque *d, int old_size)
 {
+    pthread_mutex_lock(&d->top_mutex);
+    
     int i, j = 0, size = d->bot - d->top;
     Line *temp_q = (Line *)malloc(d->mem_size * sizeof(Line));
-    
-//    printf("REALLOCATION: %d\n", d->mem_size);
-//    printf("b: %d t:%d\n", d->bot, d->top);
     
     for( i = d->top; i < d->bot; i++)
     {
@@ -41,6 +40,8 @@ void de_re_allocate( Deque *d, int old_size)
     
     de_free_queue( d);
     d->queue = temp_q;
+    
+    pthread_mutex_unlock (&d->top_mutex);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -81,7 +82,7 @@ Line de_pop_bottom( Deque *d)
         
     if( size > 0){
         /* in this case we want to shrink the array */
-        //de_attempt_shrink( d, size);
+        de_attempt_shrink( d, size);
         
         return l;
     }

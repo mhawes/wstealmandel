@@ -4,6 +4,9 @@ static unsigned int plane[HEIGHT][WIDTH];/* array to hold the generated image */
 static Deque deques[WORKER_COUNT]; /* Set of deques to fill. One per trhead. */
 pthread_t threads[WORKER_COUNT]; /* set of threads to execute the deques */
 
+pthread_mutex_t started_mut;
+char started_count = 0;
+
 /* -------------------------------------------------------------------------- */
 /* CODE STARTS HERE:                                                          */
 /* -------------------------------------------------------------------------- */
@@ -31,6 +34,9 @@ main()
     
     compute_plane( &c_max, &c_min, &c_factor);
 
+    /* write it out to a PPM file */
+    write_to_ppm( plane);
+
     pthread_exit(NULL);
     return (0);    
 }
@@ -49,7 +55,9 @@ void initialise( Complex *c_max, Complex *c_min, Complex *c_factor)
     c_factor->im = (c_max->im - c_min->im) / (HEIGHT - 1);
     
     /* set a seed for the rand function */
-    srand( 2938672); /* FIXME */
+    srand( 938672); /* FIXME */
+    
+    pthread_mutex_init( &started_mut, NULL); 
 }
 
 /* -------------------------------------------------------------------------- */
@@ -119,18 +127,18 @@ void compute_plane( Complex *c_max,
         tl[i].c_min = c_min;
         tl[i].c_factor = c_factor;
         tl[i].deq = &deques[i];
-        pthread_create(&threads[i], &attr, worker_thread, (void *)&tl[i]);
     }
 
+    for(i=0; i<WORKER_COUNT; i++) {
+        pthread_create(&threads[i], &attr, worker_thread, (void *)&tl[i]);
+    }
+    
     for(i=0; i<WORKER_COUNT; i++) {
         pthread_join(threads[i], &status);
     }
 
     /* Free attribute and wait for the other threads */
     pthread_attr_destroy( &attr);
-    
-    /* write it out to a PPM file */
-    write_to_ppm( plane);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -187,15 +195,19 @@ void *worker_thread( void *thread_load)
 {
     ThreadLoad *tl = (ThreadLoad *) thread_load;
     int stealable = 1;
-
     Deque *deq = tl->deq;
 
     printf("T_id %d started\n", deq->t_id); 
+    
+    pthread_mutex_lock(&started_mut);
+    started_count++;
+    pthread_mutex_unlock (&started_mut);
+    
     while(stealable == 1)
     {
         /* This is where the work is done. */
         compute_deque( deq, tl->c_max, tl->c_min, tl->c_factor);
-        
+
         /* After this the thread turns into a thief */
         stealable = become_thief( deq);
     }
@@ -230,49 +242,91 @@ void compute_deque( Deque *deq, Complex *c_max, Complex *c_min, Complex *c_facto
             }
             else{
                 /* negate shade of grey depending on the thread which processed it. */ 
-                //if( deq->t_id % 2 == 0){
-                  //  plane[line_cur.y][x] = is_member( c_cur);
-                //} 
-                //else {
+                if( deq->t_id % 2 == 0){
+                    plane[line_cur.y][x] = is_member( c_cur);
+                } 
+                else {
                     plane[line_cur.y][x] = MAX_ITERATIONS - is_member( c_cur);
-                //}
+                }
             }
         }
     }
 
 }
+
 /* -------------------------------------------------------------------------- */
 char become_thief( Deque *deq)
 {
-    int try_count = 0;  /* at the minute this is used as a timeout for the thief FIXME */
-    int fill_count = 0;
-    int victim_size;
-    char result = 0;
+    printf( "T %d BECAME THIEF\n", deq->t_id);
+
+    int try_count = 0;
+    char result = 0, ex_count = 1;
     Deque *victim;
-    Line line;
+    
+    char exclude_set[WORKER_COUNT];
+    exclude_set[deq->t_id] = 1;
 
-    while( try_count < 1000 && result == 0)
+    while( try_count < 1000)
     {
-        victim = random_deque( deq->t_id);
-        line = de_steal( victim);
-        victim_size = victim->bot - victim->top;
+        victim = random_deque( exclude_set);
 
-        while( line.status != LINE_EMPTY && result == 0)
-        {
-            /* if we have a normal line push it onto this threads deque */
-            if( line.status == LINE_NORMAL){
-                de_push_bottom( deq, line);
-                result = 1;
-                fill_count++;
-            }
-            /* if the thread was blocked try again */
-            if( line.status == LINE_ABORT){
-                line = de_steal( victim);
-            }
-            
+        result = victimise( deq, victim);
+
+        /* add it to the exclude set providing all threads are started */
+        if( started_count == WORKER_COUNT ){
+            exclude_set[victim->t_id] = 1;
+            ex_count++;
+        }
+        if(result == 0){
+            try_count = 0;
+        }
+        else{
+            try_count++;
+        }
+    }
+    
+    if( ex_count >= WORKER_COUNT){
+        printf( "THREAD %d SHOULD BE DEAD!\n", deq->t_id);
+        return 0;
+    }
+    
+    return result;
+}
+
+/* -------------------------------------------------------------------------- */
+char victimise( Deque *deq, Deque *victim)
+{
+    char result = 0;
+    Line line;
+    int victim_size;
+    int fill_count = 0;
+
+    line = de_steal( victim);
+    
+    printf("T %d STOLE FROM T %d\n", deq->t_id, victim->t_id);
+    
+    while( line.status != LINE_EMPTY && result == 0)
+    {
+        /* evaluate victim size */
+        victim_size = victim->bot - victim->top;
+        
+        /* if we have a normal line push it onto this threads deque */
+        if( line.status == LINE_NORMAL){
+          //printf("T %d STOLE FROM T %d and got normal signal\n", deq->t_id, victim->t_id);
+          de_push_bottom( deq, line);
+          line = de_steal( victim);
+          fill_count++;
+        }
+
+        /* if the thread was blocked try again */
+        if( line.status == LINE_ABORT){
+            return 0;
         }
         
-        try_count++;
+        /* when we have stolen the right amount of work from a victim give up */
+        if( fill_count == 10){
+            result = 1;
+        }
     }
     
     return result;
@@ -283,14 +337,14 @@ char become_thief( Deque *deq)
  * Generates a random number between 0 and WORKER_COUNT (not inclusive)
  * and returns a deque that is NOT the same is this threads.
  */
-Deque *random_deque( char this_id)
+Deque *random_deque( char exclude_set[WORKER_COUNT])
 {
-    int i;
+    int i, j;
 
     do
     {
-        i = rand() % WORKER_COUNT;
-    } while( i == this_id);
+        i = rand() % WORKER_COUNT;  
+    } while(exclude_set[i] == 1);
     
     return &deques[i];
 }

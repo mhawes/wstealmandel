@@ -54,13 +54,13 @@
 %\nocite{jmcguin}
 %-------------
 
-\section{Dynamic Scheduling Techniques for Multi-Threaded Computations}
+\section{Run-Time Scheduling Techniques for Multi-Threaded Computations}
 This section briefly describes the problems associated with scheduling Multi-Threaded Algorithms at run-time and
 the major paradigms that have surfaced.
 
 % explain problems here...... is this better off in the intro??
-In order to efficiently utilise a parallel computer architecture it is desirable to minimise
-the amount of time a processor spends idle or performing other logistical tasks, I.e not doing work. 
+To efficiently utilise a parallel computer architecture it is desirable to minimise
+the amount of time a processor spends idle or performing other logistical tasks, i.e not doing work. 
 When a computation's \textit{concurrent sub-tasks} or \textit{threads} incur a regular cost in processor
 time, each processor can simply have the same amount of work assigned to them. When the computation has
 more irregular or dynamically growing sub-tasks a problem arises resulting in 
@@ -83,60 +83,6 @@ high work-load and no need to ``steal" this becomes useful because threads need 
 migrated at all. With work-sharing work migration occurs each time new work is created \cite[p.~2]{blumleis}.
 This also suggests that work-stealing promotes better locality and grouping of sub-tasks, as spawned work 
 stays with the same processor until stolen.
-
-
-% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{The Work-Stealing Technique - Described in Depth}
-
-As described above, Work-Stealing is a load balancing technique which allows work starved processors to acquire scheduled work from other processors. 
-
-Each processor has a queue of assigned tasks to complete. In general, a processor acquires its work from here.
-However, once this queue is exhausted, the processor becomes a \textit{thief} and chooses a \textit{victim} to steal from. 
-The method used to choose a victim is implementation specific, for instance some implementations adopt a random scheme \cite{blumleis , jliff, narora}.
-If the processor successfully steals work it relinquishes its thief state and returns to doing work.
-If the steal attempt is unsuccessful, for instance when the victim's work queue is empty or blocked, the processor tries again
-until it is determined that there is no work remaining in the entire network. 
-
-Figure~\ref{fig:stealoperation} illustrates the result of a successful steal operation in which work-starved processor \textit{p1} transfers a piece
-of work from \textit{p0's} queue to its own. %do more here.
-
-\begin{figure}[h]
-\centering
-\begin{subfigure}[b]{0.4\textwidth}
-  \centering    
-%  \includegraphics[width=\textwidth]{stealreq}
-  \include{./imgs/stealreq}
-  \caption{
-    \tiny A steal request by the thief processor \textit{p1} on victim \textit{p0}.
-  }
-  \label{fig:stealreq}
-\end{subfigure}
-~~~~~~ %spacer
-\begin{subfigure}[b]{0.4\textwidth}
-  \centering
-%  \includegraphics[width=\textwidth]{stealafter}
-  \include{./imgs/stealafter}
-  \caption{
-    \tiny The attempt was successful and the work was re-assigned to \textit{p1}.
-  }
-  \label{fig:stealsuccess}
-\end{subfigure}
-\caption{
-    A successful steal operation between a thief and its victim.
-  }
-\label{fig:stealoperation}
-\end{figure}
-
-Research has been conducted to explore its application in programming languages \cite{}, 
-operating systems \cite{}, and high performance parallel computing \cite{}.
-
-This section explores some schemes used to implement work-stealing in various settings. It is focused on overall design and 
-techniques presented in related literature. 
-
-\subsection*{Schemes}
-\subsection*{Stealing Policy}
-\subsection*{The Work Queue}
-
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Mandelbrot Set}
@@ -216,7 +162,7 @@ Figure~\ref{fig:juliaimgs} illustrates some examples of such sets.
 \end{subfigure}
 % full caption
 \caption{
-  Two Julia Sets rendered using the program \textit{fraqtive}\cite{fraqtive}. 
+  Two Julia Sets rendered using the program ``fraqtive"\cite{fraqtive}. 
   Figure~\ref{fig:juliaimgcon} is a member of the Mandelbrot set, 
   figure~\ref{fig:juliaimgncon} is not.
 }
@@ -236,6 +182,103 @@ This can be done using a raster plane which takes samples of the complex plane a
 
 % TALK ABOUT VARIOUS ALGORITHMS PRESENTED TODO
 Level set method \cite[p.~188]{fractimg} Continuous Potential Method \cite[p.~191]{fractimg}
+
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{The Work-Stealing Technique - Described in Depth}
+
+As described above, Work-Stealing is a load balancing technique which allows work starved processors to acquire scheduled work from other processors. 
+
+Each processor has a number of assigned tasks to complete. In general, a processor acquires its work from here.
+However, once these tasks are exhausted, the processor becomes a \textit{thief} and chooses a \textit{victim} to steal from. 
+The method used to choose a victim is implementation specific, for instance some implementations adopt a random scheme \cite{blumleis , jliff, narora}.
+If the processor successfully steals work it relinquishes its thief state and returns to doing work.
+If the steal attempt is unsuccessful, for instance when the victim has no work or is blocked, the processor tries again
+until it is determined that there is no work remaining in the entire network. 
+
+Figure~\ref{fig:stealoperation} illustrates the result of a successful steal operation in which work-starved processor \textit{p1} transfers a piece
+of work from \textit{p0's} work list to its own. %do more here.
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.4\textwidth}
+  \centering    
+%  \includegraphics[width=\textwidth]{stealreq}
+  \include{./imgs/stealreq}
+  \caption{
+    \tiny A steal request by the thief processor \textit{p1} on victim \textit{p0}.
+  }
+  \label{fig:stealreq}
+\end{subfigure}
+~~~~~~ %spacer
+\begin{subfigure}[b]{0.4\textwidth}
+  \centering
+%  \includegraphics[width=\textwidth]{stealafter}
+  \include{./imgs/stealafter}
+  \caption{
+    \tiny The attempt was successful and the work was re-assigned to \textit{p1}.
+  }
+  \label{fig:stealsuccess}
+\end{subfigure}
+\caption{
+    A successful steal operation between a thief and its victim.
+  }
+\label{fig:stealoperation}
+\end{figure}
+
+Research has been conducted to explore its application in programming languages \cite{}, 
+operating systems \cite{}, and high performance parallel computing \cite{}.
+
+This section explores some schemes used to implement work-stealing in various settings. It is focused on overall design and 
+techniques presented in related literature. 
+
+\subsection*{Blumofe and Leiserson - A Randomized Work-Stealing Algorithm}
+
+%TODO get citation for CILK language.
+This scheme is geared towards computation of dynamically growing, fully strict, multi-threaded computations and is applied to the CILK
+programming language and its runtime system \cite{blumleis}. 
+
+Each thread maintains a \textit{ready-deque}, a double-ended queue of work waiting to be processed. 
+Accesses to this queue are made either at the top for a steal operation, and at the bottom for a push operation
+or when the next piece of work is required.
+A thread becomes a \textbf{thief} when its ready-deque is empty, and randomly selects a \textbf{victim}; a thread
+to attempt to steal work from. If this steal operation is successful it pushes the stolen piece of work 
+onto the bottom of its ready-deque and becomes a worker again. If not it tries, at random, to find another victim.
+
+Because of the setting this scheme is designed for, the algorithm needs to consider that
+a piece of work can spawn children dynamically, which it may depend on completing to continue. 
+When computing the Mandelbrot set in a concurrent environment, no such consideration is required 
+as each point can be independently processed.
+
+The ready-deque can be implemented in such a way that a thread need not be stopped in order for a steal operation 
+to occur. This property is known as \textit{non-blocking} and only requires that the top end of the deque has atomic access,
+while the bottom can freely be accessed by the thread which owns the deque \cite{narora}. This is useful because it reduces the overheads 
+of a steal operation. Further still, a non-blocking deque can be made efficient through use of a circular array \cite{circdeque}.
+
+\subsection*{McGuiness - Render-Thread Algorithm}
+
+This scheme is presented as part of McGuiness' Masters Thesis \cite{jmcguin} and is suited for parallel computation where each unit of work is independent 
+from any other. Computation of the Mandelbrot set is given as an application of the algorithm. 
+It is designed with cellular architectures in mind but can be applied to a shared memory architecture. 
+
+The algorithm uses a set of \textit{worker-threads} (referred to by McGuiness as \textit{render-threads}), 
+and a single \textit{monitor-thread}, to control the distribution of work. Each worker-thread is
+initially given an equal share of the overall work-load before starting.
+
+Each worker-thread maintains an estimated completion time for its assigned work-load. This is initially set to the maximum possible value and
+is iteratively refined by calculating the average time taken to complete a piece of work. This metric is used as a policy for deciding which
+thread is the most suitable candidate for a work-stealing operation.
+
+When a worker-thread completes its assigned work a \textit{work-completed} signal is generated, its estimated
+completion time is set to \textit{0}, and the thread is stopped. This thread will be referred to as the \textbf{thief}.
+When the monitor thread detects this signal, it searches for the worker-thread with the longest estimated completion time, 
+which will be referred to as the \textbf{victim}. The monitor-thread waits for the victim to complete its current piece of work before stopping it.
+Its workload is then halved, having the other half re-asigned to the thief. Both the victim and the thief are restarted and continue doing work.
+The monitor-thread returns to waiting for another work-completed signal and the process is repeated until no work remains.
+
+% TODO talk about the fact that work need not be queued because all that is needed is a start line and a stop line.
+
+\subsection*{Stealing Policy}
+\subsection*{The Work Queue}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------

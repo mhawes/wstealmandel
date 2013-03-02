@@ -8,13 +8,12 @@
 #define WORKER_COUNT 4        /* the total number of worker threads */
 
 /* dimensions of the raster plane */
-#define HEIGHT 1000
-#define WIDTH  1000
+#define HEIGHT 18500
+#define WIDTH  18500
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 
 #define MAX_ITERATIONS 70  /* between: 1-127 */
-
 
 /* struct for nicely containing Complex numbers */
 typedef struct Complex{
@@ -26,6 +25,10 @@ typedef struct ThreadLoad{
     Deque *deq;
     Complex *c_max, *c_min, *c_factor;
 } ThreadLoad;
+
+typedef struct Pixel{
+    char red, blue;
+} Pixel;
 
 /* -------------------------------------------------------------------------- */
 /* function declarations */
@@ -48,4 +51,5 @@ Deque *random_deque             ( char[WORKER_COUNT]);
 
 /* UTIL FUNCTIONS */
 void print_complex              ( Complex *);
-void write_to_ppm               ( unsigned int[HEIGHT][WIDTH]);
+void write_to_pgm               ();
+void write_to_ppm               ();

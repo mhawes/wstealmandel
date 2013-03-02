@@ -1,6 +1,7 @@
 #include "mandelbrot.h"
 
 static unsigned int plane[HEIGHT][WIDTH];/* array to hold the generated image */
+static Pixel plane_col[HEIGHT][WIDTH];/* array to hold the generated image in colour */
 static Deque deques[WORKER_COUNT]; /* Set of deques to fill. One per trhead. */
 pthread_t threads[WORKER_COUNT]; /* set of threads to execute the deques */
 
@@ -34,9 +35,11 @@ main()
     
     compute_plane( &c_max, &c_min, &c_factor);
 
-    /* write it out to a PPM file */
-    write_to_ppm( plane);
-
+    /* write it out to a PGM file */
+    //write_to_pgm();
+    
+    write_to_ppm();
+    
     pthread_exit(NULL);
     return (0);    
 }
@@ -85,7 +88,6 @@ void compute_plane( Complex *c_max,
     void *status;
     unsigned int x, y, i = 0;
     char rad_flag = 0;
-    Complex c_cur;      /* used as the current c value */
     Line line;
 
     /* initialise all deques */
@@ -94,25 +96,13 @@ void compute_plane( Complex *c_max,
         de_initialise( &deques[i], i);
     }
 
-/* THIS NEEDS SERIOUSLY CLEANING UP! TODO */    
-//    i = 0;
+/* THIS NEEDS SERIOUSLY CLEANING UP! TODO */  
     for( y = 0; y < HEIGHT ; y++)
     {
         line.y = y;
         
         /* distribute the current line y to one of the deques */
         de_push_bottom( &deques[0], line);
-        
-        /*
-        if(y % (HEIGHT / WORKER_COUNT) == HEIGHT / WORKER_COUNT - 1){
-            printf("upto: %d to %d\n",y,i);
-            i++;
-        }
-        
-        if(i == WORKER_COUNT){
-            i = 0;
-        }
-        */
     }
 
     /* Initialize and set thread detached attribute */
@@ -220,6 +210,8 @@ void *worker_thread( void *thread_load)
 /* -------------------------------------------------------------------------- */
 void compute_deque( Deque *deq, Complex *c_max, Complex *c_min, Complex *c_factor)
 {
+//    printf( "T %d BECAME WORKER\n", deq->t_id);
+
     Complex c_cur;  /* used as the current c value */
     unsigned int x;
     Line line_cur;
@@ -238,15 +230,35 @@ void compute_deque( Deque *deq, Complex *c_max, Complex *c_min, Complex *c_facto
             c_cur.re = convert_x_coord( c_min->re, c_factor->re, x);
             
             if( is_outside_rad2( &c_cur)){
-                plane[line_cur.y][x] = MAX_ITERATIONS / 2;  /* make the outer grey */
+                plane_col[line_cur.y][x].red = 0;  /* make the outer grey */
+                plane_col[line_cur.y][x].blue = 0;  /* make the outer grey */
             }
             else{
                 /* negate shade of grey depending on the thread which processed it. */ 
-                if( deq->t_id % 2 == 0){
+                /*if( deq->t_id % 2 == 0){
                     plane[line_cur.y][x] = is_member( c_cur);
                 } 
                 else {
                     plane[line_cur.y][x] = MAX_ITERATIONS - is_member( c_cur);
+                }*/
+                
+                /* place colour pixel */
+                switch( deq->t_id % 4){
+                    case 0:
+                        plane_col[line_cur.y][x].red = is_member( c_cur);
+                        plane_col[line_cur.y][x].blue = 0;
+                        break;
+                    case 1:
+                        plane_col[line_cur.y][x].red = MAX_ITERATIONS - is_member( c_cur);
+                        plane_col[line_cur.y][x].blue = 0;
+                        break;
+                    case 2:
+                        plane_col[line_cur.y][x].red = 0;
+                        plane_col[line_cur.y][x].blue = is_member( c_cur);
+                        break;
+                    case 3:
+                        plane_col[line_cur.y][x].red = 0;
+                        plane_col[line_cur.y][x].blue = MAX_ITERATIONS - is_member( c_cur);
                 }
             }
         }
@@ -255,87 +267,105 @@ void compute_deque( Deque *deq, Complex *c_max, Complex *c_min, Complex *c_facto
 }
 
 /* -------------------------------------------------------------------------- */
+/* returns 1 if found work and needs to return to worker mode.
+ * returns 0 if no work is found in the entire network and the thread can finish.
+ */
 char become_thief( Deque *deq)
 {
-    printf( "T %d BECAME THIEF\n", deq->t_id);
+//    printf( "T %d BECAME THIEF\n", deq->t_id);
 
+    int i;
     int try_count = 0;
     char result = 0, ex_count = 1;
     Deque *victim;
     
     char exclude_set[WORKER_COUNT];
+    for(i = 0; i < WORKER_COUNT; i++)
+    {
+        exclude_set[i] = 0;
+    }
     exclude_set[deq->t_id] = 1;
 
-    while( try_count < 1000)
+    while( try_count < 1000 && result == 0)
     {
-        victim = random_deque( exclude_set);
-
-        result = victimise( deq, victim);
+        
+        if( ex_count < WORKER_COUNT ){
+            victim = random_deque( exclude_set);
+            result = victimise( deq, victim);
+        }
+        else{
+            return 0;
+        }
 
         /* add it to the exclude set providing all threads are started */
         if( started_count == WORKER_COUNT ){
             exclude_set[victim->t_id] = 1;
             ex_count++;
         }
-        if(result == 0){
+        if(result == 1){
             try_count = 0;
         }
         else{
             try_count++;
         }
+
     }
     
-    if( ex_count >= WORKER_COUNT){
-        printf( "THREAD %d SHOULD BE DEAD!\n", deq->t_id);
-        return 0;
-    }
-    
-    return result;
+    return 1;
 }
 
 /* -------------------------------------------------------------------------- */
+/* returns 1 if work has been stolen and placed in the deque ready for computing
+ * returns 0 if no work is found at this victim.
+ */
 char victimise( Deque *deq, Deque *victim)
 {
     char result = 0;
     Line line;
-    int victim_size;
+    int steal_size;
     int fill_count = 0;
 
     line = de_steal( victim);
     
-    printf("T %d STOLE FROM T %d\n", deq->t_id, victim->t_id);
+    if( line.status == LINE_EMPTY ){
+        return 0;
+    }
     
-    while( line.status != LINE_EMPTY && result == 0)
+    /* evaluate victim size to work out how much to steal */
+    steal_size = (victim->bot - victim->top) / WORKER_COUNT;
+    
+    while( line.status != LINE_EMPTY )
     {
-        /* evaluate victim size */
-        victim_size = victim->bot - victim->top;
-        
         /* if we have a normal line push it onto this threads deque */
         if( line.status == LINE_NORMAL){
-          //printf("T %d STOLE FROM T %d and got normal signal\n", deq->t_id, victim->t_id);
-          de_push_bottom( deq, line);
-          line = de_steal( victim);
-          fill_count++;
+            //printf("T %d STOLE FROM T %d and got normal signal\n", deq->t_id, victim->t_id);
+            de_push_bottom( deq, line);
+            /* when we have stolen the right amount of work from a victim give up */
+            if( fill_count < steal_size){
+                line = de_steal( victim);
+                fill_count++;
+            }
+            else{
+                return 1;
+            }
         }
 
         /* if the thread was blocked try again */
         if( line.status == LINE_ABORT){
-            return 0;
-        }
-        
-        /* when we have stolen the right amount of work from a victim give up */
-        if( fill_count == 10){
-            result = 1;
+            usleep(100); /* sleep for a bit before trying again */
+            line = de_steal( victim);
         }
     }
-    
-    return result;
+
+    return 0;
 }
 
 /* -------------------------------------------------------------------------- */
 /* 
  * Generates a random number between 0 and WORKER_COUNT (not inclusive)
- * and returns a deque that is NOT the same is this threads.
+ * and returns a deque that is NOT the same as any in the exclude_set.
+ * this function takes no responsibility for an exclude set that is fully 
+ * set.
  */
 Deque *random_deque( char exclude_set[WORKER_COUNT])
 {
@@ -358,7 +388,7 @@ void print_complex(Complex *com)
 }
 
 /* -------------------------------------------------------------------------- */
-void write_to_ppm( unsigned int plane_p[HEIGHT][WIDTH])
+void write_to_pgm()
 {
     unsigned int x, y;
 
@@ -371,6 +401,28 @@ void write_to_ppm( unsigned int plane_p[HEIGHT][WIDTH])
         for(x = 0; x < WIDTH; ++x)
         {
             fprintf(fp, "%i ", plane[y][x]);
+        }
+        fprintf(fp, "\n");
+    }
+    
+    fclose(fp); 
+}
+
+/* -------------------------------------------------------------------------- */
+void write_to_ppm()
+{
+    unsigned int x, y;
+
+    FILE *fp = fopen("out.ppm", "w+");
+    fprintf(fp, "P3\n%d %d\n%d\n", WIDTH, HEIGHT, MAX_ITERATIONS);
+    
+    /* classic nested for loop approach */
+    for(y = 0; y < HEIGHT; ++y)    
+    {
+        for(x = 0; x < WIDTH; ++x)
+        {
+            fprintf(fp, "%i 0 %i ", plane_col[y][x].red,
+                                     plane_col[y][x].blue);
         }
         fprintf(fp, "\n");
     }

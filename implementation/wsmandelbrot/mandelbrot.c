@@ -5,9 +5,6 @@ static Pixel plane_col[HEIGHT][WIDTH];/* array to hold the generated image in co
 static Deque deques[WORKER_COUNT]; /* Set of deques to fill. One per trhead. */
 pthread_t threads[WORKER_COUNT]; /* set of threads to execute the deques */
 
-pthread_mutex_t started_mut;
-char started_count = 0;
-
 /* -------------------------------------------------------------------------- */
 /* CODE STARTS HERE:                                                          */
 /* -------------------------------------------------------------------------- */
@@ -31,12 +28,22 @@ main()
 /* END HERE */
 
     /* ------------------------------------- */
+    struct timeval tv_start, tv_end;
+    gettimeofday(&tv_start, NULL);
+
     initialise( &c_max, &c_min, &c_factor);
     
     compute_plane( &c_max, &c_min, &c_factor);
+    
+    gettimeofday(&tv_end, NULL);
+
+    unsigned long elapsed = (tv_end.tv_sec - tv_start.tv_sec)*1000000 + tv_end.tv_usec - tv_start.tv_usec;
+    printf( "TOOK: %lu us\n", elapsed);
 
     /* write it out to a PGM file */
     //write_to_pgm();
+    
+    
     
     write_to_ppm();
     
@@ -59,8 +66,6 @@ void initialise( Complex *c_max, Complex *c_min, Complex *c_factor)
     
     /* set a seed for the rand function */
     srand( 938672); /* FIXME */
-    
-    pthread_mutex_init( &started_mut, NULL); 
 }
 
 /* -------------------------------------------------------------------------- */
@@ -86,7 +91,7 @@ void compute_plane( Complex *c_max,
 {
     pthread_attr_t attr;
     void *status;
-    unsigned int x, y, i = 0;
+    unsigned int x, y, i, distribution = HEIGHT / WORKER_COUNT;
     char rad_flag = 0;
     Line line;
 
@@ -97,12 +102,18 @@ void compute_plane( Complex *c_max,
     }
 
 /* THIS NEEDS SERIOUSLY CLEANING UP! TODO */  
+    i = -1;
+    
     for( y = 0; y < HEIGHT ; y++)
     {
         line.y = y;
         
+        if( y % distribution == 0){
+            i++;
+        }
+        
         /* distribute the current line y to one of the deques */
-        de_push_bottom( &deques[0], line);
+        de_push_bottom( &deques[i], line); 
     }
 
     /* Initialize and set thread detached attribute */
@@ -186,42 +197,44 @@ void *worker_thread( void *thread_load)
     ThreadLoad *tl = (ThreadLoad *) thread_load;
     int stealable = 1;
     Deque *deq = tl->deq;
+    int work_count = 0;
 
     printf("T_id %d started\n", deq->t_id); 
     
-    pthread_mutex_lock(&started_mut);
-    started_count++;
-    pthread_mutex_unlock (&started_mut);
-    
-    while(stealable == 1)
+    do
     {
         /* This is where the work is done. */
-        compute_deque( deq, tl->c_max, tl->c_min, tl->c_factor);
+        work_count += compute_deque( deq, tl->c_max, tl->c_min, tl->c_factor);
 
         /* After this the thread turns into a thief */
         stealable = become_thief( deq);
-    }
+//        stealable = 0; /* turns off work stealing. ^ uncomment become_thief. */
+    } while(stealable == 1);
     
-    printf("T_id %d finished\n", deq->t_id);
+    
+    printf("T_id %d finished computing %d lines\n", deq->t_id, work_count);
+    
+    
     
     pthread_exit(NULL);
 }
 
 /* -------------------------------------------------------------------------- */
-void compute_deque( Deque *deq, Complex *c_max, Complex *c_min, Complex *c_factor)
+int compute_deque( Deque *deq, Complex *c_max, Complex *c_min, Complex *c_factor)
 {
 //    printf( "T %d BECAME WORKER\n", deq->t_id);
 
     Complex c_cur;  /* used as the current c value */
     unsigned int x;
     Line line_cur;
+    int work_count = 0;
 
     while(1)
     {
         line_cur = de_pop_bottom( deq);
         
         if(line_cur.status == LINE_EMPTY){
-            break;
+            return work_count;
         }
         
         c_cur.im = convert_y_coord( c_max->im, c_factor->im, line_cur.y);
@@ -230,8 +243,15 @@ void compute_deque( Deque *deq, Complex *c_max, Complex *c_min, Complex *c_facto
             c_cur.re = convert_x_coord( c_min->re, c_factor->re, x);
             
             if( is_outside_rad2( &c_cur)){
-                plane_col[line_cur.y][x].red = 0;  /* make the outer grey */
-                plane_col[line_cur.y][x].blue = 0;  /* make the outer grey */
+                /* indicates where threads starts */
+                if( line_cur.y % (HEIGHT / WORKER_COUNT) == 0){
+                    plane_col[line_cur.y][x].red = MAX_ITERATIONS;
+                    plane_col[line_cur.y][x].blue = MAX_ITERATIONS;
+                } 
+                else {
+                    plane_col[line_cur.y][x].red = 0;  /* make the outer grey */
+                    plane_col[line_cur.y][x].blue = 0;  /* make the outer grey */
+                }
             }
             else{
                 /* negate shade of grey depending on the thread which processed it. */ 
@@ -262,8 +282,10 @@ void compute_deque( Deque *deq, Complex *c_max, Complex *c_min, Complex *c_facto
                 }
             }
         }
+        work_count++;
     }
-
+    
+    return work_count;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -275,20 +297,21 @@ char become_thief( Deque *deq)
 //    printf( "T %d BECAME THIEF\n", deq->t_id);
 
     int i;
-    int try_count = 0;
     char result = 0, ex_count = 1;
     Deque *victim;
-    
     char exclude_set[WORKER_COUNT];
+
+    /* initialise the exclude set */
     for(i = 0; i < WORKER_COUNT; i++)
     {
         exclude_set[i] = 0;
     }
+    /* add this threads deque to the exclude set */
     exclude_set[deq->t_id] = 1;
 
-    while( try_count < 1000 && result == 0)
+    while(result == 0)
     {
-        
+        /* if the exclude set is not exhausted get another victim at random */
         if( ex_count < WORKER_COUNT ){
             victim = random_deque( exclude_set);
             result = victimise( deq, victim);
@@ -297,18 +320,9 @@ char become_thief( Deque *deq)
             return 0;
         }
 
-        /* add it to the exclude set providing all threads are started */
-        if( started_count == WORKER_COUNT ){
-            exclude_set[victim->t_id] = 1;
-            ex_count++;
-        }
-        if(result == 1){
-            try_count = 0;
-        }
-        else{
-            try_count++;
-        }
-
+        /* add the unsuccessful victim to the exclude set */
+        exclude_set[victim->t_id] = 1;
+        ex_count++;
     }
     
     return 1;
@@ -327,6 +341,7 @@ char victimise( Deque *deq, Deque *victim)
 
     line = de_steal( victim);
     
+    /* check if the victim is empty first */
     if( line.status == LINE_EMPTY ){
         return 0;
     }
@@ -334,6 +349,7 @@ char victimise( Deque *deq, Deque *victim)
     /* evaluate victim size to work out how much to steal */
     steal_size = (victim->bot - victim->top) / WORKER_COUNT;
     
+    /* loop until we get an empty line or the right amount of work is stolen */
     while( line.status != LINE_EMPTY )
     {
         /* if we have a normal line push it onto this threads deque */
@@ -352,7 +368,6 @@ char victimise( Deque *deq, Deque *victim)
 
         /* if the thread was blocked try again */
         if( line.status == LINE_ABORT){
-            usleep(100); /* sleep for a bit before trying again */
             line = de_steal( victim);
         }
     }

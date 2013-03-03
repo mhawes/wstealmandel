@@ -45,14 +45,25 @@
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Introduction}
 
+% Identify subject area and clearly state the arena of interest this report investigates.
+    % * state of the field. 
+    % * Talk about highly parallel computing and its applications. Be broad.
+
+% Identify some of the key pieces of literature or applications for the subject area I have chosen.
+
+% Talk about the specific investigated area's and what the report specifically talks about.
+    % * i.e. which work-stealing schemes are implemented, which Mandelbrot algorithm is identified.
+
+% Rationale for doing above said things and aims of project.
+
+% Disclaimer section i.e. This report assumes prior knowledge of blah blah blah and is written
+%   with whomever in mind and so on.
+
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Problem Background}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-% NO-CITES
-%\nocite{jmcguin}
-%-------------
 
 \section{Run-Time Scheduling Techniques for Multi-Threaded Computations}
 This section briefly describes the problems associated with scheduling Multi-Threaded Algorithms at run-time and
@@ -80,7 +91,7 @@ These are \textit{work-sharing} and \textit{work-stealing}.
 Both techniques intend to promote balanced work-load across all processors, however in Work-Stealing
 the frequency of work migrations is lower. When all processors have a 
 high work-load and no need to ``steal" this becomes useful because threads need not get 
-migrated at all. With work-sharing work migration occurs each time new work is created \cite[p.~2]{blumleis}.
+migrated at all. With work-sharing work migration occurs each time new work is created \cite{blumleis}.
 This also suggests that work-stealing promotes better locality and grouping of sub-tasks, as spawned work 
 stays with the same processor until stolen.
 
@@ -113,8 +124,9 @@ lightning bolt are obvious examples of real things that fractals allow us to mor
 These \textit{real world fractals} are similar to \textit{mathematical fractals}, 
 of which the Mandelbrot set is an example, but differ in that they do not display the property of \textit{Scale Invariance}. 
 
-Fractals have a fractional dimension. % TODO MORE HERE!!!!!
- 
+Fractals have a fractional dimension. Unlike shapes with topological dimension, for instance a square has two dimensions, 
+a fractal's dimension is of a non integer value.
+
 A property of fractals (but not all) is \textit{Self-Similarity}, where the shape is comprised of smaller ``copies" of itself. 
 This is known as \textit{Exact Self-Similarity} and means that the shape is identical at any scale.
 A well-known example of this is the \textit{Triadic Koch Snowflake} which is a fractal constructed using equilateral triangles. 
@@ -241,10 +253,10 @@ Each thread maintains a \textit{ready-deque}, a double-ended queue of work waiti
 Accesses to this queue are made either at the top for a steal operation, and at the bottom for a push operation
 or when the next piece of work is required.
 A thread becomes a \textbf{thief} when its ready-deque is empty, and randomly selects a \textbf{victim}; a thread
-to attempt to steal work from. If this steal operation is successful it pushes the stolen piece of work 
+to attempt to steal work from. If this steal operation is successful it pushes the stolen work 
 onto the bottom of its ready-deque and becomes a worker again. If not it tries, at random, to find another victim.
 
-Because of the setting this scheme is designed for, the algorithm needs to consider that
+Because of the setting this scheme is designed for the algorithm needs to consider that
 a piece of work can spawn children dynamically, which it may depend on completing to continue. 
 When computing the Mandelbrot set in a concurrent environment, no such consideration is required 
 as each point can be independently processed.
@@ -252,7 +264,8 @@ as each point can be independently processed.
 The ready-deque can be implemented in such a way that a thread need not be stopped in order for a steal operation 
 to occur. This property is known as \textit{non-blocking} and only requires that the top end of the deque has atomic access,
 while the bottom can freely be accessed by the thread which owns the deque \cite{narora}. This is useful because it reduces the overheads 
-of a steal operation. Further still, a non-blocking deque can be made efficient through use of a circular array \cite{circdeque}.
+of a steal operation in that a working thread generally does not get interrupted. 
+Further still, a non-blocking deque can be made efficient through use of a circular array \cite{circdeque}.
 
 \subsection*{McGuiness - Render-Thread Algorithm}
 
@@ -266,7 +279,7 @@ initially given an equal share of the overall work-load before starting.
 
 Each worker-thread maintains an estimated completion time for its assigned work-load. This is initially set to the maximum possible value and
 is iteratively refined by calculating the average time taken to complete a piece of work. This metric is used as a policy for deciding which
-thread is the most suitable candidate for a work-stealing operation.
+thread is the most suitable candidate for the victim of a work-stealing operation.
 
 When a worker-thread completes its assigned work a \textit{work-completed} signal is generated, its estimated
 completion time is set to \textit{0}, and the thread is stopped. This thread will be referred to as the \textbf{thief}.
@@ -277,18 +290,15 @@ The monitor-thread returns to waiting for another work-completed signal and the 
 
 % TODO talk about the fact that work need not be queued because all that is needed is a start line and a stop line.
 
-\subsection*{Stealing Policy}
-\subsection*{The Work Queue}
-
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Main Sections}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Programming Tools}
+\section{Tools}
 
-This section discusses some of the programming tools which are candidates
-for use in the implementation.
+This section discusses some of the programming and general tools which are candidates
+for use in the implementation and for the good of the project as a whole.
 The tools discussed in this section are all viable options for a Linux platform.
 
 \subsection*{Languages}
@@ -334,6 +344,18 @@ of the Mandelbrot set, a graphical representation of the plane should be output.
               
 %\item \textbf{OpenGL}
 \end{itemize}
+
+\subsection*{Other Tools}
+
+Listed here are the major utility tools which have been used to make this project of a better over-all 
+quality. 
+
+\begin{itemize}
+\item \textbf{GNU Make:}
+\item         \LaTeX:
+\item \textbf{Git:}
+\end{itemize}
+
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Design of the Algorithm}
 

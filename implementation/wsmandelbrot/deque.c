@@ -107,6 +107,7 @@ Line de_steal( Deque *d)
         return empty;
     }
     
+    /* SEG FAULT here with concurrent re-allocate and steal operation FIXME*/
     Line l = d->queue[d->top % d->mem_size];
     
     if( !de_cas_top( d, d->top, d->top + 1)){

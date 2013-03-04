@@ -8,8 +8,11 @@
 #define WORKER_COUNT 4        /* the total number of worker threads */
 
 /* dimensions of the raster plane */
-#define HEIGHT 18500
-#define WIDTH  18500
+//#define HEIGHT 18500
+//#define WIDTH  18500
+
+#define HEIGHT 10000
+#define WIDTH  10000
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 
@@ -43,7 +46,7 @@ Complex julia_func              ( Complex, Complex);
 
 /* worker thread functions */
 void *worker_thread             ( void*);
-void compute_deque              ( Deque *, Complex *, Complex *, Complex *);
+int compute_deque              ( Deque *, Complex *, Complex *, Complex *);
 char become_thief               ( Deque *);
 char victimise                  ( Deque *, Deque *);
 

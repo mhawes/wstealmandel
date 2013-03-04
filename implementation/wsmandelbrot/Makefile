@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I. -lm -lpthread
+CFLAGS=-I. -lm -lpthread -O3
 DEPS = mandelbrot.h deque.h
 OBJ = mandelbrot.o deque.o
 

@@ -24,9 +24,9 @@
 \begin{document}
 \maketitle
 \date{}
+\pagenumbering{Roman}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\pagenumbering{Roman}
 \section*{Abstract}
 
 
@@ -49,15 +49,25 @@
     % * state of the field. 
     % * Talk about highly parallel computing and its applications. Be broad.
 
+Multi-processor computers are now commonplace in the world of computing, for both consumers and scientists alike. 
+This shift in architectural design demands a drastic shift in how a program is constructed, from the standpoint of both
+the programmer and the language designer.
+
+
 % Identify some of the key pieces of literature or applications for the subject area I have chosen.
+This report identifies two contrasting work-stealing schemes and analyses their performance using an algorithm to
+compute an approximation of the Mandelbrot set as a case study. 
 
 % Talk about the specific investigated area's and what the report specifically talks about.
     % * i.e. which work-stealing schemes are implemented, which Mandelbrot algorithm is identified.
 
 % Rationale for doing above said things and aims of project.
+The work is carried out in order to establish an understanding of how effective run-time scheduling of parallel 
+computations is when considering load-balancing. 
 
 % Disclaimer section i.e. This report assumes prior knowledge of blah blah blah and is written
 %   with whomever in mind and so on.
+This report assumes some prior understanding of parallel algorithms.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -98,7 +108,6 @@ stays with the same processor until stolen.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Mandelbrot Set}
 
-%\subsection{Background}
 The Mandelbrot set is a set of complex numbers which when plotted produce a spectacular and recognisable shape as illustrated in figure~\ref{fig:mandelimg}.
 It is often presented as a colourful and striking image and has been described by some as the most beautiful object in all of mathematics \cite[p.~234]{chaosfract}.
 The complex numbers that comprise the set are closely related to \textit{Julia Sets}. 
@@ -124,14 +133,14 @@ lightning bolt are obvious examples of real things that fractals allow us to mor
 These \textit{real world fractals} are similar to \textit{mathematical fractals}, 
 of which the Mandelbrot set is an example, but differ in that they do not display the property of \textit{Scale Invariance}. 
 
-Fractals have a fractional dimension. Unlike shapes with topological dimension, for instance a square has two dimensions, 
+Fractals have a fractional dimension. Unlike shapes with topological dimension, for instance a two dimensional square, 
 a fractal's dimension is of a non integer value.
 
 A property of fractals (but not all) is \textit{Self-Similarity}, where the shape is comprised of smaller ``copies" of itself. 
-This is known as \textit{Exact Self-Similarity} and means that the shape is identical at any scale.
+This is known as \textit{Exact Self-Similarity} and means the shape is identical at any scale.
 A well-known example of this is the \textit{Triadic Koch Snowflake} which is a fractal constructed using equilateral triangles. 
 It is important to note here that The Mandelbrot set does not quite show the same property, it is said to be 
-\textit{Quasi Self-Similar}. This means that the shape is approximately similar at all scales, in that the shape is replicated but in a slightly distorted
+\textit{Quasi Self-Similar}. This means the shape is approximately similar at all scales, in that the shape is replicated but in a slightly distorted
 form with each ``copy".
 
 It turns out there are many rather useful applications for fractals. To name a few; computer game graphics, %FIND MORE EXAMPLES WITH CITATIONS.
@@ -244,33 +253,35 @@ This section explores some schemes used to implement work-stealing in various se
 techniques presented in related literature. 
 
 \subsection*{Blumofe and Leiserson - A Randomized Work-Stealing Algorithm}
+\label{sec:randscheme}
 
 %TODO get citation for CILK language.
 This scheme is geared towards computation of dynamically growing, fully strict, multi-threaded computations and is applied to the CILK
 programming language and its runtime system \cite{blumleis}. 
 
-Each thread maintains a \textit{ready-deque}, a double-ended queue of work waiting to be processed. 
-Accesses to this queue are made either at the top for a steal operation, and at the bottom for a push operation
+Each thread maintains a \textit{ready-deque}; a double-ended queue of work waiting to be processed. 
+Accesses to this queue are made either at the top for a steal operation, or at the bottom for a push operation
 or when the next piece of work is required.
-A thread becomes a \textbf{thief} when its ready-deque is empty, and randomly selects a \textbf{victim}; a thread
+A thread becomes a \textbf{thief} when its ready-deque is empty and randomly selects a \textbf{victim}; a thread
 to attempt to steal work from. If this steal operation is successful it pushes the stolen work 
 onto the bottom of its ready-deque and becomes a worker again. If not it tries, at random, to find another victim.
+
+The ready-deque can be implemented in such a way that a thread need not be stopped in order for a steal operation 
+to occur. This property is known as \textit{non-blocking} and only requires that the top end of the deque has atomic access,
+while the bottom can freely be accessed by the thread which owns the deque \cite{narora}. This is useful because it reduces the overheads 
+of a steal operation in that a working thread generally does not get interrupted. 
+Further still, a non-blocking deque can be made more efficient through use of a circular array \cite{circdeque}.
 
 Because of the setting this scheme is designed for the algorithm needs to consider that
 a piece of work can spawn children dynamically, which it may depend on completing to continue. 
 When computing the Mandelbrot set in a concurrent environment, no such consideration is required 
 as each point can be independently processed.
 
-The ready-deque can be implemented in such a way that a thread need not be stopped in order for a steal operation 
-to occur. This property is known as \textit{non-blocking} and only requires that the top end of the deque has atomic access,
-while the bottom can freely be accessed by the thread which owns the deque \cite{narora}. This is useful because it reduces the overheads 
-of a steal operation in that a working thread generally does not get interrupted. 
-Further still, a non-blocking deque can be made efficient through use of a circular array \cite{circdeque}.
-
 \subsection*{McGuiness - Render-Thread Algorithm}
+\label{sec:rendscheme}
 
 This scheme is presented as part of McGuiness' Masters Thesis \cite{jmcguin} and is suited for parallel computation where each unit of work is independent 
-from any other. Computation of the Mandelbrot set is given as an application of the algorithm. 
+from any other and can be indexed in a list. Computation of the Mandelbrot set is given as an application of the algorithm. 
 It is designed with cellular architectures in mind but can be applied to a shared memory architecture. 
 
 The algorithm uses a set of \textit{worker-threads} (referred to by McGuiness as \textit{render-threads}), 
@@ -289,6 +300,12 @@ Its workload is then halved, having the other half re-asigned to the thief. Both
 The monitor-thread returns to waiting for another work-completed signal and the process is repeated until no work remains.
 
 % TODO talk about the fact that work need not be queued because all that is needed is a start line and a stop line.
+The key difference to the \textit{Randomized Work-Stealing Algorithm} (described in section \ref{sec:randscheme}) is that a worker
+thread does not maintain a queue of work but simply has a range of indices assigned. This all but eliminates the overheads associated with initialising and 
+maintaining a potentially costly data-structure, but makes a non-blocking implementation difficult. It also requires a monitor-thread to manage
+work migration which reduces the maximum number of threads performing work by one.
+
+% Talk about scalability. i.e. the average estimated completion time vs randomly selected of victim
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -297,11 +314,11 @@ The monitor-thread returns to waiting for another work-completed signal and the 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Tools}
 
-This section discusses some of the programming and general tools which are candidates
+This section discusses some of the programming and general tools which were considered
 for use in the implementation and for the good of the project as a whole.
 The tools discussed in this section are all viable options for a Linux platform.
 
-\subsection*{Languages}
+\subsection*{Programming Languages}
 
 \begin{itemize}
 \item \textbf{C:} 
@@ -309,9 +326,9 @@ The tools discussed in this section are all viable options for a Linux platform.
 \item \textbf{Java:}
 \end{itemize}
 
-\subsection*{Concurrent Programming Libraries}
+\subsection*{Parallel Programming Libraries}
 In order to implement Work-Stealing, support for programming threads 
-with a suitable level of control is required.
+with a suitable level of control was required.
 
 \begin{itemize}
 \item \textbf{POSIX Threads (pthreads):} Provides low level manipulation of threads for the C programming language \cite{pthreadover}. 
@@ -322,12 +339,12 @@ with a suitable level of control is required.
               In general OpenMP only allows coarse grained manipulation of threads through features such as parallel loops %TODO
               \cite{ompvspthr}
 
-\item \textbf{Java Threads:}
+\item \textbf{Java Threads:} %TODO
 \end{itemize}
 
 \subsection*{Graphical Output}
 For the purpose of demonstrating that the program correctly generates a raster plane
-of the Mandelbrot set, a graphical representation of the plane should be output.
+of the Mandelbrot set, a graphical representation of the plane is output.
 
 \begin{itemize}
 \item \textbf{PPM Output File:} The simplest option is to output to a Portable Pixel Map (PPM) file. It is 
@@ -335,29 +352,50 @@ of the Mandelbrot set, a graphical representation of the plane should be output.
               The process of outputting to a text file is inherently serial in nature,
               so with large image resolutions processing takes a long time.
               There is support for both grey-scale (Portable Grey-scale Map format) and colour images. 
-              \cite{ppmspec}
+              The advantage of using this method is the portability. No libraries or extras are required
+              and most image viewers will read the file. \cite{ppmspec}
               
 \item \textbf{GNU Plot:} A graph plotting package available for multiple operating systems. 
               Supports screen display or file output of both 2d and 3d graphics \cite{gnuplot}.
               There are programming interfaces available for various languages such as C \cite{gnuplotcint}, C++ \cite{gnuplotcppint}, 
               and Java \cite{gnuplotjint}.
+              GNU Plot needs to be installed on the machine in order to use it.
               
-%\item \textbf{OpenGL}
+\item \textbf{OpenGL - glut:} Glut is a framework for providing simple, cross-platform, GUI window control in conjunction
+              with OpenGL. Bindings are available for various languages, including C and C++ \cite{openglglut}.
+              A free implementation called ``freeglut" is available and can be installed on linux \cite{freeglut}.
+              This method requires OpenGL and an implementation of Glut be available on the machine that the program 
+              is run on.
+              
 \end{itemize}
 
-\subsection*{Other Tools}
+\subsection*{Choices}
+
+C, pthreads, Colour PPM % justify these TODO
+
+\subsection*{Other Tools Used}
 
 Listed here are the major utility tools which have been used to make this project of a better over-all 
 quality. 
 
 \begin{itemize}
-\item \textbf{GNU Make:}
-\item         \LaTeX:
-\item \textbf{Git:}
+\item         \LaTeX:    A document preparation markup language which produces professional and consistent 
+                         documents. 
+
+\item \textbf{GNU Make:} A tool to aid quick and easy building of a project. It uses a series of 
+                         rules and dependancies to determine the order in which a project can be built 
+                         which are described in an accompanying \textit{Makefile}. 
+                         
+                         This is useful for  producing an executable from source code as well
+                         as compiling a \LaTeX  document in conjunction with bibtex to produce a pdf.
+
+\item \textbf{Git:}      A distributed version control system which provides version tracking capabilities. 
+                         It has the benefit of providing a means of backing up, as-well as maintaining 
+                         synchronisation of project files across multiple machines.
 \end{itemize}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Design of the Algorithm}
+\section{Design of the Mandelbrot Algorithm}
 
 \begin{lstlisting}[label = li:mandelalgo, caption = A sequential algorithm to compute the Mandelbrot Set presented in pseudo code.]
 compute_mandelbrot()
@@ -390,15 +428,35 @@ END
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{An Algorithm to Compute the Mandelbrot Set}
 
+% algorithm architecture.
 % talk about the static keyword in C for the array.
 % talk about inlining some functions
-% talk about 
+% Describe ppm output
+% Describe the mandelbrot algorithm.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{A Concurrent Algorithm to Compute the Mandelbrot Set}
+\subsection{A Randomised Work-Stealing Algorithm}
+
+%to cover:
+% * architecture of algorithm: UML diagrams, describe key choices i.e. how much work is stolen. 
+% * Describe the non-blocking deque implementation. The top mutex, non-blockingness, circular array design, shrinking-growing
+% * Describe how the algorithm starts and detects completion of thread i.e. initial distribution, exclude set.
+
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{A Render-Thread Work-Stealing Algorithm}
+
+%to cover:
+% * algorithm architecture: i.e. render threads, monitor thread.
+% * Describe a steal operation.
+% * Talk about initial distribution of work.
+% * Talk about estimated completion time.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Features for Demonstration}
+
+%to cover:
+% * Colour mandelbrot image which demonstrates work-stealing activity throughout execution.
+% * Work-stealing trace mechanism.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Validation and Verification}
@@ -408,11 +466,20 @@ END
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Discussion and Evaluation}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Analysis of the Algorithm}
+\section{Analysis of the Implemented Algorithms}
+
+% Show colour work-stealing images.
+% Analyse trace output in graph form. i.e. Matrix size vs time for sequential, parallel, wsrandom, wsrenderthread.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Reflection on Project}
 \subsection{Further Work}
+
+%to cover:
+% * Cluster computation.
+% * Adaption for use with more powerful architectures. 
+% * More tracing abilities. 
+
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------

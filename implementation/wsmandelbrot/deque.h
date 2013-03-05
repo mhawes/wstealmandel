@@ -4,6 +4,9 @@
  * 
  * The deque grows and shrinks accordingly.
  */
+
+#ifndef DEQUE_H
+#define DEQUE_H
  
 #include <pthread.h>
 #include <stdio.h>
@@ -52,3 +55,5 @@ void de_free_queue     ( Deque *d);
 
 /* UTIL FUNCTIONS */
 void de_print_deque( Deque *);
+
+#endif /* DEQUE_H */

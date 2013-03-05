@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-I. -lm -lpthread -O3
-DEPS = mandelbrot.h deque.h
-OBJ = mandelbrot.o deque.o
+DEPS = mandelbrot.h deque.h worksteal.h
+OBJ = mandelbrot.o deque.o worksteal.o
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)

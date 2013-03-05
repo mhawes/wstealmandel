@@ -1,11 +1,12 @@
+#ifndef MANDELBROT_H
+#define MANDELBROT_H
+
 #include <stdio.h>
 #include <math.h>
-#include <pthread.h>
 #include <time.h>
+#include <string.h>
 
-#include "deque.h"
-
-#define WORKER_COUNT 4        /* the total number of worker threads */
+#include "worksteal.h"
 
 /* dimensions of the raster plane */
 //#define HEIGHT 18500
@@ -23,36 +24,37 @@ typedef struct Complex{
     double re, im;
 } Complex;
 
-typedef struct ThreadLoad{
-    char t_id;
-    Deque *deq;
-    Complex *c_max, *c_min, *c_factor;
-} ThreadLoad;
-
 typedef struct Pixel{
-    char red, blue;
+    char t_id, val;
 } Pixel;
+
+/* ARGUMENT ENUMS */
+typedef enum {OFF, GREYSCALE, REDSCALE, DISTRIBUTION} Output_Arg;
 
 /* -------------------------------------------------------------------------- */
 /* function declarations */
 
-void initialise                 ( Complex *, Complex *, Complex *);
+void initialise                 ( );
 inline double convert_x_coord   ( double, double, unsigned int);
 inline double convert_y_coord   ( double, double, unsigned int);
-inline char is_outside_rad2     ( Complex *);
-void compute_plane              ( Complex *, Complex *, Complex *);
+inline char is_outside_rad2     ( Complex);
 char is_member                  ( Complex);
 Complex julia_func              ( Complex, Complex);
-
-/* worker thread functions */
-void *worker_thread             ( void*);
-int compute_deque              ( Deque *, Complex *, Complex *, Complex *);
-char become_thief               ( Deque *);
-char victimise                  ( Deque *, Deque *);
-
-Deque *random_deque             ( char[WORKER_COUNT]);
+void compute_line               ( Line, char);
 
 /* UTIL FUNCTIONS */
+void handle_arguments           ( int, char *[]);
+void print_usage                ();
+
+void perhaps_print              ();
+
 void print_complex              ( Complex *);
 void write_to_pgm               ();
+
 void write_to_ppm               ();
+void write_to_ppm_redscale      ();
+
+char get_red_val                ( Pixel);
+char get_blue_val               ( Pixel);
+
+#endif /* MANDELBROT_H */

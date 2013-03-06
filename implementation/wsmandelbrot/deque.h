@@ -46,8 +46,6 @@ void de_push_bottom    ( Deque *, Line);
 Line de_pop_bottom     ( Deque *);
 /* ------------------------------------- */
 
-char de_cas_top           ( Deque *, int, int);
-
 char de_attempt_shrink ( Deque *, int);
 
 void de_re_allocate    ( Deque *, int );

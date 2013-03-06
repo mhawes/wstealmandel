@@ -81,15 +81,19 @@ Line de_pop_bottom( Deque *d)
     l = d->queue[d->bot % d->mem_size]; 
         
     if( size > 0){
-        /* in this case we want to shrink the array */
+        /* in this case we want to attempt to shrink the array */
         de_attempt_shrink( d, size);
         
         return l;
     }
-    if( !de_cas_top( d, d->top, d->top + 1)){
-        l = empty;
-        d->bot = d->top + 1;
-    }
+    
+    /* in this case bottom is also top and lock needs to be made */    
+    /* TODO test this. would trylock be better in-case deque becomes empty from steal? */
+    pthread_mutex_lock(&d->top_mutex);
+    l = empty;
+    d->bot = d->top + 1;
+    pthread_mutex_unlock (&d->top_mutex);
+
     return l;
 }
 
@@ -99,6 +103,7 @@ Line de_pop_bottom( Deque *d)
 Line de_steal( Deque *d)
 {
     int size = d->bot - d->top;
+    Line l;
     
     /* in this case we only have the bottom member therefore do not 
      * want to steal.
@@ -106,13 +111,22 @@ Line de_steal( Deque *d)
     if(size <= 0){
         return empty;
     }
-    
-    /* SEG FAULT here with concurrent re-allocate and steal operation FIXME*/
-    Line l = d->queue[d->top % d->mem_size];
-    
-    if( !de_cas_top( d, d->top, d->top + 1)){
+
+
+    /* mutex for top element needs to be enforced here. */
+    /* If the mutex is locked an abort signal line is returned */    
+    if( pthread_mutex_trylock(&d->top_mutex) == 0)
+    {
+        l = d->queue[d->top % d->mem_size];
+        
+        d->top++;
+        
+        pthread_mutex_unlock (&d->top_mutex);
+    }
+    else{
         l = abort_steal;
     }
+    
     return l;
 }
 
@@ -127,25 +141,6 @@ char de_attempt_shrink( Deque *d, int size)
         return 1;
     }
     return 0;
-}
-
-/* -------------------------------------------------------------------------- */
-char de_cas_top( Deque *d, int old, int new)
-{
-    char pre_cond;
-    
-    if( pthread_mutex_trylock(&d->top_mutex) == 0)
-    {
-    
-        /* need to sort out atomic task here. ASM.... TODO*/
-        pre_cond = (d->top == old);
-        if(pre_cond == 1){
-            d->top = new;
-        }
-        pthread_mutex_unlock (&d->top_mutex);
-    }
-    
-    return pre_cond;
 }
 
 /* -------------------------------------------------------------------------- */

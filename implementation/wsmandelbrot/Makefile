@@ -1,14 +1,19 @@
 CC=gcc
-CFLAGS=-I. -lm -lpthread -O3
-DEPS = mandelbrot.h deque.h worksteal.h
-OBJ = mandelbrot.o deque.o worksteal.o
+CCFLAGS=-I. -lm -lpthread -O3
+
+DEPS = mandelbrot.h deque.h worksteal.h rtworksteal.h
+WSOBJ = mandelbrot.o deque.o worksteal.o
+RTOBJ = mandelbrot.o rtworksteal.o
+
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CCFLAGS)
 
-wsmandelbrot: $(OBJ)
-	gcc -o $@ $^ $(CFLAGS)
+wsmandelbrot: $(WSOBJ)
+	gcc -o $@ $^ $(CCFLAGS)
 
+rtmandelbrot: $(RTOBJ)
+	gcc -o $@ $^ $(CCFLAGS)
 
 .PHONY: clean
 

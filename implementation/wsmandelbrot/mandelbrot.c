@@ -121,25 +121,25 @@ Complex julia_func(Complex z, Complex c)
 
 /* -------------------------------------------------------------------------- */
 /* Computes a line of the raster plane */
-void compute_line( Line line_cur, char t_id)
+void compute_line( unsigned int y, char t_id)
 {
     Complex c_cur; 
     unsigned int x;
 
-    c_cur.im = convert_y_coord( c_max.im, c_factor.im, line_cur.y);
+    c_cur.im = convert_y_coord( c_max.im, c_factor.im, y);
     for( x = 0; x < WIDTH; x++)
     {
         c_cur.re = convert_x_coord( c_min.re, c_factor.re, x);
         
-        plane_col[line_cur.y][x].t_id = t_id; /* assign this thread id to the pixel */
+        plane_col[y][x].t_id = t_id; /* assign this thread id to the pixel */
         
         if( is_outside_rad2( c_cur)){
             /* set this to the cannonical boundary setting */
-            plane_col[line_cur.y][x].t_id = WORKER_COUNT; 
-            plane_col[line_cur.y][x].val = PPM_BLACK;  /* make the outer black */
+            plane_col[y][x].t_id = WORKER_COUNT; 
+            plane_col[y][x].val = PPM_BLACK;  /* make the outer black */
         }
         else{
-            plane_col[line_cur.y][x].val= is_member( c_cur);
+            plane_col[y][x].val= is_member( c_cur);
         }
     }
 }

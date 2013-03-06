@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 
-#define HEIGHT 20000
-#define WIDTH  20000
+#define HEIGHT 2000
+#define WIDTH  2000
 
 #define PPM_BLACK 0
 

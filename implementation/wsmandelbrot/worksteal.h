@@ -15,6 +15,7 @@ char ws_become_thief         ( Deque *);
 char ws_victimise            ( Deque *, Deque *);
 
 Deque *ws_random_deque       ( char[WORKER_COUNT]);
+unsigned int ws_compute_deque( Deque *deq);
 
 void ws_initialise_threads   ();
 void ws_distribute_lines     ();

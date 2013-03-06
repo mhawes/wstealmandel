@@ -12,8 +12,8 @@
 //#define HEIGHT 18500
 //#define WIDTH  18500
 
-#define HEIGHT 10000
-#define WIDTH  10000
+#define HEIGHT 100
+#define WIDTH  100
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 
@@ -40,7 +40,7 @@ inline double convert_y_coord   ( double, double, unsigned int);
 inline char is_outside_rad2     ( Complex);
 char is_member                  ( Complex);
 Complex julia_func              ( Complex, Complex);
-void compute_line               ( Line, char);
+void compute_line               ( unsigned int, char);
 
 /* UTIL FUNCTIONS */
 void handle_arguments           ( int, char *[]);

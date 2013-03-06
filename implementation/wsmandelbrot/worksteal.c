@@ -9,7 +9,7 @@ pthread_t threads[WORKER_COUNT]; /* set of threads to execute the deques */
 void *ws_worker_thread( void *t_deq)
 {
     Deque *deq = (Deque *) t_deq;
-    int stealable = 1;
+    char stealable = 1;
     int work_count = 0;
 
     printf("T_id %d started\n", deq->t_id); 
@@ -21,14 +21,11 @@ void *ws_worker_thread( void *t_deq)
 
         /* After this the thread turns into a thief */
         stealable = ws_become_thief( deq);
-//        stealable = 0; /* turns off work stealing. ^ uncomment become_thief. */
     } while(stealable == 1);
     
     
     printf("T_id %d finished computing %d lines\n", deq->t_id, work_count);
-    
-    
-    
+
     pthread_exit(NULL);
 }
 
@@ -99,7 +96,7 @@ void ws_start_threads()
 }
 
 /* -------------------------------------------------------------------------- */
-int ws_compute_deque( Deque *deq)
+unsigned int ws_compute_deque( Deque *deq)
 {
 //    printf( "T %d BECAME WORKER\n", deq->t_id);
     unsigned int work_count = 0;
@@ -113,7 +110,7 @@ int ws_compute_deque( Deque *deq)
             return work_count;
         }
         
-        compute_line( line_cur, deq->t_id);
+        compute_line( line_cur.y, deq->t_id);
         
         work_count++;
     }

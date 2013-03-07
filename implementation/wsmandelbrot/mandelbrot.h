@@ -1,19 +1,26 @@
 #ifndef MANDELBROT_H
 #define MANDELBROT_H
 
-#include <stdio.h>
 #include <math.h>
 #include <time.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
+/* TODO sort out the makefile to insert these options when compiling objects */
+//#ifdef rtmandel
+#include "rtworksteal.h"
+//#endif
+#ifdef wsmandel
 #include "worksteal.h"
+#endif
 
 /* dimensions of the raster plane */
 //#define HEIGHT 18500
 //#define WIDTH  18500
 
-#define HEIGHT 100
-#define WIDTH  100
+#define HEIGHT 10000
+#define WIDTH  10000
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 

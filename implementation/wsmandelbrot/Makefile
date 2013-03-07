@@ -1,5 +1,5 @@
 CC=gcc
-CCFLAGS=-I. -lm -lpthread -O3
+CCFLAGS=-I. -lm -lpthread -g
 
 DEPS = mandelbrot.h deque.h worksteal.h rtworksteal.h
 WSOBJ = mandelbrot.o deque.o worksteal.o
@@ -10,10 +10,10 @@ RTOBJ = mandelbrot.o rtworksteal.o
 	$(CC) -c -o $@ $< $(CCFLAGS)
 
 wsmandelbrot: $(WSOBJ)
-	gcc -o $@ $^ $(CCFLAGS)
+	gcc -o $@ $^ $(CCFLAGS) -D wsmandel
 
 rtmandelbrot: $(RTOBJ)
-	gcc -o $@ $^ $(CCFLAGS)
+	gcc -o $@ $^ $(CCFLAGS) -D rtmandel
 
 .PHONY: clean
 

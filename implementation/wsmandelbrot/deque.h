@@ -9,8 +9,6 @@
 #define DEQUE_H
  
 #include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #define LINE_NORMAL 0
 #define LINE_EMPTY 1

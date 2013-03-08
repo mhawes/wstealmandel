@@ -7,20 +7,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* TODO sort out the makefile to insert these options when compiling objects */
-//#ifdef rtmandel
+/* depending on the make rule applied this attaches a different scheduler */
+#ifdef rtmandel
 #include "rtworksteal.h"
-//#endif
+#endif
 #ifdef wsmandel
 #include "worksteal.h"
+#endif
+#ifdef semandel
+#include "sequential.h"
 #endif
 
 /* dimensions of the raster plane */
 //#define HEIGHT 18500
 //#define WIDTH  18500
 
-#define HEIGHT 10000
-#define WIDTH  10000
+#define HEIGHT 20000
+#define WIDTH  20000
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 

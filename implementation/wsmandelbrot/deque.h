@@ -8,6 +8,8 @@
 #ifndef DEQUE_H
 #define DEQUE_H
  
+#include <stdlib.h>
+#include <stdio.h>
 #include <pthread.h>
 
 #define LINE_NORMAL 0

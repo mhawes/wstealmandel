@@ -26,6 +26,8 @@ typedef struct ThreadInfo{
     unsigned int end, curr;
     pthread_mutex_t finish_line_mut;
     pthread_cond_t  finish_line_cond;
+    
+    pthread_barrier_t line_bar;
 } ThreadInfo;
 
 /* -------------------------------------------------------------------------- */

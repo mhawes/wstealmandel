@@ -20,21 +20,23 @@ char outfile[21] = "out.ppm";
 int
 main( int argc, char *argv[])
 {
+    unsigned long long elapsed;
+
     handle_arguments( argc, argv);
     
-/*    struct timeval tv_start, tv_end;
+    struct timeval tv_start, tv_end;
     gettimeofday(&tv_start, NULL);
-*/
+
     initialise();
     
     ws_initialise_threads();
     ws_start_threads();
     
-    //gettimeofday(&tv_end, NULL);
-/*
-    unsigned long elapsed = (tv_end.tv_sec - tv_start.tv_sec)*1000000 + tv_end.tv_usec - tv_start.tv_usec;
-    printf( "TOOK: %lu us\n", elapsed);
-*/
+    gettimeofday(&tv_end, NULL);
+
+    elapsed = (tv_end.tv_sec - tv_start.tv_sec)*1000000 + tv_end.tv_usec - tv_start.tv_usec;
+    printf( "TOOK: %llu us\n", elapsed);
+
     perhaps_print();
     
     pthread_exit(NULL);

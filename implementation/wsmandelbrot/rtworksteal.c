@@ -11,6 +11,8 @@ pthread_mutex_t th_stop_mut;
 pthread_cond_t  vi_stop_cond;
 pthread_cond_t  th_stop_cond;
 
+pthread_barrier_t stop_bar;
+
 ThreadInfo thread_infos[WORKER_COUNT];
 
 char finish_sig;
@@ -31,8 +33,10 @@ void *rt_render_thread( void *t_info)
         work_count += rt_compute_work( info);
 
         /* After this the thread turns into a thief */
-        rt_become_thief( info);
-    } while(info->status != WORK_FINISHED);
+        if( info->curr >= info->end){
+            rt_become_thief( info);
+        }
+    } while(finish_sig != 1);
     
     printf("T_id %d finished computing %d lines\n", info->t_id, work_count);
 
@@ -50,45 +54,47 @@ void *rt_monitor_thread( void *null)
     
     do
     {
-        /* Lock as a mechanism for stopping the victim until this is done */ 
-        printf("Monitor waiting for thief\n");
+        //printf("Monitor waiting for thief\n");
         
         thief = rt_wait_for_complete();
 
         if( thief == NULL){
             rt_broadcast_finished();
-            printf("Monitor detected no work");
+//            printf("Monitor detected no work");
             break;
         }
-        printf("Monitor found thief: %d\n", thief->t_id);
+
+        //printf("Monitor found thief: %d\n", thief->t_id);
 
         victim = rt_find_victim();
-        printf("Monitor found victim: %d\n", victim->t_id);
-
-        /* if the victim found has an est time of 0 we know all threads are 
-         * thieves thus there is no work left 
-         */
-        if( victim->estimated_complete == 0){
-            printf( "No work detected\n");
-            is_work = 0;
-            
+        
+        if( victim == NULL){
             rt_broadcast_finished();
+            //printf("Monitor detected no work after no victim\n");
+            break;
         }
-        else {        
-            /* Wait for the finish_line mutex to be unlocked */
-            pthread_mutex_lock( &victim->finish_line_mut);
-            while( victim->status == IS_VICTIM)
-            {
-                pthread_cond_wait(&victim->finish_line_cond, &victim->finish_line_mut);
-            }
-            pthread_mutex_unlock( &victim->finish_line_mut);
-            
-            rt_distribute( thief, victim);
+        //printf("Monitor found victim: %d\n", victim->t_id);
+/*
+        rt_print_status(thief);
+        rt_print_workload( thief);
+        rt_print_status(victim);
+        rt_print_workload( victim);
+*/
+        /* Wait for the finish_line mutex to be unlocked */
+        /*pthread_mutex_lock( &victim->finish_line_mut);
+        while( victim->status == IS_VICTIM)
+        {
+            pthread_cond_wait(&victim->finish_line_cond, &victim->finish_line_mut);
         }
+        pthread_mutex_unlock( &victim->finish_line_mut); */
+
+        /* wait at this barrier for the victim to finish the line */        
+        pthread_barrier_wait(&victim->line_bar);
+        
+        rt_distribute( thief, victim);
         
         /* let threads continue */
-        pthread_cond_signal( &th_stop_cond);
-        pthread_cond_signal( &vi_stop_cond);
+        pthread_barrier_wait(&stop_bar);
         
     } while( is_work == 1);
 
@@ -106,30 +112,32 @@ void rt_distribute( ThreadInfo *thief, ThreadInfo *victim)
     victim_count = victim->end - victim->curr;
     /* Steal exactly half of the victims work */
     
+    /*
     printf("VICTIM b: "); 
     rt_print_workload( victim);
     printf("THIEF b:  "); 
     rt_print_workload( thief);
+    */
     
-    
-    if(victim->curr < victim->end - 1){
+    if(victim->curr < victim->end){
         block = victim_count / 2;
 
         thief->end    = victim->end;    
         thief->curr  = victim->curr + block + 1;
         
         victim->end   = victim->curr + block;
-        
-        thief->status  = THREAD_WORKING;
     }
-
+    
+    thief->status  = THREAD_WORKING;
     victim->status = THREAD_WORKING;
-
+    
+    /*
     printf( "steal-count: %u\n", block);
     printf("VICTIM: "); 
     rt_print_workload( victim);
     printf("THIEF:  "); 
     rt_print_workload( thief);
+    */
 }
 
 /* -------------------------------------------------------------------------- */
@@ -138,16 +146,28 @@ void rt_distribute( ThreadInfo *thief, ThreadInfo *victim)
 void rt_broadcast_finished()
 {
     char i;
+    
+    //printf("FINISH BROADCAST\n");
+    
     for( i = 0; i < WORKER_COUNT; i++)
     {
-        thread_infos[i].status = WORK_FINISHED;
-        rt_print_status(&thread_infos[i]);
-        rt_print_workload(&thread_infos[i]);
+        
+        //rt_print_status(&thread_infos[i]);
+        //rt_print_workload(&thread_infos[i]);
  
+        finish_sig = 1;
+        //pthread_barrier_wait(&thread_infos[i].line_bar);
+        
+        thread_infos[i].status = WORK_FINISHED;
+        
+        /*
         pthread_mutex_unlock( &th_stop_mut);
         pthread_mutex_unlock( &vi_stop_mut);       
         pthread_mutex_unlock( &thief_mut);
+        */
     }        
+    
+    pthread_barrier_wait(&stop_bar);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -159,7 +179,7 @@ void rt_broadcast_finished()
 ThreadInfo *rt_wait_for_complete()
 {
     char i;
-    unsigned int count = 0;
+    ThreadInfo *ti = NULL;
     
     do
     {
@@ -169,28 +189,33 @@ ThreadInfo *rt_wait_for_complete()
                 thread_infos[i].status = IS_THIEF;
                 return &thread_infos[i];
             }
-            else if( thread_infos[i].status == WORK_FINISHED ){
-                count++;
-            }
         }
-    } while( count < WORKER_COUNT); /* repeat until no work-detected */
+    } while( ti == NULL && finish_sig != 1); /* repeat until no work-detected */
     
-    return NULL;
+    return ti;
 }
 
 /* -------------------------------------------------------------------------- */
 /* Finds the thread with the highest estimated complete time */
 ThreadInfo *rt_find_victim()
 {
-    char i;
+    char i, count = 0;
+
     ThreadInfo *result = &thread_infos[0]; /* take t_id 0 as the default */
     
-    for(i = 1; i < WORKER_COUNT; i++)
-    {
-        if(thread_infos[i].estimated_complete > result->estimated_complete)
+    for(i = 0; i < WORKER_COUNT; i++)
+    {   
+        if( thread_infos[i].curr >= thread_infos[i].end){
+            count++;
+        }
+        else if( thread_infos[i].estimated_complete > result->estimated_complete)
         {
             result = &thread_infos[i];
         }
+    }
+    
+    if( count == WORKER_COUNT){
+        return NULL;
     }
     result->status = VICTIM_SIG;
     
@@ -205,8 +230,7 @@ unsigned int rt_compute_work( ThreadInfo *ti)
 
     struct timeval tv_start, tv_end;
 
-    while( ti->curr <= ti->end)
-//    for( i = ti->curr; i <= ti->end; i++)
+    while( ti->curr <= ti->end && finish_sig != 1)
     {
         i = ti->curr;
         
@@ -222,18 +246,14 @@ unsigned int rt_compute_work( ThreadInfo *ti)
             rt_become_victim( ti);
             break;
         }
-        else if( ti->status != THREAD_WORKING)
-        {
-            break;
-        }
         
         gettimeofday(&tv_end, NULL);
         
         /* THIS IS NOT NICE! FIXME is there a better way to do this? */
         rt_update_estimate( ti, ((tv_end.tv_sec - tv_start.tv_sec)*1000000 + 
                                 tv_end.tv_usec - tv_start.tv_usec) / 100);
-    } 
-
+    }
+    
     return work_count;
 }
 
@@ -260,6 +280,10 @@ void ws_initialise_threads()
     pthread_cond_init( &th_stop_cond, NULL);
     pthread_cond_init( &vi_stop_cond, NULL);
     
+    finish_sig = 0;
+    
+    pthread_barrier_init(&stop_bar, NULL, 3);
+    
     for( i = 0; i < WORKER_COUNT; i++)
     {
         thread_infos[i].t_id = i;
@@ -268,6 +292,8 @@ void ws_initialise_threads()
 
         pthread_mutex_init( &thread_infos[i].finish_line_mut, NULL);
         pthread_cond_init( &thread_infos[i].finish_line_cond, NULL);
+        
+        pthread_barrier_init( &thread_infos[i].line_bar, NULL, 2);
 
         /* if this is the last thread distribute right upto the last line 
            This is in-case the height isn't divisable by the worker count */
@@ -302,10 +328,11 @@ void ws_start_threads()
     }
     
     /* join point */
-    pthread_join( monitor, &status);
+    
     for(i = 0; i < WORKER_COUNT; i++) {
         pthread_join(threads[i], &status);
     }
+    pthread_join( monitor, &status);    
     
     /* Free attribute and wait for the other threads */
     pthread_attr_destroy( &attr);
@@ -317,24 +344,32 @@ void ws_start_threads()
  */
 void rt_become_thief( ThreadInfo *ti)
 {
-    /* Set the estimated time to 0. This helps the monitor detect no-remaining work. */
+    /* Set the estimated time to 0. 
+     * This stops the monitor from picking the thief as a victim 
+     */
     ti->estimated_complete = 0;
 
     /* Attempt to lock the thief mutex.
-     * This ensures only one thread can become a thief at a time */
-    pthread_mutex_lock( &thief_mut);
+     * This ensures only one thread can become a thief at a time 
+     * The others have to wait.
+     */
+//    pthread_mutex_lock( &thief_mut);
     ti->status = THIEF_SIG;
     
     /* Stop mutex makes sure we are stopped here. */
-    pthread_mutex_lock( &th_stop_mut);
+    /*pthread_mutex_lock( &th_stop_mut);
     while (ti->status == IS_THIEF)
     {
         pthread_cond_wait(&th_stop_cond, &th_stop_mut);
     }
     
-    pthread_mutex_unlock( &th_stop_mut);
+    pthread_mutex_unlock( &th_stop_mut); */
     
-    pthread_mutex_unlock( &thief_mut);    
+    /* wait for thief, victim, and monitor to call this function */
+    pthread_barrier_wait(&stop_bar);
+    
+    /* Allow waiting thieves to become a thief */
+//    pthread_mutex_unlock( &thief_mut);    
 }
 
 /* -------------------------------------------------------------------------- */
@@ -344,17 +379,23 @@ void rt_become_victim( ThreadInfo *ti)
 {
     ti->status = IS_VICTIM;
 
-    pthread_cond_signal( &ti->finish_line_cond);
+//    pthread_cond_signal( &ti->finish_line_cond);
+
+    /* when monitor and victim reach this barrier the line has ended */
+    pthread_barrier_wait(&ti->line_bar);
 
     /* make this wait for the stop mutex to be unlocked */    
-    pthread_mutex_lock( &vi_stop_mut);
-    
+    /*pthread_mutex_lock( &vi_stop_mut);
+        
     while (ti->status == IS_VICTIM)
     {
         pthread_cond_wait(&vi_stop_cond, &vi_stop_mut);
     }
     
-    pthread_mutex_unlock( &vi_stop_mut);
+    pthread_mutex_unlock( &vi_stop_mut);*/
+    
+    /* wait for thief, victim, and monitor to call this function */
+    pthread_barrier_wait(&stop_bar);
 }
 
 /* -------------------------------------------------------------------------- */

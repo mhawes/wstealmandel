@@ -5,7 +5,7 @@
 % ------------------------------------------------------------------------------
 %title
 \title{
-\huge A Work-Stealing Scheduling Technique Applied to Computing the Mandelbrot Set.
+\huge Work-Stealing Scheduling Techniques Applied to Computing the Mandelbrot Set.
 }
 
 \author{
@@ -33,7 +33,6 @@
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section*{Acknowledgements}
 
-
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \clearpage
 \pagenumbering{arabic}
@@ -53,21 +52,91 @@ Multi-processor computers are now commonplace in the world of computing, for bot
 This shift in architectural design demands a drastic shift in how a program is constructed, from the standpoint of both
 the programmer and the language designer.
 
+\section*{Motivation}
+
+
+
+\section*{Aim}
+
+To investigate, through research and practical implementation, the effectiveness of work-stealing run-time scheduling on
+a parallel algorithm which computes an approximation of the Mandelbrot set.
+
+\section*{Objectives}
+This section outlines the deliverable items that are presented in this report.
+Core objectives are primary and more vital, advanced objectives are additional items.
+
+\subsection*{Core Objectives}
+\newcounter{saveenum}
+\begin{enumerate}
+\item \textbf{Background Research:}
+\item \textbf{A Sequential Mandelbrot Set Algorithm:}
+\item \textbf{A Random Work-Stealing Mandelbrot Set Algorithm:}
+\item \textbf{A Render Thread Work-Stealing Mandelbrot Set Algorithm:}
+\item \textbf{Cross Analysis of the Implemented Algorithms:}
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+
+\subsection*{Advanced Objectives}
+\begin{enumerate}
+\setcounter{enumi}{\value{saveenum}}
+\item \textbf{Work-Stealing Trace System:}
+\end{enumerate}
+
+\section*{Achievements}
+The following table shows each objective and its final completion status at the time this 
+report was finalised. 
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|r|l|}
+        \hline
+            \textbf{Objective} & \textbf{Status} \\
+        \hline \hline
+            \textbf{1} & Complete \\
+            \textbf{2} & Complete \\
+            \textbf{3} & Complete \\
+            \textbf{4} & Partially Complete \\
+            \textbf{5} & - \\
+        \hline
+            6 & - \\
+        \hline
+    \end{tabular}
+    
+    \label{tab:ach}
+    \caption{Table of Achievements}
+\end{table}
+
+\section*{Report Structure}
+
+There are five remaining chapters in this report. 
+In chapter \textit{two} a detailed review of the problem background is presented. 
+Chapter \textit{three} details the practical implementation, which this report is based on, including validation and verification of the described software.
+Chapter \textit{four} offers an evaluation of the project as a whole. This includes analysis of the implemented software and a comparison of the implemented
+schemes.
+Chapter \textit{five} lists the resources referenced in this report.
+In chapter \textit{six} the appendices are presented.
+
+A glossary of terms is presented in section \ref{sec:glosterm} as Appendix A. 
+This consists of a list describing major concepts surrounding the field of study and directs the reader to the page of first occurrence. 
+
+The source code for any software developed to fulfil the objectives described above is presented in section \ref{sec:srccode} as Appendix B.
+
+
 
 % Identify some of the key pieces of literature or applications for the subject area I have chosen.
-This report identifies two contrasting work-stealing schemes and analyses their performance using an algorithm to
-compute an approximation of the Mandelbrot set as a case study. 
+% This report identifies two contrasting work-stealing schemes and analyses their performance using an algorithm to
+% compute an approximation of the Mandelbrot set as a case study. 
 
 % Talk about the specific investigated area's and what the report specifically talks about.
     % * i.e. which work-stealing schemes are implemented, which Mandelbrot algorithm is identified.
 
 % Rationale for doing above said things and aims of project.
-The work is carried out in order to establish an understanding of how effective run-time scheduling of parallel 
-computations is when considering load-balancing. 
+% The work is carried out in order to establish an understanding of how effective run-time scheduling of parallel 
+% computations is when considering load-balancing. 
 
 % Disclaimer section i.e. This report assumes prior knowledge of blah blah blah and is written
 %   with whomever in mind and so on.
-This report assumes some prior understanding of parallel algorithms.
+% This report assumes some prior understanding of parallel algorithms.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -466,7 +535,7 @@ END
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Discussion and Evaluation}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Analysis of the Implemented Algorithms}
+\section{Cross Analysis of the Implemented Algorithms}
 
 % Show colour work-stealing images.
 % Analyse trace output in graph form. i.e. Matrix size vs time for sequential, parallel, wsrandom, wsrenderthread.
@@ -494,5 +563,14 @@ END
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Appendices}
+
+\section{Appendix A: Glossary of Terms}
+\label{sec:glosterm}
+
+%\include{gloss}
+%\printglossaries
+
+\section{Appendix B: Source Code}
+\label{sec:srccode}
 
 \end{document}

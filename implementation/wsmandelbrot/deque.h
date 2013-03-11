@@ -47,8 +47,8 @@ Line de_pop_bottom     ( Deque *);
 /* ------------------------------------- */
 
 char de_attempt_shrink ( Deque *, int);
-
-void de_re_allocate    ( Deque *, int );
+char de_attempt_grow   ( Deque *, int);
+void de_re_allocate    ( Deque *, int);
 void de_free_queue     ( Deque *d);
 
 /* UTIL FUNCTIONS */

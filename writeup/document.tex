@@ -68,11 +68,11 @@ Core objectives are primary and more vital, advanced objectives are additional i
 \subsection*{Core Objectives}
 \newcounter{saveenum}
 \begin{enumerate}
-\item \textbf{Background Research:}
-\item \textbf{A Sequential Mandelbrot Set Algorithm:}
-\item \textbf{A Random Work-Stealing Mandelbrot Set Algorithm:}
-\item \textbf{A Render Thread Work-Stealing Mandelbrot Set Algorithm:}
-\item \textbf{Cross Analysis of the Implemented Algorithms:}
+\item \textbf{Background Research}
+\item \textbf{A Sequential Mandelbrot Set Algorithm}
+\item \textbf{A Random Work-Stealing Mandelbrot Set Algorithm}
+\item \textbf{A Render Thread Work-Stealing Mandelbrot Set Algorithm}
+\item \textbf{Cross Analysis of the Implemented Algorithms}
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
 
@@ -321,7 +321,7 @@ operating systems \cite{}, and high performance parallel computing \cite{}.
 This section explores some schemes used to implement work-stealing in various settings. It is focused on overall design and 
 techniques presented in related literature. 
 
-\subsection*{Blumofe and Leiserson - A Randomized Work-Stealing Algorithm}
+\subsection{Blumofe and Leiserson - A Randomized Work-Stealing Algorithm}
 \label{sec:randscheme}
 
 %TODO get citation for CILK language.
@@ -346,7 +346,7 @@ a piece of work can spawn children dynamically, which it may depend on completin
 When computing the Mandelbrot set in a concurrent environment, no such consideration is required 
 as each point can be independently processed.
 
-\subsection*{McGuiness - Render-Thread Algorithm}
+\subsection{McGuiness - Render-Thread Algorithm}
 \label{sec:rendscheme}
 
 This scheme is presented as part of McGuiness' Masters Thesis \cite{jmcguin} and is suited for parallel computation where each unit of work is independent 
@@ -511,6 +511,50 @@ END
 % * Describe the non-blocking deque implementation. The top mutex, non-blockingness, circular array design, shrinking-growing
 % * Describe how the algorithm starts and detects completion of thread i.e. initial distribution, exclude set.
 
+This section describes the implementation of the Randomised Work-Stealing algorithm described in section \ref{sec:randscheme}.
+This implementation uses four threads, each maintaining its own work-deque. 
+
+\subsubsection*{The Deque Implementation}
+% general description
+Three key operation can be made on a deque. These are de\_pop\_bottom, de\_push\_bottom, and de\_steal.
+
+\begin{itemize}
+\item \textbf{de\_pop\_bottom: }
+                         Accepts a Deque pointer and returns a Line from the front of the deque or a Line signalling an empty Deque.
+                         
+                         The bottom counter of the Deque passed to the function is decremented regardless of the outcome.
+                         If the deque is empty a Line with a status of LINE\_EMPTY is returned 
+                         allowing the client code to handle this appropriately. 
+                         If the Deque has more than one item it may be shrunk and the Line indexed using the bottom counter is returned.
+                         If the Deque only holds one item and the top\_mutex is locked then a simultaneous steal operation has claimed
+                         the last item. In this case a Line with a status of LINE\_EMPTY is returned. 
+                         Otherwise the remaining bottom item is returned.
+
+\item \textbf{de\_steal: } 
+                         Accepts a Deque pointer and attempts to return a Line from the back of the deque. Otherwise a Line with 
+                         status LINE\_EMPTY or LINE\_ABORT is returned. 
+                         
+                         If the Deque has only one item remaining a Line with the status LINE\_EMPTY is returned. 
+                         This is tested before the top\_mutex is locked in order to avoid unnecessary blocking of the pop\_bottom operation.
+                         In any other case an attempt to lock the top\_mutex is made. If this fails then a simultaneous pop\_bottom operation
+                         has locked the deque item and a Line with the status LINE\_ABORT is returned. 
+                         Otherwise the item at the top of the Deque is returned and the top counter is incremented.
+                       
+\item \textbf{de\_push\_bottom: }
+                         Accepts a Deque pointer and a Line to push onto the bottom of the queue. 
+                         
+                         Attempts to re-size the array and increments the bottom counter whilst placing the 
+                         Line passed to it on the bottom of the deque.
+
+                         
+                         
+\end{itemize}
+
+% cicular array
+The deque makes use of a \textit{circular array}.
+This approach is memory efficient, simple, and allows the top to remain unchanged unless a steal operation occurs. 
+The consequence of this design is that any steal operations are blocked when the array is being re-sized.
+
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{A Render-Thread Work-Stealing Algorithm}
 
@@ -562,15 +606,15 @@ END
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 \chapter{Appendices}
 
-\section{Appendix A: Glossary of Terms}
-\label{sec:glosterm}
+\appendix
+\chapter{Glossary of Terms}\label{sec:glosterm}
 
 %\include{gloss}
 %\printglossaries
-
-\section{Appendix B: Source Code}
-\label{sec:srccode}
+\newpage
+\chapter{Source Code}\label{sec:srccode}
 
 \end{document}

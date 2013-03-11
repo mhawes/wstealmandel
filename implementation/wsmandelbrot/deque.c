@@ -46,15 +46,13 @@ void de_re_allocate( Deque *d, int old_size)
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
+/* Pushes a line onto the bottom of the queue.
+ */
 void de_push_bottom( Deque *d, Line line)
 {
     int size = d->bot - d->top;
     
-    int mem_s = d->mem_size;
-    if(size >= mem_s){
-        d->mem_size = mem_s * 2;
-        de_re_allocate( d, mem_s);
-    }
+    de_attempt_grow( d, size);
     
     line.status = LINE_NORMAL;
     d->queue[ d->bot % d->mem_size] = line;
@@ -87,12 +85,15 @@ Line de_pop_bottom( Deque *d)
         return l;
     }
     
-    /* in this case bottom is also top and lock needs to be made */    
-    /* TODO test this. would trylock be better in-case deque becomes empty from steal? */
-    pthread_mutex_lock(&d->top_mutex);
-    l = empty;
-    d->bot = d->top + 1;
-    pthread_mutex_unlock (&d->top_mutex);
+    /* in this case bottom is also top and lock needs to be checked for */    
+    if( pthread_mutex_trylock(&d->top_mutex) == 0){
+        pthread_mutex_unlock (&d->top_mutex);
+        return l;
+    }
+    else {
+        l = empty;
+        d->bot = d->top + 1;
+    }
 
     return l;
 }
@@ -112,15 +113,12 @@ Line de_steal( Deque *d)
         return empty;
     }
 
-
     /* mutex for top element needs to be enforced here. */
     /* If the mutex is locked an abort signal line is returned */    
     if( pthread_mutex_trylock(&d->top_mutex) == 0)
     {
         l = d->queue[d->top % d->mem_size];
-        
         d->top++;
-        
         pthread_mutex_unlock (&d->top_mutex);
     }
     else{
@@ -141,6 +139,17 @@ char de_attempt_shrink( Deque *d, int size)
         return 1;
     }
     return 0;
+}
+
+/* -------------------------------------------------------------------------- */
+char de_attempt_grow( Deque *d, int size)
+{
+    int mem_s = d->mem_size;
+    
+    if(size >= mem_s){
+        d->mem_size = mem_s * 2;
+        de_re_allocate( d, mem_s);
+    }
 }
 
 /* -------------------------------------------------------------------------- */

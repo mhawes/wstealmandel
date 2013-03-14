@@ -1,6 +1,6 @@
 % ------------------------------------------------------------------------------
 % includes preamble stuff
-\include{pre}
+\input{pre}
 
 % ------------------------------------------------------------------------------
 %title
@@ -117,7 +117,7 @@ Chapter \textit{five} lists the resources referenced in this report.
 In chapter \textit{six} the appendices are presented.
 
 A glossary of terms is presented in section \ref{sec:glosterm} as Appendix A. 
-This consists of a list describing major concepts surrounding the field of study and directs the reader to the page of first occurrence. 
+This consists of a list describing major concepts surrounding the field of study and directs the reader to their pages of occurrence. 
 
 The source code for any software developed to fulfil the objectives described above is presented in section \ref{sec:srccode} as Appendix B.
 
@@ -145,22 +145,22 @@ The source code for any software developed to fulfil the objectives described ab
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 \section{Run-Time Scheduling Techniques for Multi-Threaded Computations}
-This section briefly describes the problems associated with scheduling Multi-Threaded Algorithms at run-time and
+This section briefly describes the problems associated with \gls{scheduling} \glspl{multi-threaded algorithm} at run-time and
 the major paradigms that have surfaced.
 
 % explain problems here...... is this better off in the intro??
 To efficiently utilise a parallel computer architecture it is desirable to minimise
 the amount of time a processor spends idle or performing other logistical tasks, i.e not doing work. 
-When a computation's \textit{concurrent sub-tasks} or \textit{threads} incur a regular cost in processor
+When a computation's concurrent sub-tasks or \glspl{thread} incur a regular cost in processor
 time, each processor can simply have the same amount of work assigned to them. When the computation has
 more irregular or dynamically growing sub-tasks a problem arises resulting in 
 processors becoming idle while others still remain working. The solution to this problem is referred to as
-\textit{load balancing} and can be described as a form of dynamic scheduling that ensures each processor 
+\gls{load-balancing} and can be described as a form of dynamic scheduling that ensures each processor 
 spends approximately the same amount of time working. This means processors generally spend
 less time idle, however have to deal with scheduling overheads as a trade-off.
 
 When considering the scheduling of multi-threaded computations, two major load balancing techniques have been used.
-These are \textit{work-sharing} and \textit{work-stealing}.
+These are \gls{work-sharing} and \gls{work-stealing}.
 
 \begin{itemize}
 \item \textbf{Work-Sharing:} A processor which creates new work attempts to migrate it to another underutilised processor at creation time. 
@@ -170,8 +170,8 @@ These are \textit{work-sharing} and \textit{work-stealing}.
 Both techniques intend to promote balanced work-load across all processors, however in Work-Stealing
 the frequency of work migrations is lower. When all processors have a 
 high work-load and no need to ``steal" this becomes useful because threads need not get 
-migrated at all. With work-sharing work migration occurs each time new work is created \cite{blumleis}.
-This also suggests that work-stealing promotes better locality and grouping of sub-tasks, as spawned work 
+migrated at all. With \gls{work-sharing} work migration occurs each time new work is created \cite{blumleis}.
+This also suggests that \gls{work-stealing} promotes better \gls{locality} and grouping of sub-tasks, as spawned work 
 stays with the same processor until stolen.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -179,12 +179,12 @@ stays with the same processor until stolen.
 
 The Mandelbrot set is a set of complex numbers which when plotted produce a spectacular and recognisable shape as illustrated in figure~\ref{fig:mandelimg}.
 It is often presented as a colourful and striking image and has been described by some as the most beautiful object in all of mathematics \cite[p.~234]{chaosfract}.
-The complex numbers that comprise the set are closely related to \textit{Julia Sets}. 
-In-fact the Mandelbrot set can be described as a catalogue of Julia Sets which, when plotted, all points are \textit{connected}, 
-forming a \textit{single, unbroken shape} \cite[p.~177]{fractimg}.
+The \glspl{complex-number} that comprise the set are closely related to \glspl{julia-set}. 
+In-fact the Mandelbrot set can be described as a catalogue of Julia Sets which, when plotted, all points are connected, 
+forming a single, unbroken shape \cite[p.~177]{fractimg}.
 
-The set is named for the mathematician \textit{Benoit Mandelbrot}, who discovered it in 1980 \cite{fracnature , fractimg}. He was a pioneer in the study of 
-fractal geometry and also coined the term \textit{fractal}, of which both the Mandelbrot set, and Julia sets are examples of. 
+The set is named for the mathematician Benoit Mandelbrot, who discovered it in 1980 \cite{fracnature , fractimg}. He was a pioneer in the study of 
+fractal geometry and also coined the term \gls{fractal}, of which both the Mandelbrot set, and Julia sets are examples of. 
 
 In this section I will give a more detailed explanation of the areas mentioned here. 
 
@@ -197,39 +197,40 @@ In this section I will give a more detailed explanation of the areas mentioned h
 
 \subsection*{Fractals and Self-Similarity} 
 %TODO: this section needs citations all over the shop!
-A fractal is a means of describing shapes which are more complex than classical geometric shapes. The leaves of a pine tree or the forks of a 
+A \gls{fractal} is a means of describing shapes which are more complex than classical geometric shapes. The leaves of a pine tree or the forks of a 
 lightning bolt are obvious examples of real things that fractals allow us to more faithfully describe. 
-These \textit{real world fractals} are similar to \textit{mathematical fractals}, 
-of which the Mandelbrot set is an example, but differ in that they do not display the property of \textit{Scale Invariance}. 
+These \glspl{real-world-fractal} are similar to \glspl{mathematical-fractal}, 
+of which the Mandelbrot set is an example, but differ in that they do not display the property of \gls{scale-invariance}. 
 
 Fractals have a fractional dimension. Unlike shapes with topological dimension, for instance a two dimensional square, 
-a fractal's dimension is of a non integer value.
+a \glspl{fractal} dimension is of a non integer value.
 
-A property of fractals (but not all) is \textit{Self-Similarity}, where the shape is comprised of smaller ``copies" of itself. 
-This is known as \textit{Exact Self-Similarity} and means the shape is identical at any scale.
-A well-known example of this is the \textit{Triadic Koch Snowflake} which is a fractal constructed using equilateral triangles. 
+A property of fractals (but not all) is \gls{self-similarity}, where the shape is comprised of smaller ``copies" of itself. 
+This is known as \gls{exact self-similarity} and means the shape is identical at any scale.
+A well-known example of this is the Triadic Koch Snowflake which is a fractal constructed using equilateral triangles. 
 It is important to note here that The Mandelbrot set does not quite show the same property, it is said to be 
-\textit{Quasi Self-Similar}. This means the shape is approximately similar at all scales, in that the shape is replicated but in a slightly distorted
+\glspl{quasi self-similarity}. This means the shape is approximately similar at all scales, in that the shape is replicated but in a slightly distorted
 form with each ``copy".
 
+%TODO
 It turns out there are many rather useful applications for fractals. To name a few; computer game graphics, %FIND MORE EXAMPLES WITH CITATIONS.
 
 \subsection*{Julia Sets}
 
-To understand the basis of the Mandelbrot set it is first necessary to understand it's relation to \textit{Julia Sets}.
+To understand the basis of the Mandelbrot set it is first necessary to understand it's relation to \glspl{julia-set}.
 The function in equation~\ref{eq:julia1} is iterated infinitely where \(c\) is fixed.
-The \textit{filled Julia Set} is comprised of all values of \(z_0\) where the result is bounded and does not tend towards infinity.
-The \textit{Julia Set} is comprised of those members of the \textit{filled Julia Set} which lie on the boundary \cite{chaosfract}.
-In the interest of keeping this report readable, and because filled Julia Sets are more relevant, filled Julia sets will be 
-referred to simply as \textit{Julia Sets}.
+The \gls{filled julia-set} is comprised of all values of \(z_0\) where the result is bounded and does not tend towards infinity.
+The \gls{julia-set} is comprised of those members of the \gls{filled julia-set} which lie on the boundary \cite{chaosfract}.
+In the interest of keeping this report readable, and because filled Julia Sets are more relevant, \glspl{filled julia-set} will be 
+referred to simply as \glspl{julia-set}.
 
 % express the set notation for f(x) -> infinity.???? TODO
 \begin{equation}\label{eq:julia1}
 f(z) = z^2 + c
 \end{equation}
 
-With regards to the Mandelbrot Set I am interested in Julia Sets in which the values \(c\) and \(z\) used are expressed as a complex number. 
-Figure~\ref{fig:juliaimgs} illustrates some examples of such sets. 
+With regards to the Mandelbrot Set I am interested in \glspl{julia-set} in which the values \(c\) and \(z\) used are expressed as a 
+\gls{complex-number}. Figure~\ref{fig:juliaimgs} illustrates some examples of such sets. 
 
 \begin{figure}[h]
 \centering
@@ -237,7 +238,7 @@ Figure~\ref{fig:juliaimgs} illustrates some examples of such sets.
   \centering    
   \includegraphics[width=\textwidth]{julia-con}
   \caption{
-    \tiny The Julia Set where \(c = -0.1 + 0.649i\)
+    \tiny The \gls{julia-set} where \(c = -0.1 + 0.649i\)
   }
   \label{fig:juliaimgcon}
 \end{subfigure}
@@ -246,7 +247,7 @@ Figure~\ref{fig:juliaimgs} illustrates some examples of such sets.
   \centering
   \includegraphics[width=\textwidth]{julia-ncon}
   \caption{
-    \tiny The Julia Set where \(c = -0.75 + 0.03i\)
+    \tiny The \gls{julia-set} where \(c = -0.75 + 0.03i\)
   }
   \label{fig:juliaimgncon}
 \end{subfigure}
@@ -261,14 +262,14 @@ Figure~\ref{fig:juliaimgs} illustrates some examples of such sets.
 
 \subsection*{Computing the Mandelbrot Set}
 
-The set is comprised of those Julia Sets which are \textit{connected}. In order to determine whether a Julia Set possesses this property,
+The set is comprised of those \glspl{julia-set} which are connected. In order to determine whether a Julia Set possesses this property,
 we need only compute the result for \(z_0\). If this tends towards infinity the value \(c\) is not a member of the Mandelbrot Set. If the result
-is bounded, then it is a member. This is known as the \textit{critical orbit} and is useful because it means we do not have to compute
+is bounded, then it is a member. This is known as the \gls{critical-orbit} and is useful because it means we do not have to compute
 the entire Julia Set for each value of \(c\).
 
-So the Mandelbrot set can be computed by iterating all possible values of \(c\) for the function in equation~\ref{eq:julia1} where \(z\) is the \textit{critical
-orbit}. Because the set of all possible values of \(c\) is infinite, and computers have a finite amount of resources, this set needs to be approximated. 
-This can be done using a raster plane which takes samples of the complex plane at regular intervals. 
+So the Mandelbrot set can be computed by iterating all possible values of \(c\) for the function in equation~\ref{eq:julia1} where \(z\) is the 
+\gls{critical-orbit}. Because the set of all possible values of \(c\) is infinite, and computers have a finite amount of resources, this 
+set needs to be approximated. This can be done using a raster plane which takes samples of the complex plane at regular intervals. 
 
 % TALK ABOUT VARIOUS ALGORITHMS PRESENTED TODO
 Level set method \cite[p.~188]{fractimg} Continuous Potential Method \cite[p.~191]{fractimg}
@@ -276,10 +277,10 @@ Level set method \cite[p.~188]{fractimg} Continuous Potential Method \cite[p.~19
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Work-Stealing Technique - Described in Depth}
 
-As described above, Work-Stealing is a load balancing technique which allows work starved processors to acquire scheduled work from other processors. 
+As described above, \gls{work-stealing} is a \gls{load-balancing} technique which allows work starved processors to acquire scheduled work from other processors. 
 
 Each processor has a number of assigned tasks to complete. In general, a processor acquires its work from here.
-However, once these tasks are exhausted, the processor becomes a \textit{thief} and chooses a \textit{victim} to steal from. 
+However, once these tasks are exhausted, the processor becomes a \gls{thief} and chooses a \gls{victim} to steal from. 
 The method used to choose a victim is implementation specific, for instance some implementations adopt a random scheme \cite{blumleis , jliff, narora}.
 If the processor successfully steals work it relinquishes its thief state and returns to doing work.
 If the steal attempt is unsuccessful, for instance when the victim has no work or is blocked, the processor tries again
@@ -328,15 +329,15 @@ techniques presented in related literature.
 This scheme is geared towards computation of dynamically growing, fully strict, multi-threaded computations and is applied to the CILK
 programming language and its runtime system \cite{blumleis}. 
 
-Each thread maintains a \textit{ready-deque}; a double-ended queue of work waiting to be processed. 
+Each thread maintains a \gls{ready-deque}; a double-ended queue of work waiting to be processed. 
 Accesses to this queue are made either at the top (for a steal operation), or at the bottom (for a push operation
 or when the next piece of work is required).
-A thread becomes a \textbf{thief} when its ready-deque is empty and randomly selects a \textbf{victim}; a thread
-to attempt to steal work from. If this steal operation is successful it pushes the stolen work 
+A thread becomes a \gls{thief} when its ready-deque is empty and randomly selects a \gls{victim}; a thread
+to attempt to steal work from. If this \gls{steal-operation} is successful it pushes the stolen work 
 onto the bottom of its ready-deque and becomes a worker again. If not it tries, at random, to find another victim.
 
 The ready-deque can be implemented in such a way that a thread need not be stopped in order for a steal operation 
-to occur. This property is known as \textit{non-blocking} and only requires that the top end of the deque has atomic access,
+to occur. This property is known as \gls{non-blocking} and only requires that the top end of the deque has atomic access,
 while the bottom can freely be accessed by the thread which owns the deque \cite{narora}. This is useful because it reduces the overheads 
 of a steal operation in that a working thread generally does not get interrupted. 
 Further still, a non-blocking deque can be made more efficient through use of a circular array \cite{circdeque}.
@@ -353,25 +354,27 @@ This scheme is presented as part of McGuiness' Masters Thesis \cite{jmcguin} and
 from any other and can be indexed in a list. Computation of the Mandelbrot set is given as an application of the algorithm. 
 % It is designed with cellular architectures in mind but can be applied to a shared memory architecture. 
 
-The algorithm uses a set of \textit{worker-threads} (referred to by McGuiness as \textit{render-threads}), 
-and a single \textit{monitor-thread}, to control the distribution of work. Each worker-thread is
+The algorithm uses a set of \glspl{worker-thread} (referred to by McGuiness as render-threads), 
+and a single \gls{monitor-thread}, to control the distribution of work. Each \gls{worker-thread} is
 initially given an equal share of the overall work-load before starting.
 
-Each worker-thread maintains an estimated completion time for its assigned work-load. This is initially set to the maximum possible value and
+Each \gls{worker-thread} maintains an estimated completion time for its assigned work-load. This is initially set to the maximum possible value and
 is iteratively refined by calculating the average time taken to complete a piece of work. This metric is used as a policy for deciding which
 thread is the most suitable candidate for the victim of a work-stealing operation.
 
-When a worker-thread completes its assigned work a \textit{work-completed} signal is generated, its estimated
-completion time is set to \textit{0}, and the thread is stopped. This thread will be referred to as the \textbf{thief}.
+When a worker-thread completes its assigned work a work-completed signal is generated, its estimated
+completion time is set to \textit{0}, and the thread is stopped. This thread will be referred to as the \gls{thief}.
 When the monitor thread detects this signal, it searches for the worker-thread with the longest estimated completion time, 
-which will be referred to as the \textbf{victim}. The monitor-thread waits for the victim to complete its current piece of work before stopping it.
+which will be referred to as the \gls{victim}. The \gls{monitor-thread} waits for the victim to complete its current piece of work before stopping it.
 Its workload is then halved, having the other half re-asigned to the thief. Both the victim and the thief are restarted and continue doing work.
 The monitor-thread returns to waiting for another work-completed signal and the process is repeated until no work remains.
 
+
+% --------------------------------------------------------- HYPOTH section????? FIXME 
 % TODO talk about the fact that work need not be queued because all that is needed is a start line and a stop line.
-The key difference to the \textit{Randomized Work-Stealing Algorithm} (described in section \ref{sec:randscheme}) is that a worker
-thread does not maintain a queue of work but simply has a range of indices assigned. This all but eliminates the overheads associated with initialising and 
-maintaining a potentially costly data-structure, but makes a non-blocking implementation difficult. It also requires a monitor-thread to manage
+The key difference to the Randomized Work-Stealing Algorithm (described in section \ref{sec:randscheme}) is that a \gls{worker-thread} 
+does not maintain a queue of work but simply has a range of indices assigned. This all but eliminates the overheads associated with initialising and 
+maintaining a potentially costly data-structure, but makes a \gls{non-blocking} implementation difficult. It also requires a monitor-thread to manage
 work migration which reduces the maximum number of threads performing work by one.
 
 % Talk about scalability. i.e. the average estimated completion time vs randomly selected of victim
@@ -402,11 +405,11 @@ with a suitable level of control was required.
 \begin{itemize}
 \item \textbf{POSIX Threads (pthreads):} Provides low level manipulation of threads for the C programming language \cite{pthreadover}. 
               It is a library based on IEEE standard 1003.1. Thread programming is achieved through use of a set of functions and data
-              structures provided, such as \textit{mutexes}, \textit{semaphores}, \textit{ }. %TODO
+              structures provided; such as \glspl{mutex}, \glspl{barrier}, and \glspl{conditional-variable}. %TODO
              
 \item \textbf{Open Multiprocessing (OpenMP):} Provides abstract thread programming interfaces for C, C++, and fortran.
               In general OpenMP only allows coarse grained manipulation of threads through features such as parallel loops %TODO
-              \cite{ompvspthr}
+              \cite{ompvspthr}.
 
 \item \textbf{Java Threads:} %TODO
 \end{itemize}
@@ -453,7 +456,7 @@ quality.
 
 \item \textbf{GNU Make:} A tool to aid quick and easy building of a project. It uses a series of 
                          rules and dependancies to determine the order in which a project can be built 
-                         which are described in an accompanying \textit{Makefile}. 
+                         which are described in an accompanying \gls{Makefile}. 
                          
                          This is useful for  producing an executable from source code as well
                          as compiling a \LaTeX  document in conjunction with bibtex to produce a pdf.
@@ -512,11 +515,12 @@ END
 % * Describe how the algorithm starts and detects completion of thread i.e. initial distribution, exclude set.
 
 This section describes the implementation of the Randomised Work-Stealing algorithm described in section \ref{sec:randscheme}.
-This implementation uses four threads, each maintaining its own work-deque. 
+This implementation uses four threads, each maintaining its own \gls{ready-deque}. The implemented \gls{ready-deque} is based on
+the scheme presented in \cite{circdeque}.
 
 \subsubsection*{The Deque Implementation}
 % general description
-Three key operation can be made on a deque. These are de\_pop\_bottom, de\_push\_bottom, and de\_steal.
+Three key operation can be made on a \gls{ready-deque}. These are de\_pop\_bottom, de\_push\_bottom, and de\_steal.
 
 \begin{itemize}
 \item \textbf{de\_pop\_bottom: }
@@ -545,10 +549,9 @@ Three key operation can be made on a deque. These are de\_pop\_bottom, de\_push\
                          
                          Attempts to re-size the array and increments the bottom counter whilst placing the 
                          Line passed to it on the bottom of the deque.
-
-                         
-                         
 \end{itemize}
+
+
 
 % cicular array
 The deque makes use of a \textit{circular array}.
@@ -612,8 +615,9 @@ The consequence of this design is that any steal operations are blocked when the
 \appendix
 \chapter{Glossary of Terms}\label{sec:glosterm}
 
-%\include{gloss}
-%\printglossaries
+%\glsaddall
+\printglossaries
+
 \newpage
 \chapter{Source Code}\label{sec:srccode}
 

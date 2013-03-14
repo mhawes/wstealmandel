@@ -329,8 +329,8 @@ This scheme is geared towards computation of dynamically growing, fully strict, 
 programming language and its runtime system \cite{blumleis}. 
 
 Each thread maintains a \textit{ready-deque}; a double-ended queue of work waiting to be processed. 
-Accesses to this queue are made either at the top for a steal operation, or at the bottom for a push operation
-or when the next piece of work is required.
+Accesses to this queue are made either at the top (for a steal operation), or at the bottom (for a push operation
+or when the next piece of work is required).
 A thread becomes a \textbf{thief} when its ready-deque is empty and randomly selects a \textbf{victim}; a thread
 to attempt to steal work from. If this steal operation is successful it pushes the stolen work 
 onto the bottom of its ready-deque and becomes a worker again. If not it tries, at random, to find another victim.
@@ -341,7 +341,7 @@ while the bottom can freely be accessed by the thread which owns the deque \cite
 of a steal operation in that a working thread generally does not get interrupted. 
 Further still, a non-blocking deque can be made more efficient through use of a circular array \cite{circdeque}.
 
-Because of the setting this scheme is designed for the algorithm needs to consider that
+Because of the setting this scheme is designed for, the algorithm needs to consider that
 a piece of work can spawn children dynamically, which it may depend on completing to continue. 
 When computing the Mandelbrot set in a concurrent environment, no such consideration is required 
 as each point can be independently processed.
@@ -351,7 +351,7 @@ as each point can be independently processed.
 
 This scheme is presented as part of McGuiness' Masters Thesis \cite{jmcguin} and is suited for parallel computation where each unit of work is independent 
 from any other and can be indexed in a list. Computation of the Mandelbrot set is given as an application of the algorithm. 
-It is designed with cellular architectures in mind but can be applied to a shared memory architecture. 
+% It is designed with cellular architectures in mind but can be applied to a shared memory architecture. 
 
 The algorithm uses a set of \textit{worker-threads} (referred to by McGuiness as \textit{render-threads}), 
 and a single \textit{monitor-thread}, to control the distribution of work. Each worker-thread is

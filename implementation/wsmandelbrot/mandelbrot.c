@@ -35,7 +35,7 @@ main( int argc, char *argv[])
     gettimeofday(&tv_end, NULL);
 
     elapsed = (tv_end.tv_sec - tv_start.tv_sec)*1000000 + tv_end.tv_usec - tv_start.tv_usec;
-    printf( "TOOK: %llu us\n", elapsed);
+//    printf( "TOOK: %llu us\n", elapsed);
 
     perhaps_print();
     

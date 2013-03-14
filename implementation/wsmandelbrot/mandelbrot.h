@@ -22,8 +22,8 @@
 //#define HEIGHT 18500
 //#define WIDTH  18500
 
-#define HEIGHT 20000
-#define WIDTH  20000
+#define HEIGHT 5000
+#define WIDTH  5000
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 

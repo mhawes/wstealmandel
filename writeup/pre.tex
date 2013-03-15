@@ -78,11 +78,12 @@ breakatwhitespace=true,    % sets if automatic breaks should only happen at whit
 \newcommand*{\glossfirstformat}[1]{\textbf{#1}}
 
 \usepackage{glossaries}
-\glossarystyle{altlist}
+%\glossarystyle{altlist}
 \makeglossaries
 
 \renewcommand{\glsdisplayfirst}[4]{\glossfirstformat{#1#4}}
 \renewcommand*{\glsnamefont}{\sffamily}
+\renewcommand*{\glossarymark}[1]{}
 
 \input{gloss}
 

@@ -109,17 +109,17 @@ report was finalised.
 \section*{Report Structure}
 
 There are five remaining chapters in this report. 
-In chapter \textit{two} a detailed review of the problem background is presented. 
-Chapter \textit{three} details the practical implementation, which this report is based on, including validation and verification of the described software.
-Chapter \textit{four} offers an evaluation of the project as a whole. This includes analysis of the implemented software and a comparison of the implemented
+In chapter two a detailed review of the problem background is presented. 
+Chapter three details the practical implementation, which this report is based on, including validation and verification of the described software.
+Chapter four offers an evaluation of the project as a whole. This includes analysis of the implemented software and a comparison of the implemented
 schemes.
-Chapter \textit{five} lists the resources referenced in this report.
-In chapter \textit{six} the appendices are presented.
+Chapter five lists the resources referenced in this report.
+In chapter six the appendices are presented.
 
-A glossary of terms is presented in section \ref{sec:glosterm} as Appendix A. 
-This consists of a list describing major concepts surrounding the field of study and directs the reader to their pages of occurrence. 
+A glossary of terms is presented as Appendix A. 
+This consists of a list describing major concepts surrounding the field of study, and directs the reader to their pages of occurrence. 
 
-The source code for any software developed to fulfil the objectives described above is presented in section \ref{sec:srccode} as Appendix B.
+The source code for any software developed to fulfil the objectives described above is presented as Appendix B.
 
 
 
@@ -340,7 +340,7 @@ The ready-deque can be implemented in such a way that a thread need not be stopp
 to occur. This property is known as \gls{non-blocking} and only requires that the top end of the deque has atomic access,
 while the bottom can freely be accessed by the thread which owns the deque \cite{narora}. This is useful because it reduces the overheads 
 of a steal operation in that a working thread generally does not get interrupted. 
-Further still, a non-blocking deque can be made more efficient through use of a circular array \cite{circdeque}.
+Further still, a non-blocking deque can be made more efficient through use of a \gls{circular array} \cite{circdeque}.
 
 Because of the setting this scheme is designed for, the algorithm needs to consider that
 a piece of work can spawn children dynamically, which it may depend on completing to continue. 
@@ -551,11 +551,32 @@ Three key operation can be made on a \gls{ready-deque}. These are de\_pop\_botto
                          Line passed to it on the bottom of the deque.
 \end{itemize}
 
-
-
+% the three operations and lock
+Both the de\_pop\_bottom and de\_steal operations, in some situations, need to ensure that the thread has exclusive access of the 
+top index of the deque.
+This is achieved using the pthread\_mutex\_trylock function, which accepts a mutex and returns \textit{0} should lock be successful.
+Otherwise, for instance when the mutex is locked by another thread, an error value is returned. This allows the thread to test the 
+state of the mutex and continue execution without blocking (waiting for the mutex to become un-locked).
+This allows the thread to handle such a situation accordingly; in the case of the steal operation an abort signal, and in the case
+of the pop operation an empty signal\footnote{An empty signal is produced here because the only situation where a de\_steal operation will block 
+a de\_pop\_bottom operation is when there is only one item remaining in the deque, which has already been claimed by the steal operation.}.
+The benefit of using this approach, rather than a pthread\_mutex\_lock based method, is that \gls{dead-lock} is avoided.
+\\\\
 % cicular array
-The deque makes use of a \textit{circular array}.
-This approach is memory efficient, simple, and allows the top to remain unchanged unless a steal operation occurs. 
+The deque makes use of a \gls{circular array} which automatically grows and shrinks.
+This approach is memory efficient and simple. 
+It also allows for the top counter to remain unchanged unless a steal operation occurs, reducing the frequency of locks required.
+
+\input{circ}
+
+The design relies on bottom and top counters (used to index the array), the memory size (the number of memory slots allocated to the deque), and 
+the size (the number of elements which are currently used). The size is computed by subtracting the top counter from the bottom counter. 
+This is used to detect an empty array, and detect when the array needs to be re-sized.
+When the array is accessed the correct element is indexed by computing: \(realindex = index \bmod memorysize \). 
+For example, let the top counter equal fifteen and the \(memorysize\) equal ten, the \(realindex\) of the top element is five.
+This allows for the top and bottom counters to exceed the memory size and still point to the correct index, without allowing access to memory outside the 
+bounds of the array. It also ensures that the size can be computed correctly.
+
 The consequence of this design is that any steal operations are blocked when the array is being re-sized.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------

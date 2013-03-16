@@ -145,11 +145,12 @@ char de_attempt_shrink( Deque *d, int size)
 char de_attempt_grow( Deque *d, int size)
 {
     int mem_s = d->mem_size;
-    
     if(size >= mem_s){
         d->mem_size = mem_s * 2;
         de_re_allocate( d, mem_s);
+        return 1;
     }
+    return 0;
 }
 
 /* -------------------------------------------------------------------------- */

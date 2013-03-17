@@ -18,7 +18,11 @@ void ws_distribute_lines     ();
 Deque *ws_random_deque       ( char[WORKER_COUNT]);
 unsigned int ws_compute_deque( Deque *deq);
 
+/* -------------------------------------------------------------------------- */
+
 void ws_initialise_threads   ();
 void ws_start_threads        ();
+
+/* -------------------------------------------------------------------------- */
 
 #endif /* WORKSTEAL_H */

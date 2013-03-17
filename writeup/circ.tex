@@ -1,7 +1,7 @@
-\vspace{20pt}
 
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
+
 \begin{subfigure}[b]{0.31\textwidth}
   \centering    
   \includegraphics[width=\textwidth]{circ-init}
@@ -25,18 +25,18 @@
   \centering
   \includegraphics[width=\textwidth]{circ-push2}
   \caption{
-    \tiny A further nine de\_push\_bottom operations. 
+    \tiny After a further nine de\_push\_bottom operations. 
   }
   \label{fig:circ-3}
 \end{subfigure}
 
-\vspace{20pt}
+\vspace{10pt}
 
 \begin{subfigure}[b]{0.31\textwidth}
   \centering
   \includegraphics[width=\textwidth]{circ-steal1}
   \caption{
-    \tiny 
+    \tiny After one de\_steal operation.
   }
   \label{fig:circ-4}
 \end{subfigure}
@@ -45,29 +45,30 @@
   \centering
   \includegraphics[width=\textwidth]{circ-stealpush1}
   \caption{
-    \tiny 
+    \tiny After three more de\_steal operations followed by two de\_push\_bottom
+          operations.
   }
-  \label{fig:circ-4}
+  \label{fig:circ-5}
 \end{subfigure}
 ~ %spacer
 \begin{subfigure}[b]{0.31\textwidth}
   \centering
   \includegraphics[width=\textwidth]{circ-pop1}
   \caption{
-    \tiny 
+    \tiny After one de\_pop\_bottom operation.
   }
-  \label{fig:circ-4}
+  \label{fig:circ-6}
 \end{subfigure}
 
 % full caption
 \caption{
-    A demonstration of the circular array data-structure. 
+    A demonstration of the a sequence of operations applied to the circular array
+    data-structure.
     The `TOP' field refers to the index of the top element of the deque and
     the `BOT' field refers to the index of the bottom element plus one.
-    White squares indicate an un-used element, shaded squares indicate an
-    element which is in use.
+    White squares indicate an un-used element, shaded squares indicate
+    elements which are in use.
 }
-\label{fig:juliaimgs}
+\label{fig:circ-demo}
 \end{figure}
 
-\vspace{20pt}

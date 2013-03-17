@@ -69,6 +69,9 @@ breakatwhitespace=true,    % sets if automatic breaks should only happen at whit
 \usepackage{caption}
 \usepackage{subcaption}
 
+\renewcommand{\thesubfigure}{\roman{subfigure}}
+\captionsetup[subfigure]{labelformat=simple, labelsep=colon}
+
 % ------------------------------------------------------------------------------
 % Maths packages
 \usepackage{amsmath}
@@ -78,7 +81,7 @@ breakatwhitespace=true,    % sets if automatic breaks should only happen at whit
 \newcommand*{\glossfirstformat}[1]{\textbf{#1}}
 
 \usepackage{glossaries}
-%\glossarystyle{altlist}
+\glossarystyle{altlist}
 \makeglossaries
 
 \renewcommand{\glsdisplayfirst}[4]{\glossfirstformat{#1#4}}

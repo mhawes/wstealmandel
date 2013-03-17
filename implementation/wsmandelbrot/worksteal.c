@@ -107,7 +107,7 @@ unsigned int ws_compute_deque( Deque *deq)
         line_cur = de_pop_bottom( deq);
         
         if(line_cur.status == LINE_EMPTY){
-            return work_count;
+            break;
         }
         
         compute_line( line_cur.y, deq->t_id);
@@ -139,6 +139,10 @@ char ws_become_thief( Deque *deq)
     /* add this threads deque to the exclude set */
     exclude_set[deq->t_id] = 1;
 
+    /* while no work has been stolen.
+     * in the case that no work is available 0 is 
+     * returned and the loop is broken.
+     */
     while(result == 0)
     {
         /* if the exclude set is not exhausted get another victim at random */

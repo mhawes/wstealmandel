@@ -141,7 +141,7 @@ The source code for any software developed to fulfil the objectives described ab
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\chapter{Problem Background}
+\chapter{Background Research}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 \section{Run-Time Scheduling Techniques for Multi-Threaded Computations}
@@ -369,20 +369,6 @@ which will be referred to as the \gls{victim}. The \gls{monitor-thread} waits fo
 Its workload is then halved, having the other half re-asigned to the thief. Both the victim and the thief are restarted and continue doing work.
 The monitor-thread returns to waiting for another work-completed signal and the process is repeated until no work remains.
 
-
-% --------------------------------------------------------- HYPOTH section????? FIXME 
-% TODO talk about the fact that work need not be queued because all that is needed is a start line and a stop line.
-The key difference to the Randomized Work-Stealing Algorithm (described in section \ref{sec:randscheme}) is that a \gls{worker-thread} 
-does not maintain a queue of work but simply has a range of indices assigned. This all but eliminates the overheads associated with initialising and 
-maintaining a potentially costly data-structure, but makes a \gls{non-blocking} implementation difficult. It also requires a monitor-thread to manage
-work migration which reduces the maximum number of threads performing work by one.
-
-% Talk about scalability. i.e. the average estimated completion time vs randomly selected of victim
-
-% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\chapter{Main Sections}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Tools}
 
@@ -456,7 +442,7 @@ quality.
 
 \item \textbf{GNU Make:} A tool to aid quick and easy building of a project. It uses a series of 
                          rules and dependancies to determine the order in which a project can be built 
-                         which are described in an accompanying \gls{Makefile}. 
+                         which are described in an accompanying Makefile. 
                          
                          This is useful for  producing an executable from source code as well
                          as compiling a \LaTeX  document in conjunction with bibtex to produce a pdf.
@@ -465,6 +451,20 @@ quality.
                          It has the benefit of providing a means of backing up, as-well as maintaining 
                          synchronisation of project files across multiple machines.
 \end{itemize}
+
+% --------------------------------------------------------- HYPOTH section????? FIXME 
+% TODO talk about the fact that work need not be queued because all that is needed is a start line and a stop line.
+The key difference to the Randomized Work-Stealing Algorithm (described in section \ref{sec:randscheme}) is that a \gls{worker-thread} 
+does not maintain a queue of work but simply has a range of indices assigned. This all but eliminates the overheads associated with initialising and 
+maintaining a potentially costly data-structure, but makes a \gls{non-blocking} implementation difficult. It also requires a monitor-thread to manage
+work migration which reduces the maximum number of threads performing work by one.
+
+% Talk about scalability. i.e. the average estimated completion time vs randomly selected of victim
+
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\chapter{Main Sections}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Design of the Mandelbrot Algorithm}
@@ -510,20 +510,20 @@ END
 \subsection{A Randomised Work-Stealing Algorithm}
 
 %to cover:
-% * architecture of algorithm: UML diagrams, describe key choices i.e. how much work is stolen. 
 % * Describe the non-blocking deque implementation. The top mutex, non-blockingness, circular array design, shrinking-growing
+% * architecture of algorithm: UML diagrams, describe key choices i.e. how much work is stolen. 
 % * Describe how the algorithm starts and detects completion of thread i.e. initial distribution, exclude set.
 
-This section describes the implementation of the Randomised Work-Stealing algorithm described in section \ref{sec:randscheme}.
+This section describes the implementation of the Randomised Work-Stealing algorithm based on the scheme described in section \ref{sec:randscheme}.
 This implementation uses four threads, each maintaining its own \gls{ready-deque}. The implemented \gls{ready-deque} is based on
 the scheme presented in \cite{circdeque}.
 
 \subsubsection*{The Deque Implementation}
 % general description
-Three key operation can be made on a \gls{ready-deque}. These are de\_pop\_bottom, de\_push\_bottom, and de\_steal.
+Three key operation are made on a \gls{ready-deque}. These are de\_pop\_bottom, de\_push\_bottom, and de\_steal.
 
 \begin{itemize}
-\item \textbf{de\_pop\_bottom: }
+\item \textbf{de\_pop\_bottom: } \\
                          Accepts a Deque pointer and returns a Line from the front of the deque or a Line signalling an empty Deque.
                          
                          The bottom counter of the Deque passed to the function is decremented regardless of the outcome.
@@ -534,7 +534,7 @@ Three key operation can be made on a \gls{ready-deque}. These are de\_pop\_botto
                          the last item. In this case a Line with a status of LINE\_EMPTY is returned. 
                          Otherwise the remaining bottom item is returned.
 
-\item \textbf{de\_steal: } 
+\item \textbf{de\_steal: } \\
                          Accepts a Deque pointer and attempts to return a Line from the back of the deque. Otherwise a Line with 
                          status LINE\_EMPTY or LINE\_ABORT is returned. 
                          
@@ -544,7 +544,7 @@ Three key operation can be made on a \gls{ready-deque}. These are de\_pop\_botto
                          has locked the deque item and a Line with the status LINE\_ABORT is returned. 
                          Otherwise the item at the top of the Deque is returned and the top counter is incremented.
                        
-\item \textbf{de\_push\_bottom: }
+\item \textbf{de\_push\_bottom: } \\
                          Accepts a Deque pointer and a Line to push onto the bottom of the queue. 
                          
                          Attempts to re-size the array and increments the bottom counter whilst placing the 
@@ -561,23 +561,79 @@ This allows the thread to handle such a situation accordingly; in the case of th
 of the pop operation an empty signal\footnote{An empty signal is produced here because the only situation where a de\_steal operation will block 
 a de\_pop\_bottom operation is when there is only one item remaining in the deque, which has already been claimed by the steal operation.}.
 The benefit of using this approach, rather than a pthread\_mutex\_lock based method, is that \gls{dead-lock} is avoided.
-\\\\
-% cicular array
-The deque makes use of a \gls{circular array} which automatically grows and shrinks.
-This approach is memory efficient and simple. 
-It also allows for the top counter to remain unchanged unless a steal operation occurs, reducing the frequency of locks required.
 
 \input{circ}
 
-The design relies on bottom and top counters (used to index the array), the memory size (the number of memory slots allocated to the deque), and 
+% cicular array
+The deque makes use of a \gls{circular array} which automatically grows and shrinks.
+This approach is memory efficient and simple. 
+It also allows for the top counter to remain unchanged unless a steal operation occurs (in most cases), reducing the frequency of locks occurring.
+Figure \ref{fig:circ-demo} illustrates some of its mechanics. For instance figure \ref{fig:circ-5} shows that the array is circular, in that it
+``wraps around" when the final element is reached and there are elements un-used at the start.
+
+The design relies on bottom and top counters (used to index the array), the memory-size (the number of memory slots allocated to the deque), and 
 the size (the number of elements which are currently used). The size is computed by subtracting the top counter from the bottom counter. 
 This is used to detect an empty array, and detect when the array needs to be re-sized.
 When the array is accessed the correct element is indexed by computing: \(realindex = index \bmod memorysize \). 
-For example, let the top counter equal fifteen and the \(memorysize\) equal ten, the \(realindex\) of the top element is five.
+For example, let the top counter equal fifteen and the memory-size equal ten, the \(realindex\) of the top element is five.
 This allows for the top and bottom counters to exceed the memory size and still point to the correct index, without allowing access to memory outside the 
-bounds of the array. It also ensures that the size can be computed correctly.
+bounds of the array. It also maintains that the size can be computed correctly. When the array becomes empty the counters are re-set to zero.
 
-The consequence of this design is that any steal operations are blocked when the array is being re-sized.
+Should the size exceed the memory-size the array is automatically re-sized by double its current allocation. 
+This is achieved by allocating a new array using malloc, copying the contents of the old array then freeing it, 
+then assigning a pointer to the new array to the deque. 
+Similarly, the array is shrunk by half when its size recedes to half of the memory-size using the same approach.
+The consequence of this design is that the top\_mutex must be locked throughout the operation, blocking any de\_steal
+attempts until the mutex is un-locked. 
+The benefits of this approach are that the deque is more scalable and only memory that is likely to be used is allocated, 
+rather than some amount that is defined at compile-time.
+
+\subsubsection*{The Work-Stealing Mechanism}
+
+% 4 key functions: 
+% * ws\_worker\_thread
+% * ws\_compute\_deque
+% * ws\_become\_thief
+% * ws\_victimise
+
+\begin{itemize}
+\item \textbf{ws\_worker\_thread: } \\
+                The function which is passed to pthread\_create. This acts as the point of entry for each \gls{thread}.
+                It accepts a pointer to the deque which is associated with the given thread\footnote{This is passed 
+                in the form of a void pointer which has to be cast due to the interface provided by the pthreads
+                library.}.
+              
+                This function makes use of a do-while loop which breaks when there is no work remaining in any \glspl{worker-thread} \gls{ready-deque}. 
+                Each iteration of the loop sets the thread to work by calling the ws\_compute\_deque function, which returns when 
+                no work remains in the \gls{ready-deque}. Then, the thread becomes a \gls{thief} and must attempt to acquire work
+                from other threads by calling ws\_become\_thief. If more work is acquired the thread becomes a worker and calls ws\_compute\_deque
+                again. If no work is found the condition for the loop are broken and the thread exits.
+              
+\item \textbf{ws\_compute\_deque: } \\
+                Accepts a Deque pointer, i.e. to the Deque associated with the same thread. This function 
+                calls de\_pop\_bottom until it detects that the ready-deque is empty, at which point it returns
+                the total number of work items completed.
+                
+\item \textbf{ws\_become\_thief: } \\
+                This operation randomly selects a thread to victimise. If it detects that there is no work
+                available to steal it returns 0, otherwise it returns 1.
+                It accepts a Deque pointer, i.e. to the Deque associated with the same thread. 
+                
+                When a victim is selected the ws\_victimise function is called.
+                
+                In order to determine that no work is available, a set to mark each thread which is unsuccessfully victimised (referred to as
+                the exclude set) as-well as a counter is maintained.
+                The exclude set is initialised adding the current thread. It is passed to the ws\_random\_deque
+                \footnote{ws\_random\_deque uses 
+                the standard c rand function to generate a number between zero and the number of threads to index an array 
+                of deques and return one. An exclude set is passed to the function so that any member of that set is not returned.
+                The function expects the exclude set to have at-least one element which is not asserted.}
+                function. When the counter is equal to the number of threads one is returned.
+                
+\item \textbf{ws\_victimise: } \\
+                
+                
+\end{itemize}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{A Render-Thread Work-Stealing Algorithm}

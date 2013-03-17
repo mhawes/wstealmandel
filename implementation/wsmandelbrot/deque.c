@@ -22,29 +22,6 @@ void de_initialise( Deque *d, char thread_id)
 }
 
 /* -------------------------------------------------------------------------- */
-/* This function grows the array to the current value of mem_size.
- * It does so by allocating a new array and copying the results from
- * the old array over. 
- */
-void de_re_allocate( Deque *d, int old_size)
-{
-    pthread_mutex_lock(&d->top_mutex);
-    
-    int i, j = 0, size = d->bot - d->top;
-    Line *temp_q = (Line *)malloc(d->mem_size * sizeof(Line));
-    
-    for( i = d->top; i < d->bot; i++)
-    {
-        temp_q[i % d->mem_size] = d->queue[i % old_size];
-    }
-    
-    de_free_queue( d);
-    d->queue = temp_q;
-    
-    pthread_mutex_unlock (&d->top_mutex);
-}
-
-/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* Pushes a line onto the bottom of the queue.
  */
@@ -150,6 +127,29 @@ char de_attempt_grow( Deque *d, int size)
         d->mem_size = mem_s * 2;
         de_re_allocate( d, mem_s);
     }
+}
+
+/* -------------------------------------------------------------------------- */
+/* This function grows the array to the current value of mem_size.
+ * It does so by allocating a new array and copying the results from
+ * the old array over. 
+ */
+void de_re_allocate( Deque *d, int old_size)
+{
+    pthread_mutex_lock(&d->top_mutex);
+    
+    int i, j = 0, size = d->bot - d->top;
+    Line *temp_q = (Line *)malloc(d->mem_size * sizeof(Line));
+    
+    for( i = d->top; i < d->bot; i++)
+    {
+        temp_q[i % d->mem_size] = d->queue[i % old_size];
+    }
+    
+    de_free_queue( d);
+    d->queue = temp_q;
+    
+    pthread_mutex_unlock (&d->top_mutex);
 }
 
 /* -------------------------------------------------------------------------- */

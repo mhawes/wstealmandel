@@ -1,15 +1,15 @@
 #include "mandelbrot.h"
 
-static Pixel plane_col[HEIGHT][WIDTH];/* array to hold the generated image */
+static pixel_t plane_col[HEIGHT][WIDTH];/* array to hold the generated image */
 
 /* globals used to control the limits raster plane */
-Complex c_max;  /* maximum value of c */
-Complex c_min;  /* minimum value of c */
-Complex c_factor; /* value used to calculate space between each sample on the 
+complex_t c_max;  /* maximum value of c */
+complex_t c_min;  /* minimum value of c */
+complex_t c_factor; /* value used to calculate space between each sample on the 
                     raster plane */
 
 /* ARGUMENT SETTINGS */
-Output_Arg out_arg;
+output_arg_t out_arg;
 char outfile[21] = "out.ppm";
 
 
@@ -78,10 +78,10 @@ inline double convert_x_coord( double re_min,
  * returns the iteration count when not in the set. This produces a nice 
  * gradient effect.
  */
-char is_member(Complex c)
+char is_member(complex_t c)
 {
     char i;
-    Complex z;
+    complex_t z;
 
     z.re = c.re; 
     z.im = c.im;
@@ -103,7 +103,7 @@ char is_member(Complex c)
 
 /* -------------------------------------------------------------------------- */
 /* returns 1 if outside the circle of radius 2 */
-inline char is_outside_rad2( Complex c)
+inline char is_outside_rad2( complex_t c)
 {
     /* if the number is outside the radius 2 we know it cant be in the set */
     return( sqrt((c.re * c.re) + (c.im * c.im)) > 2);
@@ -111,9 +111,9 @@ inline char is_outside_rad2( Complex c)
 
 /* -------------------------------------------------------------------------- */
 /* calculates the next value of: z = z^2 + c */
-Complex julia_func(Complex z, Complex c)
+complex_t julia_func(complex_t z, complex_t c)
 {
-    Complex res;
+    complex_t res;
     
     res.im = 2 * z.re * z.im + c.im;
     res.re = (z.re * z.re) - (z.im * z.im)  + c.re;
@@ -125,7 +125,7 @@ Complex julia_func(Complex z, Complex c)
 /* Computes a line of the raster plane */
 void compute_line( unsigned int y, char t_id)
 {
-    Complex c_cur; 
+    complex_t c_cur; 
     unsigned int x;
 
     c_cur.im = convert_y_coord( c_max.im, c_factor.im, y);
@@ -241,7 +241,7 @@ void perhaps_print()
 }
 
 /* -------------------------------------------------------------------------- */
-void print_complex(Complex *com)
+void print_complex(complex_t *com)
 {
     printf("(%g + %g*i) ", com->re, com->im);
 }
@@ -311,7 +311,7 @@ void write_to_ppm()
 }
 
 /* -------------------------------------------------------------------------- */
-char get_red_val( Pixel pix)
+char get_red_val( pixel_t pix)
 {
     if( pix.t_id == WORKER_COUNT)
     {
@@ -329,7 +329,7 @@ char get_red_val( Pixel pix)
 }
 
 /* -------------------------------------------------------------------------- */
-char get_blue_val( Pixel pix)
+char get_blue_val( pixel_t pix)
 {
     if( pix.t_id == WORKER_COUNT)
     {

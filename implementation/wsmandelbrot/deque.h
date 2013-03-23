@@ -18,40 +18,40 @@
 
 #define INIT_MEM_SIZE 10 /* the initial number of allocated Line slots */
  
-typedef struct Line{
+typedef struct line_t{
     char status;
     unsigned int y;
-} Line;
+} line_t;
 
-typedef struct Deque{
+typedef struct deque_t{
     char t_id;
     
     int mem_size; 
     int top, bot;
 
-    Line *queue;
+    line_t *queue;
     
     pthread_mutex_t top_mutex;
-} Deque;
+} deque_t;
 
-static Line empty, abort_steal;
+static line_t empty, abort_steal;
 
 /* function defs */
 
-void de_initialise     ( Deque *, char);
+void de_initialise     ( deque_t *, char);
 
 /* ------------------------------------- */
-Line de_steal          ( Deque *);
-void de_push_bottom    ( Deque *, Line);
-Line de_pop_bottom     ( Deque *);
+line_t de_steal        ( deque_t *);
+void de_push_bottom    ( deque_t *, line_t);
+line_t de_pop_bottom   ( deque_t *);
 /* ------------------------------------- */
 
-char de_attempt_shrink ( Deque *, int);
-char de_attempt_grow   ( Deque *, int);
-void de_re_allocate    ( Deque *, int);
-void de_free_queue     ( Deque *d);
+char de_attempt_shrink ( deque_t *, int);
+char de_attempt_grow   ( deque_t *, int);
+void de_re_allocate    ( deque_t *, int);
+void de_free_queue     ( deque_t *d);
 
 /* UTIL FUNCTIONS */
-void de_print_deque( Deque *);
+void de_print_deque( deque_t *);
 
 #endif /* DEQUE_H */

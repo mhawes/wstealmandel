@@ -1,22 +1,19 @@
-#ifndef WORKSTEAL_H
-#define WORKSTEAL_H
+#ifndef NOSCHEDULING_H
+#define NOSCHEDULING_H
 
 #define WORKER_COUNT 4        /* the total number of worker threads */
 
 #include <pthread.h>
-#include "deque.h"
 
 /* HAS TO BE INCLUDED LAST!!! */
 #include "mandelbrot.h"
 
+typedef struct thread_info_t{
+    char t_id;
+    unsigned int start_y, end_y;
+} thread_info_t;
+
 void *ws_worker_thread       ( void*);
-
-char ws_become_thief         ( deque_t *);
-char ws_victimise            ( deque_t *, deque_t *);
-
-void ws_distribute_lines     ();
-deque_t *ws_random_deque       ( char[WORKER_COUNT]);
-unsigned int ws_compute_deque( deque_t *deq);
 
 /* -------------------------------------------------------------------------- */
 
@@ -25,4 +22,4 @@ void ws_start_threads        ();
 
 /* -------------------------------------------------------------------------- */
 
-#endif /* WORKSTEAL_H */
+#endif /* NOSCHEDULING_H */

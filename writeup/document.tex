@@ -119,7 +119,7 @@ In chapter six the appendices are presented.
 A glossary of terms is presented as Appendix A. 
 This consists of a list describing major concepts surrounding the field of study, and directs the reader to their pages of occurrence. 
 
-The source code for any software developed to fulfil the objectives described above is presented as Appendix B.
+The source code for all software developed to fulfil the objectives described above is presented as Appendix B.
 
 
 
@@ -498,13 +498,44 @@ END
 \section{The Implementation}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{An Algorithm to Compute the Mandelbrot Set}
+\subsection{General Design and Practices}
 
-% algorithm architecture.
+All presented code follows strict conventions to ensure readability. Following is a list of conventions used.
+\begin{itemize}
+\item \textbf{Variable and Function Names: } \\
+            All variable and function names are given in lower-case with multiple words separated by an underscore.
+            Function names declared in a module are prefixed with an associated acronym. For instance, functions declared in 
+            `deque.c' start with `de\_'.
+            
+\item \textbf{Type Definitions: } \\
+            All type 
+\item \textbf{Conditional Statements: } \\
+\item \textbf{Constants and Pre-Processor Directives: } \\
+\end{itemize}
+
+
+The implementation takes the form of a modular design. The module which has the functionality to compute the Mandelbrot set
+has an interface to which a seperate `scheduling' module can be attached. The Makefile holds a rule for each scheduling 
+module and builds a binary for each. This approach provides several benefits. 
+
+\begin{itemize}
+\item It ensures all scheduling modules use exactly the same scheme to compute the Mandelbrot set, making them more comparable.
+\item It allows for a common user-interface for each executable, independent of the scheduler back-end.
+\item It allows for alteration to the mandelbrot module to be made with ease.
+\end{itemize}
+
+Four scheduler modules are implemented, of which two are described in detail in the following sections i.e. those which employ work stealing
+techniques.
+Simple sequential and a non-run-time-scheduled modules are implemented simply for comparison sake.
+
 % talk about the static keyword in C for the array.
 % talk about inlining some functions
 % Describe ppm output
+
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{An Algorithm to Compute the Mandelbrot Set}
 % Describe the mandelbrot algorithm.
+% algorithm architecture.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{A Randomised Work-Stealing Algorithm}

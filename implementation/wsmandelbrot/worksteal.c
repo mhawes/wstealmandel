@@ -1,6 +1,6 @@
 #include "worksteal.h"
 
-static Deque deques[WORKER_COUNT]; /* Set of deques to fill. One per trhead. */
+static deque_t deques[WORKER_COUNT]; /* Set of deques to fill. One per trhead. */
 pthread_t threads[WORKER_COUNT]; /* set of threads to execute the deques */
 
 /* -------------------------------------------------------------------------- */
@@ -8,7 +8,7 @@ pthread_t threads[WORKER_COUNT]; /* set of threads to execute the deques */
 /* -------------------------------------------------------------------------- */
 void *ws_worker_thread( void *t_deq)
 {
-    Deque *deq = (Deque *) t_deq;
+    deque_t *deq = (deque_t *) t_deq;
     char stealable = 1;
     int work_count = 0;
 
@@ -52,7 +52,7 @@ void ws_distribute_lines()
 {
     unsigned int y, distribution = HEIGHT / WORKER_COUNT;
     char i = -1;
-    Line line;
+    line_t line;
     
     line.status = LINE_NORMAL;
     
@@ -96,11 +96,11 @@ void ws_start_threads()
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned int ws_compute_deque( Deque *deq)
+unsigned int ws_compute_deque( deque_t *deq)
 {
 //    printf( "T %d BECAME WORKER\n", deq->t_id);
     unsigned int work_count = 0;
-    Line line_cur;
+    line_t line_cur;
 
     while(1)
     {
@@ -122,13 +122,13 @@ unsigned int ws_compute_deque( Deque *deq)
 /* returns 1 if found work and needs to return to worker mode.
  * returns 0 if no work is found in the entire network and the thread can finish.
  */
-char ws_become_thief( Deque *deq)
+char ws_become_thief( deque_t *deq)
 {
 //    printf( "T %d BECAME THIEF\n", deq->t_id);
 
     int i;
     char result = 0, ex_count = 1;
-    Deque *victim;
+    deque_t *victim;
     char exclude_set[WORKER_COUNT];
 
     /* initialise the exclude set */
@@ -166,10 +166,10 @@ char ws_become_thief( Deque *deq)
 /* returns 1 if work has been stolen and placed in the deque ready for computing
  * returns 0 if no work is found at this victim.
  */
-char ws_victimise( Deque *deq, Deque *victim)
+char ws_victimise( deque_t *deq, deque_t *victim)
 {
     char result = 0;
-    Line line;
+    line_t line;
     int steal_size;
     int fill_count = 0;
 
@@ -216,7 +216,7 @@ char ws_victimise( Deque *deq, Deque *victim)
  * NOTE: this function takes no responsibility for an exclude set that is fully 
  *       set.
  */
-Deque *ws_random_deque( char exclude_set[WORKER_COUNT])
+deque_t *ws_random_deque( char exclude_set[WORKER_COUNT])
 {
     int i, j;
 

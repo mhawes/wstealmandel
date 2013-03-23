@@ -1,7 +1,7 @@
 #include "deque.h"
 
 /* -------------------------------------------------------------------------- */
-void de_initialise( Deque *d, char thread_id)
+void de_initialise( deque_t *d, char thread_id)
 {
     d->t_id = thread_id;
     
@@ -11,7 +11,7 @@ void de_initialise( Deque *d, char thread_id)
     d->bot = 0;     /* points to the bototm of the queue */
     
     /* allocates the initial block of memory */
-    d->queue = (Line *)malloc(d->mem_size * sizeof(Line));
+    d->queue = (line_t *)malloc(d->mem_size * sizeof(line_t));
     
     /* initialise of EMPTY and ABORT vals. */
     empty.status = LINE_EMPTY;
@@ -25,7 +25,7 @@ void de_initialise( Deque *d, char thread_id)
 /* -------------------------------------------------------------------------- */
 /* Pushes a line onto the bottom of the queue.
  */
-void de_push_bottom( Deque *d, Line line)
+void de_push_bottom( deque_t *d, line_t line)
 {
     int size = d->bot - d->top;
     
@@ -41,9 +41,9 @@ void de_push_bottom( Deque *d, Line line)
 /* Takes the bottom member of the queue and increments the bottom counter.
  * This function has a chance to shrink the size of the queue.
  */
-Line de_pop_bottom( Deque *d)
+line_t de_pop_bottom( deque_t *d)
 {
-    Line l;
+    line_t l;
     d->bot--;
 
     int size = d->bot - d->top;
@@ -78,10 +78,10 @@ Line de_pop_bottom( Deque *d)
 /* -------------------------------------------------------------------------- */
 /* Takes the top member of the queue.
  */
-Line de_steal( Deque *d)
+line_t de_steal( deque_t *d)
 {
     int size = d->bot - d->top;
-    Line l;
+    line_t l;
     
     /* in this case we only have the bottom member therefore do not 
      * want to steal.
@@ -107,7 +107,7 @@ Line de_steal( Deque *d)
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-char de_attempt_shrink( Deque *d, int size)
+char de_attempt_shrink( deque_t *d, int size)
 {
     int mem_s = d->mem_size;
     if( size <= mem_s / 2 && mem_s > INIT_MEM_SIZE){
@@ -119,7 +119,7 @@ char de_attempt_shrink( Deque *d, int size)
 }
 
 /* -------------------------------------------------------------------------- */
-char de_attempt_grow( Deque *d, int size)
+char de_attempt_grow( deque_t *d, int size)
 {
     int mem_s = d->mem_size;
     
@@ -134,12 +134,12 @@ char de_attempt_grow( Deque *d, int size)
  * It does so by allocating a new array and copying the results from
  * the old array over. 
  */
-void de_re_allocate( Deque *d, int old_size)
+void de_re_allocate( deque_t *d, int old_size)
 {
     pthread_mutex_lock(&d->top_mutex);
     
     int i, j = 0, size = d->bot - d->top;
-    Line *temp_q = (Line *)malloc(d->mem_size * sizeof(Line));
+    line_t *temp_q = (line_t *)malloc(d->mem_size * sizeof(line_t));
     
     for( i = d->top; i < d->bot; i++)
     {
@@ -153,7 +153,7 @@ void de_re_allocate( Deque *d, int old_size)
 }
 
 /* -------------------------------------------------------------------------- */
-void de_free_queue( Deque *d)
+void de_free_queue( deque_t *d)
 {
     free(d->queue);
 }
@@ -161,11 +161,11 @@ void de_free_queue( Deque *d)
 /* -------------------------------------------------------------------------- */
 /* UTIL FUNCTIONS: */
 /* -------------------------------------------------------------------------- */
-void de_print_deque( Deque *d)
+void de_print_deque( deque_t *d)
 {
     int size = d->bot - d->top;
     int i;
-    Line l;
+    line_t l;
     
     printf("Deque for thread id: %d\n", d->t_id);
     printf("  Bot: %d Top: %d\n", d->bot, d->top);
@@ -191,9 +191,9 @@ void de_print_deque( Deque *d)
     printf("\n");
 }
 
-void de_test_deque( Deque *d)
+void de_test_deque( deque_t *d)
 {
-    Line l;
+    line_t l;
 
     /* fill up the deque */
     int i;

@@ -13,7 +13,7 @@ pthread_cond_t  th_stop_cond;
 
 pthread_barrier_t stop_bar;
 
-ThreadInfo thread_infos[WORKER_COUNT];
+thread_info_t thread_infos[WORKER_COUNT];
 
 char finish_sig;
 
@@ -23,7 +23,7 @@ char finish_sig;
 void *rt_render_thread( void *t_info)
 {
     int work_count = 0;
-    ThreadInfo *info = (ThreadInfo *) t_info;
+    thread_info_t *info = (thread_info_t *) t_info;
 
     printf("T_id %d started\n", info->t_id); 
     
@@ -49,8 +49,8 @@ void *rt_monitor_thread( void *null)
     printf("Monitor started\n"); 
     
     char i, is_work = 1;
-    ThreadInfo *thief;
-    ThreadInfo *victim;
+    thread_info_t *thief;
+    thread_info_t *victim;
     
     do
     {
@@ -104,7 +104,7 @@ void *rt_monitor_thread( void *null)
 }
 
 /* -------------------------------------------------------------------------- */
-void rt_distribute( ThreadInfo *thief, ThreadInfo *victim)
+void rt_distribute( thread_info_t *thief, thread_info_t *victim)
 {
     unsigned int block; 
     unsigned int victim_count;
@@ -176,10 +176,10 @@ void rt_broadcast_finished()
  *
  * Returns the thread_info of the complete thread.
  */
-ThreadInfo *rt_wait_for_complete()
+thread_info_t *rt_wait_for_complete()
 {
     char i;
-    ThreadInfo *ti = NULL;
+    thread_info_t *ti = NULL;
     
     do
     {
@@ -197,11 +197,11 @@ ThreadInfo *rt_wait_for_complete()
 
 /* -------------------------------------------------------------------------- */
 /* Finds the thread with the highest estimated complete time */
-ThreadInfo *rt_find_victim()
+thread_info_t *rt_find_victim()
 {
     char i, count = 0;
 
-    ThreadInfo *result = &thread_infos[0]; /* take t_id 0 as the default */
+    thread_info_t *result = &thread_infos[0]; /* take t_id 0 as the default */
     
     for(i = 0; i < WORKER_COUNT; i++)
     {   
@@ -223,7 +223,7 @@ ThreadInfo *rt_find_victim()
 }
 
 /* -------------------------------------------------------------------------- */
-unsigned int rt_compute_work( ThreadInfo *ti)
+unsigned int rt_compute_work( thread_info_t *ti)
 {
     unsigned int i;
     unsigned int work_count = 0;
@@ -258,7 +258,7 @@ unsigned int rt_compute_work( ThreadInfo *ti)
 }
 
 /* -------------------------------------------------------------------------- */
-void rt_update_estimate( ThreadInfo *ti, unsigned long time)
+void rt_update_estimate( thread_info_t *ti, unsigned long time)
 {
     unsigned int work_count = ti->end - ti->curr;
     
@@ -342,7 +342,7 @@ void ws_start_threads()
 /* Issues the work complete signal and waits until its status is changed from
  * THIEF_SIG.
  */
-void rt_become_thief( ThreadInfo *ti)
+void rt_become_thief( thread_info_t *ti)
 {
     /* Set the estimated time to 0. 
      * This stops the monitor from picking the thief as a victim 
@@ -375,7 +375,7 @@ void rt_become_thief( ThreadInfo *ti)
 /* -------------------------------------------------------------------------- */
 /*
  */
-void rt_become_victim( ThreadInfo *ti)
+void rt_become_victim( thread_info_t *ti)
 {
     ti->status = IS_VICTIM;
 
@@ -401,7 +401,7 @@ void rt_become_victim( ThreadInfo *ti)
 /* -------------------------------------------------------------------------- */
 /* UTIL FUNCTIONS: */
 /* -------------------------------------------------------------------------- */
-void rt_print_status( ThreadInfo *ti)
+void rt_print_status( thread_info_t *ti)
 {
     printf("t_id %d status: ", ti->t_id);
     switch( ti->status)
@@ -426,7 +426,7 @@ void rt_print_status( ThreadInfo *ti)
     }
 }
 
-void rt_print_workload( ThreadInfo *ti)
+void rt_print_workload( thread_info_t *ti)
 {
     printf("t_id %d curr: %u end: %u\n",ti->t_id,
                                         ti->curr,

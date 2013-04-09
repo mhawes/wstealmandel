@@ -49,12 +49,15 @@
     % * Talk about highly parallel computing and its applications. Be broad.
 
 Multi-processor computers are now commonplace in the world of computing, for both consumers and scientists alike. 
-This shift in architectural design demands a drastic shift in how a program is constructed, from the standpoint of both
-the programmer and the language designer.
+This shift in architectural design demands a drastic shift in how programs for such architectures are constructed, 
+from the standpoint of both the programmer and the language designer. 
+This is problematic because efficient parallel algorithms are inherently difficult to implement.
+
+%TODO
 
 \section*{Motivation}
 
-
+%TODO
 
 \section*{Aim}
 
@@ -83,8 +86,8 @@ Core objectives are primary and more vital, advanced objectives are additional i
 \end{enumerate}
 
 \section*{Achievements}
-The following table shows each objective and its final completion status at the time this 
-report was finalised. 
+The following table shows each objective and its completion status at the time this
+report was produced. 
 
 \begin{table}[H]
     \centering
@@ -148,7 +151,6 @@ The source code for all software developed to fulfil the objectives described ab
 This section briefly describes the problems associated with \gls{scheduling} \glspl{multi-threaded algorithm} at run-time and
 the major paradigms that have surfaced.
 
-% explain problems here...... is this better off in the intro??
 To efficiently utilise a parallel computer architecture it is desirable to minimise
 the amount of time a processor spends idle or performing other logistical tasks, i.e not doing work. 
 When a computation's concurrent sub-tasks or \glspl{thread} incur a regular cost in processor
@@ -386,18 +388,20 @@ The tools discussed in this section are all viable options for a Linux platform.
 
 \subsection*{Parallel Programming Libraries}
 In order to implement Work-Stealing, support for programming threads 
-with a suitable level of control was required.
+with a suitable level of control is required.
 
 \begin{itemize}
-\item \textbf{POSIX Threads (pthreads):} Provides low level manipulation of threads for the C programming language \cite{pthreadover}. 
+\item \textbf{POSIX Threads (pthreads):} \\ 
+              Provides low level manipulation of threads for the C programming language \cite{pthreadover}. 
               It is a library based on IEEE standard 1003.1. Thread programming is achieved through use of a set of functions and data
               structures provided; such as \glspl{mutex}, \glspl{barrier}, and \glspl{conditional-variable}. %TODO
              
-\item \textbf{Open Multiprocessing (OpenMP):} Provides abstract thread programming interfaces for C, C++, and fortran.
+\item \textbf{Open Multiprocessing (OpenMP):} \\ 
+              Provides abstract thread programming interfaces for C, C++, and fortran.
               In general OpenMP only allows coarse grained manipulation of threads through features such as parallel loops %TODO
               \cite{ompvspthr}.
 
-\item \textbf{Java Threads:} %TODO
+\item \textbf{Java Threads:} \\ %TODO
 \end{itemize}
 
 \subsection*{Graphical Output}
@@ -405,7 +409,8 @@ For the purpose of demonstrating that the program correctly generates a raster p
 of the Mandelbrot set, a graphical representation of the plane is output.
 
 \begin{itemize}
-\item \textbf{PPM Output File:} The simplest option is to output to a Portable Pixel Map (PPM) file. It is 
+\item \textbf{PPM Output File:} \\
+              The simplest option is to output to a Portable Pixel Map (PPM) file. It is 
               text-file based and easy to implement but produces rather large files. 
               The process of outputting to a text file is inherently serial in nature,
               so with large image resolutions processing takes a long time.
@@ -413,13 +418,15 @@ of the Mandelbrot set, a graphical representation of the plane is output.
               The advantage of using this method is the portability. No libraries or extras are required
               and most image viewers will read the file. \cite{ppmspec}
               
-\item \textbf{GNU Plot:} A graph plotting package available for multiple operating systems. 
+\item \textbf{GNU Plot:} \\
+              A graph plotting package available for multiple operating systems. 
               Supports screen display or file output of both 2d and 3d graphics \cite{gnuplot}.
               There are programming interfaces available for various languages such as C \cite{gnuplotcint}, C++ \cite{gnuplotcppint}, 
               and Java \cite{gnuplotjint}.
               GNU Plot needs to be installed on the machine in order to use it.
               
-\item \textbf{OpenGL - glut:} Glut is a framework for providing simple, cross-platform, GUI window control in conjunction
+\item \textbf{OpenGL - glut:} \\
+              Glut is a framework for providing simple, cross-platform, GUI window control in conjunction
               with OpenGL. Bindings are available for various languages, including C and C++ \cite{openglglut}.
               A free implementation called ``freeglut" is available and can be installed on linux \cite{freeglut}.
               This method requires OpenGL and an implementation of Glut be available on the machine that the program 
@@ -437,19 +444,22 @@ Listed here are the major utility tools which have been used to make this projec
 quality. 
 
 \begin{itemize}
-\item         \LaTeX:    A document preparation markup language which produces professional and consistent 
-                         documents. 
+\item \LaTeX: \\   
+            A document preparation markup language which produces professional and consistent 
+            documents. 
 
-\item \textbf{GNU Make:} A tool to aid quick and easy building of a project. It uses a series of 
-                         rules and dependancies to determine the order in which a project can be built 
-                         which are described in an accompanying Makefile. 
+\item \textbf{GNU Make:} \\ 
+            A tool to aid quick and easy building of a project. It uses a series of 
+            rules and dependancies to determine the order in which a project can be built 
+            which are described in an accompanying Makefile. 
                          
-                         This is useful for  producing an executable from source code as well
-                         as compiling a \LaTeX  document in conjunction with bibtex to produce a pdf.
+            This is useful for  producing an executable from source code as well
+            as compiling a \LaTeX  document in conjunction with bibtex to produce a pdf.
 
-\item \textbf{Git:}      A distributed version control system which provides version tracking capabilities. 
-                         It has the benefit of providing a means of backing up, as-well as maintaining 
-                         synchronisation of project files across multiple machines.
+\item \textbf{Git:} \\     
+            A distributed version control system which provides version tracking capabilities. 
+            It has the benefit of providing a means of backing up, as-well as maintaining 
+            synchronisation of project files across multiple machines.
 \end{itemize}
 
 % --------------------------------------------------------- HYPOTH section????? FIXME 
@@ -496,23 +506,33 @@ END
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Implementation}
-
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{General Design and Practices}
 
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\subsubsection*{Code Conventions}
+
 All presented code follows strict conventions to ensure readability. Following is a list of conventions used.
 \begin{itemize}
-\item \textbf{Variable and Function Names: } \\
+\item \textbf{Names: } \\
             All variable and function names are given in lower-case with multiple words separated by an underscore.
             Function names declared in a module are prefixed with an associated acronym. For instance, functions declared in 
             `deque.c' start with `de\_'.
+            Type definitions are named in the same fashion as a variable, followed by a trailing `\_t', to match the style used 
+            by the pthreads library.
             
-\item \textbf{Type Definitions: } \\
-            All type 
-\item \textbf{Conditional Statements: } \\
+\item \textbf{Parentheses: } \\
+            For functions and iteration statements the opening parenthesis is placed on a new line, in any other case it
+            can be placed on the same line. The closing parenthesis is always placed on its own line.
+                        
 \item \textbf{Constants and Pre-Processor Directives: } \\
+            Pre-processor directives are declared in the accompanying header file. All names are in upper-case
+            with words seperated by an underscore.
 \end{itemize}
 
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\subsubsection*{Modular Design}
 
 The implementation takes the form of a modular design. The module which has the functionality to compute the Mandelbrot set
 has an interface to which a seperate `scheduling' module can be attached. The Makefile holds a rule for each scheduling 
@@ -526,17 +546,54 @@ module and builds a binary for each. This approach provides several benefits.
 
 Four scheduler modules are implemented, of which two are described in detail in the following sections i.e. those which employ work stealing
 techniques.
-Simple sequential and a non-run-time-scheduled modules are implemented simply for comparison sake.
+A sequential and a non run-time scheduled parallel module is implemented for comparison sake and as a test for the Mandelbrot module.
+
+\subsubsection*{Useful Language Features}
 
 % talk about the static keyword in C for the array.
 % talk about inlining some functions
 % Describe ppm output
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{An Algorithm to Compute the Mandelbrot Set}
 % Describe the mandelbrot algorithm.
 % algorithm architecture.
 
+This section describes the Mandelbrot module which provides an interface for run-time scheduler implementations to 
+compute a raster-plane of the Mandelbrot set line by line. 
+This interface is provided primarily by the compute\_line function which takes a line number and the id of the thread
+which is making the call. The thread id is required for visualisation purposes. A constant HEIGHT is declared in the 
+accompanying header file which provides a work limit for the scheduler.
+
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\subsubsection*{The Algorithm}
+
+Each pixel of the raster plane maps to a point on the complex plane.
+
+The algorithm uses several parameters to manipulate the raster plane.
+\begin{itemize}
+\item \textbf{The HEIGHT and WIDTH constants:} \\
+            Defines the dimensions of the raster plane. 
+\item \textbf{The MAX\_ITERATIONS constant:} \\
+\item \textbf{The c\_max and x\_min complex numbers:} \\
+\item \textbf{The c\_factor:} \\
+\end{itemize} 
+
+The key functions used in the mandelbrot module.
+
+\begin{itemize}
+\item \textbf{compute\_line:} \\
+            Iterates a single line of the raster plane specified by a perameter \(y\) and assigns the result to the plane matrix.
+            
+            
+\item \textbf{is\_member:} \\
+\item \textbf{julia\_func:} \\
+\item \textbf{convert\_y\_coord:} \\
+\item \textbf{convert\_x\_coord:} \\
+\end{itemize}
+
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{A Randomised Work-Stealing Algorithm}
 
@@ -589,8 +646,8 @@ This is achieved using the pthread\_mutex\_trylock function, which accepts a mut
 Otherwise, for instance when the mutex is locked by another thread, an error value is returned. This allows the thread to test the 
 state of the mutex and continue execution without blocking (waiting for the mutex to become un-locked).
 This allows the thread to handle such a situation accordingly; in the case of the steal operation an abort signal, and in the case
-of the pop operation an empty signal\footnote{An empty signal is produced here because the only situation where a de\_steal operation will block 
-a de\_pop\_bottom operation is when there is only one item remaining in the deque, which has already been claimed by the steal operation.}.
+of the pop operation an empty signal. An empty signal is produced here because the only situation where a de\_steal operation will block 
+a de\_pop\_bottom operation is when there is only one item remaining in the deque, which has already been claimed by the steal operation.
 The benefit of using this approach, rather than a pthread\_mutex\_lock based method, is that \gls{dead-lock} is avoided.
 
 \input{circ}
@@ -630,9 +687,9 @@ rather than some amount that is defined at compile-time.
 \begin{itemize}
 \item \textbf{ws\_worker\_thread: } \\
                 The function which is passed to pthread\_create. This acts as the point of entry for each \gls{thread}.
-                It accepts a pointer to the deque which is associated with the given thread\footnote{This is passed 
+                It accepts a pointer to the deque which is associated with the given thread. This is passed 
                 in the form of a void pointer which has to be cast due to the interface provided by the pthreads
-                library.}.
+                library.
               
                 This function makes use of a do-while loop which breaks when there is no work remaining in any \glspl{worker-thread} \gls{ready-deque}. 
                 Each iteration of the loop sets the thread to work by calling the ws\_compute\_deque function, which returns when 
@@ -654,12 +711,11 @@ rather than some amount that is defined at compile-time.
                 
                 In order to determine that no work is available, a set to mark each thread which is unsuccessfully victimised (referred to as
                 the exclude set) as-well as a counter is maintained.
-                The exclude set is initialised adding the current thread. It is passed to the ws\_random\_deque
-                \footnote{ws\_random\_deque uses 
-                the standard c rand function to generate a number between zero and the number of threads to index an array 
+                The exclude set is initialised adding the current thread. It is passed to ws\_random\_deque, which
+                uses the standard c rand function to generate a number between zero and the number of threads to index an array 
                 of deques and return one. An exclude set is passed to the function so that any member of that set is not returned.
-                The function expects the exclude set to have at-least one element which is not asserted.}
-                function. When the counter is equal to the number of threads one is returned.
+                The function expects the exclude set to have at-least one element which is not asserted.
+                When the counter is equal to the number of threads one is returned.
                 
 \item \textbf{ws\_victimise: } \\
                 
@@ -700,6 +756,7 @@ rather than some amount that is defined at compile-time.
 \subsection{Further Work}
 
 %to cover:
+% * Use a linked list instead of a circular array in the deque.
 % * Cluster computation.
 % * Adaption for use with more powerful architectures. 
 % * More tracing abilities. 

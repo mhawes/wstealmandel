@@ -1,16 +1,16 @@
 #include "mandelbrot.h"
 
-static pixel_t plane_col[HEIGHT][WIDTH];/* array to hold the generated image */
+static pixel_t plane[HEIGHT][WIDTH];/* array to hold the generated image */
 
-/* globals used to control the limits raster plane */
+/* globals used to control the limits of the raster plane */
 complex_t c_max;  /* maximum value of c */
 complex_t c_min;  /* minimum value of c */
 complex_t c_factor; /* value used to calculate space between each sample on the 
                     raster plane */
 
 /* ARGUMENT SETTINGS */
-output_arg_t out_arg;
-char outfile[21] = "out.ppm";
+output_arg_t out_arg;           // the output mode
+char outfile[21] = "out.ppm";   // the output filename with a default of `out.ppm'
 
 
 /* -------------------------------------------------------------------------- */
@@ -102,7 +102,7 @@ char is_member(complex_t c)
 }
 
 /* -------------------------------------------------------------------------- */
-/* returns 1 if outside the circle of radius 2 */
+/* returns true if outside the circle of radius 2 */
 inline char is_outside_rad2( complex_t c)
 {
     /* if the number is outside the radius 2 we know it cant be in the set */
@@ -133,15 +133,16 @@ void compute_line( unsigned int y, char t_id)
     {
         c_cur.re = convert_x_coord( c_min.re, c_factor.re, x);
         
-        plane_col[y][x].t_id = t_id; /* assign this thread id to the pixel */
-        
+        /* if the pixel is outside radius of two */
         if( is_outside_rad2( c_cur)){
-            /* set this to the cannonical boundary setting */
-            plane_col[y][x].t_id = WORKER_COUNT; 
-            plane_col[y][x].val = PPM_BLACK;  /* make the outer black */
+            plane[y][x].t_id = WORKER_COUNT; 
+            plane[y][x].val = PPM_BLACK;  /* make the outer black */
         }
-        else{
-            plane_col[y][x].val= is_member( c_cur);
+        else{ /* otherwise it could be in the mandelbrot set */
+            /* assign this thread id to the pixel */
+            plane[y][x].t_id = t_id; 
+            /* assign the resulting value to the pixel */
+            plane[y][x].val= is_member( c_cur); 
         }
     }
 }
@@ -259,7 +260,7 @@ void write_to_pgm()
     {
         for(x = 0; x < WIDTH; ++x)
         {
-            fprintf(fp, "%i ", plane_col[y][x].val);
+            fprintf(fp, "%i ", plane[y][x].val);
         }
         fprintf(fp, "\n");
     }
@@ -280,7 +281,7 @@ void write_to_ppm_redscale()
     {
         for(x = 0; x < WIDTH; ++x)
         {
-            fprintf(fp, "%i 0 0 ", MAX_ITERATIONS - plane_col[y][x].val);
+            fprintf(fp, "%i 0 0 ", MAX_ITERATIONS - plane[y][x].val);
         }
         fprintf(fp, "\n");
     }
@@ -301,8 +302,8 @@ void write_to_ppm()
     {
         for(x = 0; x < WIDTH; ++x)
         {
-            fprintf(fp, "%i 0 %i ", get_red_val(plane_col[y][x]),
-                                    get_blue_val(plane_col[y][x]));
+            fprintf(fp, "%i 0 %i ", get_red_val(plane[y][x]),
+                                    get_blue_val(plane[y][x]));
         }
         fprintf(fp, "\n");
     }

@@ -73,8 +73,8 @@ Core objectives are primary and more vital, advanced objectives are additional i
 \begin{enumerate}
 \item \textbf{Background Research}
 \item \textbf{A Sequential Mandelbrot Set Algorithm}
+\item \textbf{A Naive Parallel Mandelbrot Set Algorithm}
 \item \textbf{A Random Work-Stealing Mandelbrot Set Algorithm}
-\item \textbf{A Render Thread Work-Stealing Mandelbrot Set Algorithm}
 \item \textbf{Cross Analysis of the Implemented Algorithms}
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
@@ -82,7 +82,9 @@ Core objectives are primary and more vital, advanced objectives are additional i
 \subsection*{Advanced Objectives}
 \begin{enumerate}
 \setcounter{enumi}{\value{saveenum}}
-\item \textbf{Work-Stealing Trace System:}
+\item Graphical Output
+\item A Render Thread Work-Stealing Mandelbrot Set Algorithm
+\item Work-Stealing Trace System
 \end{enumerate}
 
 \section*{Achievements}
@@ -98,10 +100,12 @@ report was produced.
             \textbf{1} & Complete \\
             \textbf{2} & Complete \\
             \textbf{3} & Complete \\
-            \textbf{4} & Partially Complete \\
+            \textbf{4} & Complete \\
             \textbf{5} & - \\
         \hline
-            6 & - \\
+            6 & Complete \\
+            7 & Partially Complete \\
+            8 & - \\
         \hline
     \end{tabular}
     
@@ -198,8 +202,7 @@ In this section I will give a more detailed explanation of the areas mentioned h
 \end{figure}
 
 \subsection*{Fractals and Self-Similarity} 
-%TODO: this section needs citations all over the shop!
-A \gls{fractal} is a means of describing shapes which are more complex than classical geometric shapes. The leaves of a pine tree or the forks of a 
+A \gls{fractal} is a means of describing shapes which are more complex than a Euclidean shape. The leaves of a pine tree or the forks of a 
 lightning bolt are obvious examples of real things that fractals allow us to more faithfully describe. 
 These \glspl{real-world-fractal} are similar to \glspl{mathematical-fractal}, 
 of which the Mandelbrot set is an example, but differ in that they do not display the property of \gls{scale-invariance}. 
@@ -214,8 +217,9 @@ It is important to note here that The Mandelbrot set does not quite show the sam
 \glspl{quasi self-similarity}. This means the shape is approximately similar at all scales, in that the shape is replicated but in a slightly distorted
 form with each ``copy".
 
-%TODO
-It turns out there are many rather useful applications for fractals. To name a few; computer game graphics, %FIND MORE EXAMPLES WITH CITATIONS.
+It turns out there are many rather useful applications for fractals. To name a few; 
+computer graphics used in video games and films (notably Star Trek II: The Wrath of Khan \cite[p.~8]{fractimg}), 
+military hardware design \cite{fractantenna}, and measuring the length of a coastline \cite{coastline}.
 
 \subsection*{Julia Sets}
 
@@ -273,8 +277,9 @@ So the Mandelbrot set can be computed by iterating all possible values of \(c\) 
 \gls{critical-orbit}. Because the set of all possible values of \(c\) is infinite, and computers have a finite amount of resources, this 
 set needs to be approximated. This can be done using a raster plane which takes samples of the complex plane at regular intervals. 
 
-% TALK ABOUT VARIOUS ALGORITHMS PRESENTED TODO
-Level set method \cite[p.~188]{fractimg} Continuous Potential Method \cite[p.~191]{fractimg}
+There are many algorithms including the Level set method \cite[p.~188]{fractimg} and Continuous Potential Method \cite[p.~191]{fractimg}.
+The former uses a raster plane to produce an approximation as described above, and the latter produces a smooth surface representation.
+
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Work-Stealing Technique - Described in Depth}
@@ -318,8 +323,10 @@ of work from \textit{p0's} work list to its own. %do more here.
 \label{fig:stealoperation}
 \end{figure}
 
-Research has been conducted to explore its application in programming languages \cite{}, 
-operating systems \cite{}, and high performance parallel computing \cite{}.
+% TODO
+Research has been conducted to explore its application in programming languages such as Cilk \cite{blumleis}, 
+parallel programming libraries such as Hood \cite{hoodlib} and Factory \cite{factorylib}, 
+and large scale heterogeneous systems such as computational clouds \cite{scalesthesis}.
 
 This section explores some schemes used to implement work-stealing in various settings. It is focused on overall design and 
 techniques presented in related literature. 
@@ -382,8 +389,42 @@ The tools discussed in this section are all viable options for a Linux platform.
 
 \begin{itemize}
 \item \textbf{C:} 
+            A general purpose imperative language which is very widely used.
+            It is statically typed but weakly enforces and allows low level access to memory which 
+            makes the programmer responsible for reclaiming used memory.
+            This allows the programmer a high level of control but reduces type safety.
+            It is not object oriented and lacks many features of more modern high level
+            language features.
+            
+            C is well suited for implementing efficient, high performance programs due to
+            its relatively low level of abstraction compared to more modern languages.
+            It is often associated with system programming because of this.
+            A number of parallel programming libraries are available amongst other useful 
+            libraries.
+
 \item \textbf{C++:}
+            A general purpose multi-paradigm language inspired by C.
+            C++ adds object oriented programming (amongst other features) to the majority 
+            of C's syntax and features. 
+            This makes it more suitable for implementing larger application systems 
+            with the same benefits of low-level memory manipulation that C boasts.
+            
+            Some useful features include inheritance of types, dynamic polymorphism, 
+            and template (including an extensive library of useful template classes).
+            A number of parallel programming libraries are available and are similar 
+            if not the same as the equivalent C versions.
+            
 \item \textbf{Java:}
+            Primarily an object oriented language which borrows features from other paradigms.
+            It is highly portable because it targets java bytecode which runs on the java virtual machine, available on most platforms.
+            It is heavily influenced by C and C++ but offers few low-level facilities available in said languages. 
+            For instance pointers are not allowed and a garbage collector is used to move
+            the responsibility of memory management from the programmer to the run-time system.
+            Although this is a useful tool, the consequence is a run-time overhead.
+            
+            Java is more suited to application programming than the likes of C and C++.
+            Its extensive library offers concurrent programming classes.
+            
 \end{itemize}
 
 \subsection*{Parallel Programming Libraries}
@@ -436,7 +477,20 @@ of the Mandelbrot set, a graphical representation of the plane is output.
 
 \subsection*{Choices}
 
-C, pthreads, Colour PPM % justify these TODO
+% C, pthreads, Colour PPM % justify these TODO
+
+The implementation is produced using the C programming language, the pthreads library, and PPM files for graphical output.
+
+The C programming language is chosen for its relatively low-level of abstraction and level of control over memory management.
+It is preferable over C++ because features such as object oriented programming are deemed unnecessary for the purpose. 
+The implementation is relatively small-scale so C will suffice in terms of managing the project.
+
+The pthreads library is selected again for its low-level control compared to the likes of OpenMP and Java Threads.
+The implementation of the Randomised Work-Stealing algorithm only requires simple control of simple locks (i.e. mutexes)
+and nothing more. 
+
+The text based PPM file format is chosen for its simplicity. Producing a graphical representation of the Mandelbrot set is not
+the primary purpose of this project, but is still a desirable feature for verification and demonstration purposes.
 
 \subsection*{Other Tools Used}
 
@@ -511,7 +565,7 @@ END
 \subsection{General Design and Practices}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{Code Conventions}
+\subsubsection*{Coding Conventions}
 
 All presented code follows strict conventions to ensure readability. Following is a list of conventions used.
 \begin{itemize}
@@ -544,12 +598,9 @@ module and builds a binary for each. This approach provides several benefits.
 \item It allows for alteration to the mandelbrot module to be made with ease.
 \end{itemize}
 
-Four scheduler modules are implemented, of which two are described in detail in the following sections i.e. those which employ work stealing
-techniques.
-A sequential and a non run-time scheduled parallel module is implemented for comparison sake and as a test for the Mandelbrot module.
-
 \subsubsection*{Useful Language Features}
 
+% TODO
 % talk about the static keyword in C for the array.
 % talk about inlining some functions
 % Describe ppm output
@@ -569,6 +620,7 @@ accompanying header file which provides a work limit for the scheduler.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsubsection*{The Algorithm}
 
+% TODO Expand on these points.
 Each pixel of the raster plane maps to a point on the complex plane.
 
 The algorithm uses several parameters to manipulate the raster plane.
@@ -580,12 +632,24 @@ The algorithm uses several parameters to manipulate the raster plane.
 \item \textbf{The c\_factor:} \\
 \end{itemize} 
 
-The key functions used in the mandelbrot module.
+The key functions used in the mandelbrot module are described as follows:
 
 \begin{itemize}
 \item \textbf{compute\_line:} \\
-            Iterates a single line of the raster plane specified by a perameter \(y\) and assigns the result to the plane matrix.
-            
+            Iterates a single line of the X axis on the raster plane, specified by a perameter \(y\), and assigns the result to the corresponding
+            members of the plane matrix.
+            It also accepts a `t\_id' (thread id) parameter which is used for visualising regions of work completed per thread.
+            This is used as a point of interface for the attached scheduler module, which is responsible for iteration of the Y axis. 
+            The implication of this design means that the minimum granularity of a work item for the implemented scheduler module
+            is one `line'.
+
+            The function converts the co-ordinates \(x\) and \(y\) into a corresponding complex number \(c\) using the converte\_x\_coord and 
+            convert\_y\_coord functions respectively. 
+            Should the value of \(c\) lie outside the radius of two from the origin, the point is 
+            assigned the constant PPM\_BLACK. Its thread id is assigned WORKER\_COUNT to indicate to indicate that the graphical output should
+            ignore any thread information for this pixel.
+            Otherwise the pixel is assigned the value returned from the is\_member function and the thread id is assigned the value of 
+            the t\_id parameter.
             
 \item \textbf{is\_member:} \\
 \item \textbf{julia\_func:} \\

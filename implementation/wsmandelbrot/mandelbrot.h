@@ -24,8 +24,8 @@
 
 
 /* dimensions of the raster plane */
-#define HEIGHT 15000
-#define WIDTH  15000
+#define HEIGHT 5000
+#define WIDTH  5000
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 
@@ -47,8 +47,8 @@ typedef enum {OFF, GREYSCALE, REDSCALE, DISTRIBUTION} output_arg_t;
 /* function declarations */
 
 void initialise                 ( );
-inline double convert_x_coord   ( double, double, unsigned int);
-inline double convert_y_coord   ( double, double, unsigned int);
+inline double convert_x_coord   ( unsigned int);
+inline double convert_y_coord   ( unsigned int);
 inline char is_outside_rad2     ( complex_t);
 char is_member                  ( complex_t);
 complex_t julia_func              ( complex_t, complex_t);
@@ -68,5 +68,7 @@ void write_to_ppm_redscale      ();
 
 char get_red_val                ( pixel_t);
 char get_blue_val               ( pixel_t);
+
+inline float fast_inv_sqrt      ( float);
 
 #endif /* MANDELBROT_H */

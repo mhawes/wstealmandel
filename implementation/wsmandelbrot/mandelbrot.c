@@ -51,26 +51,22 @@ void initialise( )
 
     c_min.im = -2;
     c_max.im = c_min.im + (c_max.re - c_min.re) * HEIGHT / WIDTH;
-
+    
     /* used to convert x, y of the raster plane into a complex number */
     c_factor.re = (c_max.re - c_min.re) / (WIDTH - 1);
     c_factor.im = (c_max.im - c_min.im) / (HEIGHT - 1);
 }
 
 /* -------------------------------------------------------------------------- */
-inline double convert_y_coord( double im_max, 
-                        double im_factor, 
-                        unsigned int y)
+inline double convert_y_coord( unsigned int y)
 {
-    return im_max - y * im_factor;
+    return c_max.im - y * c_factor.im;
 }
 
 /* -------------------------------------------------------------------------- */
-inline double convert_x_coord( double re_min, 
-                        double re_factor, 
-                        unsigned int x)
+inline double convert_x_coord( unsigned int x)
 {
-    return re_min + x * re_factor;
+    return c_min.re + x * c_factor.re;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -106,7 +102,9 @@ char is_member(complex_t c)
 inline char is_outside_rad2( complex_t c)
 {
     /* if the number is outside the radius 2 we know it cant be in the set */
-    return( sqrt((c.re * c.re) + (c.im * c.im)) > 2);
+    /* note: no need for the sqrt function here comparing to 4 rather than 2 
+     * is faster */
+    return( ((c.re * c.re) + (c.im * c.im)) > 4 );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -128,10 +126,10 @@ void compute_line( unsigned int y, char t_id)
     complex_t c_cur; 
     unsigned int x;
 
-    c_cur.im = convert_y_coord( c_max.im, c_factor.im, y);
+    c_cur.im = convert_y_coord( y);
     for( x = 0; x < WIDTH; x++)
     {
-        c_cur.re = convert_x_coord( c_min.re, c_factor.re, x);
+        c_cur.re = convert_x_coord( x);
         
         /* if the pixel is outside radius of two */
         if( is_outside_rad2( c_cur)){
@@ -206,6 +204,12 @@ void print_usage()
     printf( "Computing the Mandelbrot set in parallel using a workstealing technique. \n"
             "Author: Martin Hawes\n"
             "\n"
+            "Constants:\n"
+            "   WORKER_COUNT:   %d\n"
+            "   MAX_ITERATIONS: %d\n"
+            "   HEIGHT:         %d\n"
+            "   WIDTH:          %d\n"
+            "\n"
             "Usage:\n"
             "   * No Arguments\n"
             "       The raster-plane is computed but no output is done.\n"
@@ -221,8 +225,8 @@ void print_usage()
             "   * --outfile=<file>\n"
             "       Specifies the name of the output file.\n"
             "       Maximum of 20 characters.\n"
-            "\n"
-            );
+            "\n",
+            WORKER_COUNT, MAX_ITERATIONS, HEIGHT, WIDTH);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -188,7 +188,6 @@ char ws_victimise( deque_t *deq, deque_t *victim)
     {
         /* if we have a normal line push it onto this threads deque */
         if( line.status == LINE_NORMAL){
-            //printf("T %d STOLE FROM T %d and got normal signal\n", deq->t_id, victim->t_id);
             de_push_bottom( deq, line);
             /* when we have stolen the right amount of work from a victim give up */
             if( fill_count < steal_size){

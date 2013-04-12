@@ -3,6 +3,7 @@
 
 #define WORKER_COUNT 4        /* the total number of worker threads */
 
+
 #include <pthread.h>
 
 /* HAS TO BE INCLUDED LAST!!! */
@@ -13,7 +14,8 @@ typedef struct thread_info_t{
     unsigned int start_y, end_y;
 } thread_info_t;
 
-void *ws_worker_thread       ( void*);
+void *na_worker_thread       ( void*);
+void na_initialise           ( thread_info_t*);
 
 /* -------------------------------------------------------------------------- */
 

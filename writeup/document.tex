@@ -566,8 +566,25 @@ Certain features of the XP approach are not applicable for this project. For exa
 \end{comment}
 
 % Try writing about feature driven development and see if it turns out better....
+A feature driven development (FDD) style approach to development is adopted for this project. 
+FDD is a branch of project management derived from the school of agile process models \cite{pracguidefdd}. 
+It is almost ideal for this project due to the small scale,  short product life-cycle,
+and the flexibility needed when requirements change as the project transpires.
+\\
 
-%TODO This is a bullshit gold mine! Write a page or so on this. Add an awesome diagram which takes up half a page! yay!
+\input{fddmodel}
+
+Some of the notable features of FDD which make it attractive for such a project are described 
+as follows:
+
+\begin{itemize}
+\item Short, iterative cycles of development.
+\item Working results delivered by each iteration.
+\item Flexibility for developers and clients alike, allowing for easy adaptation to changing requirements.
+\item Product quality is emphasised at each step. 
+\item Development stages may overlap, i.e. individual features can be produced concurrently.
+\end{itemize}
+
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsubsection*{Tool Choices}
@@ -578,6 +595,7 @@ The implementation is produced using the C programming language, the pthreads li
 The C programming language is chosen for its relatively low-level of abstraction and level of control over memory management.
 It is preferable over C++ because features such as object oriented programming are deemed unnecessary for the purpose. 
 The implementation is relatively small-scale so C will suffice in terms of managing the project.
+This decision is contrary to the choice documented in the detailed project proposal. 
 
 The pthreads library is selected again for its low-level control compared to the likes of OpenMP and Java Threads.
 The implementation of the Randomised Work-Stealing algorithm only requires simple control of simple locks (i.e. mutexes)
@@ -879,24 +897,51 @@ This section describes three additional modules which make use of different prog
 techniques than those described in section \ref{sec:randws}. 
 They interface with the Mandelbrot module in the same fashion as described in section \ref{sec:mandmod}
 
+These schemes are primarily used as a benchmark for the randomized work stealing algorithm but also 
+serve to verify the Mandelbrot module.
+
 \subsubsection*{A Sequential Algorithm}
 
-Simply iterates each line (i.e. \(y\) index) of the raster plane in sequence, calling compute\_line for each value of \(y\).
+This is the simplest algorithm presented and utilizes no concurrency.
+It iterates each line (i.e. \(y\) index) of the raster plane in sequence, calling compute\_line for each value of \(y\).
 This module effectively implements a variation of the level set algorithm described in listing~\ref{li:mandelalgo}
-by implementing the outer for loop in the compute\_mandelbrot function.
+by adding the outer for loop of the compute\_mandelbrot function.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{seqactivity}
+% full caption
+\caption{
+    An activity diagram which illustrates the simplicity of this scheme.
+}
+\label{fig:seqactivity}
+\end{figure}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection*{A Naive Parallel Algorithm}
+\subsubsection*{A Naive Parallel Algorithm}
 
-
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{naiveparactivity}
+% full caption
+\caption{
+    An activity diagram which illustrates the simple use of concurrency employed by this 
+    scheme.
+}
+\label{fig:naiveparactivity}
+\end{figure}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection*{A Render-Thread Work-Stealing Algorithm}
+\subsubsection*{A Render-Thread Work-Stealing Algorithm}
 %to cover:
 % * algorithm architecture: i.e. render threads, monitor thread.
 % * Describe a steal operation.
 % * Talk about initial distribution of work.
 % * Talk about estimated completion time.
+
+\subsection{The User Interface}
+
+
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Features for Demonstration}

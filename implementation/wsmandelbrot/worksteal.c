@@ -12,7 +12,7 @@ void *ws_worker_thread( void *t_deq)
     char stealable = 1;
     int work_count = 0;
 
-    printf("T_id %d started\n", deq->t_id); 
+//    printf("T_id %d started\n", deq->t_id); 
     
     do
     {
@@ -24,7 +24,7 @@ void *ws_worker_thread( void *t_deq)
     } while(stealable == 1);
     
     
-    printf("T_id %d finished computing %d lines\n", deq->t_id, work_count);
+//    printf("T_id %d finished computing %d lines\n", deq->t_id, work_count);
 
     pthread_exit(NULL);
 }

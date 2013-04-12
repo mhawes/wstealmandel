@@ -1,0 +1,45 @@
+\begin{figure}[h]
+\centering
+
+\begin{tikzpicture}[x=0.04\textwidth,y=1.5cm]
+
+  \def\xmin{1}
+  \def\xmax{20}
+  \def\ymin{0}
+  \def\ymax{4}
+
+  % grid
+  \draw[style=help lines, ystep=0.5, xstep=1] (\xmin,\ymin) grid
+  (\xmax,\ymax);
+
+  % axes
+  \draw[->] (\xmin,\ymin) -- (\xmax,\ymin); % node[right] {$x$};
+  \draw[->] (\xmin,\ymin) -- (\xmin,\ymax); % node[above] {$y$};
+
+  %labels      
+    \draw (10,0) -- coordinate (x axis mid) (10,0);
+	\draw (0,2) -- coordinate (y axis mid) (0,2);
+    \node[below=0.8cm] at (x axis mid) {Plane Size in Thousands Squared};
+    \node[rotate=90, above=0.8cm] at (y axis mid) {Performance Increase};
+
+
+  % xticks and yticks
+  \foreach \x in {1,2,...,20}
+    \node at (\x, \ymin) [below] {\x};
+  \foreach \y in {0,0.5,1,...,4}
+    \node at (\xmin,\y) [left] {\y};
+
+    \draw[color=blue] plot[smooth,mark=*,mark size=0pt] file {results/pcmatsize-np.data}
+    node [right] {naive-par};
+    
+    \draw[color=red] plot[smooth,mark=*,mark size=0pt] file {results/pcmatsize-ws.data}
+    node [right] {rand-ws};
+
+\end{tikzpicture}
+
+% full caption
+\caption{
+    A lovely lovely graph
+}
+\label{fig:perfmatsizepc}
+\end{figure}

@@ -1,0 +1,45 @@
+\begin{figure}[h]
+\centering
+
+\begin{tikzpicture}[x=0.005\textwidth,y=1.5cm]
+
+  \def\xmin{10}
+  \def\xmax{120}
+  \def\ymin{0}
+  \def\ymax{4}
+
+  % grid
+  \draw[style=help lines, ystep=0.5, xstep=10] (\xmin,\ymin) grid
+  (\xmax,\ymax);
+
+  % axes
+  \draw[->] (\xmin,\ymin) -- (\xmax,\ymin); % node[right] {$x$};
+  \draw[->] (\xmin,\ymin) -- (\xmin,\ymax); % node[above] {$y$};
+
+  %labels      
+    \draw (60,0) -- coordinate (x axis mid) (60,0);
+	\draw (0,2) -- coordinate (y axis mid) (0,2);
+    \node[below=0.5cm] at (x axis mid) {MAX\_ITERATIONS};
+    \node[rotate=90, above=0.5cm] at (y axis mid) {Performance Increase};
+
+
+  % xticks and yticks
+  \foreach \x in {10,20,...,120}
+    \node at (\x, \ymin) [below] {\x};
+  \foreach \y in {0,0.5,1,...,4}
+    \node at (\xmin,\y) [left] {\y};
+
+    \draw[color=blue] plot[smooth,mark=*,mark size=0pt] file {results/pcworksize-np.data}
+    node [right] {naive-par};
+    
+    \draw[color=red] plot[smooth,mark=*,mark size=0pt] file {results/pcworksize-ws.data}
+    node [right] {rand-ws};
+
+\end{tikzpicture}
+
+% full caption
+\caption{
+    Another lovely lovely graph
+}
+\label{fig:perfworksizepc}
+\end{figure}

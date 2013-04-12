@@ -1,9 +1,9 @@
 CC=gcc
-CCFLAGS=-I. -lm -lpthread -O3
+TRACE=0
 
 BINDIR = ./bin/
 
-DEPS = mandelbrot.h deque.h worksteal.h rtworksteal.h sequential.h noscheduling.h
+DEPS = mandelbrot.h deque.h worksteal.h rtworksteal.h sequential.h noscheduling.h interleaved.h
 WSOBJ = deque.o worksteal.o
 RTOBJ = rtworksteal.o
 SEOBJ = sequential.o
@@ -11,6 +11,13 @@ NSOBJ = noscheduling.o
 INOBJ = interleaved.o
 
 VERS = wsmandelbrot rtmandelbrot semandelbrot nsmandelbrot inmandelbrot
+
+# Setup  the trace mode and add the -D to the cc flags
+ifeq ($(TRACE),0)
+	CCFLAGS=-I. -lm -lpthread -O3 
+else
+	CCFLAGS=-I. -lm -lpthread -O3 -D TRACE=$(TRACE)
+endif
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CCFLAGS)

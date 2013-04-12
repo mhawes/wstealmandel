@@ -1,6 +1,7 @@
 #ifndef MANDELBROT_H
 #define MANDELBROT_H
 
+#include <stdarg.h>
 #include <math.h>
 #include <time.h>
 #include <string.h>
@@ -26,8 +27,8 @@
 
 
 /* dimensions of the raster plane */
-#define HEIGHT 5000
-#define WIDTH  5000
+#define HEIGHT 10000
+#define WIDTH  10000
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 
@@ -73,4 +74,6 @@ char get_blue_val               ( pixel_t);
 
 inline float fast_inv_sqrt      ( float);
 
+void trace_event                ( const char *,...);
+inline void trace_start         ();
 #endif /* MANDELBROT_H */

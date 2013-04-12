@@ -883,7 +883,8 @@ The algorithm is so called `randomised' because of the means to which a victim i
                 The fill\_count is then incremented. 
                 The line is checked for the LINE\_ABORT status. If this is true de\_steal is called again.
                 Otherwise this entire process is repeated until the LINE\_EMPTY status is received or the allotted amount of work is stolen.
-                
+
+%TODO Talk about the pros and cons of this design!!!!
 %TODO Talk about the problems I encountered 
 
 \end{itemize}
@@ -959,6 +960,9 @@ by adding the outer for loop of the compute\_mandelbrot function.
 \chapter{Discussion and Evaluation}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Cross Analysis of the Implemented Algorithms}
+
+\input{pcmatsize}
+\input{pcworksize}
 
 % Show colour work-stealing images.
 % Analyse trace output in graph form. i.e. Matrix size vs time for sequential, parallel, wsrandom, wsrenderthread.

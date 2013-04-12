@@ -12,6 +12,11 @@ complex_t c_factor; /* value used to calculate space between each sample on the
 output_arg_t out_arg;           // the output mode
 char outfile[21] = "out.ppm";   // the output filename with a default of `out.ppm'
 
+#ifdef TRACE
+/* only use this for trace build */
+unsigned long long start_time;
+pthread_mutex_t trace_mutex;
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* CODE STARTS HERE:                                                          */
@@ -20,22 +25,21 @@ char outfile[21] = "out.ppm";   // the output filename with a default of `out.pp
 int
 main( int argc, char *argv[])
 {
-    unsigned long long elapsed;
-
     handle_arguments( argc, argv);
-    
-    struct timeval tv_start, tv_end;
-    gettimeofday(&tv_start, NULL);
+
+#if TRACE >= 1
+    trace_start();
+#endif
 
     initialise();
     
     ws_initialise_threads();
     ws_start_threads();
-    
-    gettimeofday(&tv_end, NULL);
 
-    elapsed = (tv_end.tv_sec - tv_start.tv_sec)*1000000 + tv_end.tv_usec - tv_start.tv_usec;
-    printf( "TOOK: %llu us\n", elapsed);
+
+#if TRACE >= 1
+    trace_event( "complete\n");
+#endif
 
     perhaps_print();
     
@@ -55,6 +59,10 @@ void initialise( )
     /* used to convert x, y of the raster plane into a complex number */
     c_factor.re = (c_max.re - c_min.re) / (WIDTH - 1);
     c_factor.im = (c_max.im - c_min.im) / (HEIGHT - 1);
+    
+    #ifdef TRACE
+    pthread_mutex_init( &trace_mutex, NULL); 
+    #endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -351,3 +359,38 @@ char get_blue_val( pixel_t pix)
     return 0;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Prints a timestamp followed by the message to the output */
+void trace_event( const char *mess, ...)
+{
+#ifdef TRACE    
+    va_list args;
+
+    unsigned long long time;
+    struct timeval tv_time;
+    
+    gettimeofday(&tv_time, NULL);
+    time = (tv_time.tv_sec * 1000000 + tv_time.tv_usec) - start_time;
+
+    /* lock the trace mutex so that only one trace event can write at a time */
+    pthread_mutex_lock(&trace_mutex);
+    
+    printf("%llu: ", time);
+    va_start(args, mess);
+    vprintf(mess,args);
+    va_end(args);
+    
+    pthread_mutex_unlock(&trace_mutex);
+    
+#endif
+}
+
+/* -------------------------------------------------------------------------- */
+inline void trace_start()
+{
+#ifdef TRACE
+    struct timeval tv_start;
+    gettimeofday(&tv_start, NULL);
+    start_time = tv_start.tv_sec * 1000000 + tv_start.tv_usec;
+#endif
+}

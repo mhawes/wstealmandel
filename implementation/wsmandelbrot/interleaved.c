@@ -11,14 +11,18 @@ void *in_worker_thread( void* tia)
 
     //na_initialise( ti);
 
-//    printf("T_id %d started\n", ti->t_id); 
+#if TRACE >= 2    
+    trace_event("T_id %d started\n", ti->t_id); 
+#endif
 
     for(y = ti->t_id; y < HEIGHT; y = y + WORKER_COUNT)
     {
         compute_line( y, ti->t_id);
     }
-    
-//    printf("T_id %d finished computing %d lines\n", ti->t_id, ti->end_y - ti->start_y);
+
+#if TRACE >= 2 
+    trace_event("T_id %d finished computing %d lines\n", ti->t_id, ti->end_y - ti->start_y);
+#endif
 
     pthread_exit(NULL);
 }

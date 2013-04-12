@@ -6,12 +6,16 @@ void ws_start_threads()
 {
     unsigned int y;
 
-    //printf("Started\n");
+#if TRACE >= 2
+    trace_event("Started\n");
+#endif
     
     for( y = 0; y < HEIGHT; y++)
     {
         compute_line( y, 0);
     }
-    
-    //printf("Finished\n");
+
+#if TRACE >= 2   
+    trace_event("Finished\n");
+#endif
 }

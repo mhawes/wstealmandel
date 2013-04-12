@@ -3,6 +3,10 @@
 static deque_t deques[WORKER_COUNT]; /* Set of deques to fill. One per trhead. */
 pthread_t threads[WORKER_COUNT]; /* set of threads to execute the deques */
 
+#ifdef TRACE
+int steal_count[WORKER_COUNT];
+#endif
+
 /* -------------------------------------------------------------------------- */
 /* thread function */
 /* -------------------------------------------------------------------------- */
@@ -12,7 +16,9 @@ void *ws_worker_thread( void *t_deq)
     char stealable = 1;
     int work_count = 0;
 
-//    printf("T_id %d started\n", deq->t_id); 
+#if TRACE >= 2
+    trace_event("T_id %d started\n", deq->t_id); 
+#endif
     
     do
     {
@@ -23,8 +29,9 @@ void *ws_worker_thread( void *t_deq)
         stealable = ws_become_thief( deq);
     } while(stealable == 1);
     
-    
-//    printf("T_id %d finished computing %d lines\n", deq->t_id, work_count);
+#if TRACE >= 2
+    trace_event("T_id %d finished li: %d, sc: %d\n", deq->t_id, work_count, steal_count[deq->t_id]);
+#endif
 
     pthread_exit(NULL);
 }
@@ -124,8 +131,6 @@ unsigned int ws_compute_deque( deque_t *deq)
  */
 char ws_become_thief( deque_t *deq)
 {
-//    printf( "T %d BECAME THIEF\n", deq->t_id);
-
     int i;
     char result = 0, ex_count = 1;
     deque_t *victim;
@@ -155,10 +160,16 @@ char ws_become_thief( deque_t *deq)
         }
 
         /* add the unsuccessful victim to the exclude set */
-        exclude_set[victim->t_id] = 1;
-        ex_count++;
+        if( result == 0){
+            exclude_set[victim->t_id] = 1;
+            ex_count++;
+        }
     }
     
+#if TRACE >= 2
+    /* report the failure count as the thread returns to do the work it stole */
+    trace_event("T_id %d ret-work fc: %d\n", deq->t_id, ex_count - 1);
+#endif
     return 1;
 }
 
@@ -183,8 +194,12 @@ char ws_victimise( deque_t *deq, deque_t *victim)
     /* evaluate victim size to work out how much to steal */
     steal_size = (victim->bot - victim->top) / 2;
     
+    if( steal_size == 0){
+        return 0;
+    }
+    
     /* loop until we get an empty line or the right amount of work is stolen */
-    while( line.status != LINE_EMPTY )
+    while( line.status != LINE_EMPTY)
     {
         /* if we have a normal line push it onto this threads deque */
         if( line.status == LINE_NORMAL){
@@ -195,6 +210,10 @@ char ws_victimise( deque_t *deq, deque_t *victim)
                 fill_count++;
             }
             else{
+#if TRACE >= 2
+                steal_count[deq->t_id]++;
+                trace_event("T_id %d steal vi: %d, ws: %d\n", deq->t_id, victim->t_id, fill_count);
+#endif
                 return 1;
             }
         }
@@ -226,3 +245,4 @@ deque_t *ws_random_deque( char exclude_set[WORKER_COUNT])
     
     return &deques[i];
 }
+

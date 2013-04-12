@@ -6,12 +6,12 @@ void ws_start_threads()
 {
     unsigned int y;
 
-    printf("Started\n");
+    //printf("Started\n");
     
     for( y = 0; y < HEIGHT; y++)
     {
         compute_line( y, 0);
     }
     
-    printf("Finished\n");
+    //printf("Finished\n");
 }

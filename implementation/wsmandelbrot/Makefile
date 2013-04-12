@@ -8,8 +8,9 @@ WSOBJ = deque.o worksteal.o
 RTOBJ = rtworksteal.o
 SEOBJ = sequential.o
 NSOBJ = noscheduling.o
+INOBJ = interleaved.o
 
-VERS = wsmandelbrot rtmandelbrot semandelbrot nsmandelbrot
+VERS = wsmandelbrot rtmandelbrot semandelbrot nsmandelbrot inmandelbrot
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CCFLAGS)
@@ -28,6 +29,9 @@ semandelobj: mandelbrot.c $(DEPS)
 nsmandelobj: mandelbrot.c $(DEPS)
 	$(CC) -c -o mandelbrot.o mandelbrot.c $(CCFLAGS) -D nsmandel
 
+inmandelobj: mandelbrot.c $(DEPS)
+	$(CC) -c -o mandelbrot.o mandelbrot.c $(CCFLAGS) -D inmandel
+
 
 wsmandelbrot: wsmandelobj $(WSOBJ)
 	$(CC) -o $(BINDIR)$@ mandelbrot.o $(WSOBJ) $(CCFLAGS) 
@@ -40,6 +44,9 @@ semandelbrot: semandelobj $(SEOBJ)
 
 nsmandelbrot: nsmandelobj $(NSOBJ)
 	$(CC) -o $(BINDIR)$@ mandelbrot.o $(NSOBJ) $(CCFLAGS)
+
+inmandelbrot: inmandelobj $(INOBJ)
+	$(CC) -o $(BINDIR)$@ mandelbrot.o $(INOBJ) $(CCFLAGS)
 
 
 .PHONY: clean

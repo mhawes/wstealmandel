@@ -156,6 +156,7 @@ void compute_line( unsigned int y, char t_id)
 /* -------------------------------------------------------------------------- */
 /* UTIL FUNCTIONS:                                                           */
 /* -------------------------------------------------------------------------- */
+
 /* A simple function to parse command line arguments to allow some dynamic 
  * control from the user.
  *
@@ -212,12 +213,6 @@ void print_usage()
     printf( "Computing the Mandelbrot set in parallel using a workstealing technique. \n"
             "Author: Martin Hawes\n"
             "\n"
-            "Constants:\n"
-            "   WORKER_COUNT:   %d\n"
-            "   MAX_ITERATIONS: %d\n"
-            "   HEIGHT:         %d\n"
-            "   WIDTH:          %d\n"
-            "\n"
             "Usage:\n"
             "   * No Arguments\n"
             "       The raster-plane is computed but no output is done.\n"
@@ -233,6 +228,15 @@ void print_usage()
             "   * --outfile=<file>\n"
             "       Specifies the name of the output file.\n"
             "       Maximum of 20 characters.\n"
+            "\n"
+            "   * --help\n"
+            "       Displays this usage message.\n"
+            "\n\n"
+            "Constants:\n"
+            "   WORKER_COUNT:   %d\n"
+            "   MAX_ITERATIONS: %d\n"
+            "   HEIGHT:         %d\n"
+            "   WIDTH:          %d\n"
             "\n",
             WORKER_COUNT, MAX_ITERATIONS, HEIGHT, WIDTH);
 }
@@ -243,13 +247,13 @@ void perhaps_print()
 {
     switch( out_arg){
         case GREYSCALE :
-            write_to_pgm();
+            write_to_ppm_greyscale();
             break;
         case REDSCALE :
             write_to_ppm_redscale();
             break;
         case DISTRIBUTION :
-            write_to_ppm();
+            write_to_ppm_dist();
     }
 }
 
@@ -260,7 +264,7 @@ void print_complex(complex_t *com)
 }
 
 /* -------------------------------------------------------------------------- */
-void write_to_pgm()
+void write_to_ppm_greyscale()
 {
     unsigned int x, y;
 
@@ -302,7 +306,7 @@ void write_to_ppm_redscale()
 }
 
 /* -------------------------------------------------------------------------- */
-void write_to_ppm()
+void write_to_ppm_dist()
 {
     unsigned int x, y;
 

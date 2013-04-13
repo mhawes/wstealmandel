@@ -184,7 +184,8 @@ stays with the same processor until stolen.
 \section{The Mandelbrot Set}
 
 The Mandelbrot set is a set of complex numbers which when plotted produce a spectacular and recognisable shape as illustrated in figure~\ref{fig:mandelimg}.
-It is often presented as a colourful and striking image and has been described by some as the most beautiful object in all of mathematics \cite[p.~234]{chaosfract}.
+It is often presented as a colourful and striking image and has been described by some as the most beautiful object in all of mathematics 
+\cite[p.~234]{chaosfract}.
 The \glspl{complex-number} that comprise the set are closely related to \glspl{julia-set}. 
 In-fact the Mandelbrot set can be described as a catalogue of Julia Sets which, when plotted, all points are connected 
 forming a single unbroken shape \cite[p.~177]{fractimg}.
@@ -507,30 +508,6 @@ of the Mandelbrot set, a graphical representation of the plane is output.
               
 \end{itemize}
 
-\subsection*{Other Tools Used}
-
-Listed here are the major utility tools which have been used to make this project of a better over-all 
-quality. 
-
-\begin{itemize}
-\item \LaTeX: \\   
-            A document preparation markup language which produces professional and consistent 
-            documents. 
-
-\item \textbf{GNU Make:} \\ 
-            A tool to aid quick and easy building of a project. It uses a series of 
-            rules and dependancies to determine the order in which a project can be built 
-            which are described in an accompanying Makefile. 
-                         
-            This is useful for  producing an executable from source code as well
-            as compiling a \LaTeX  document in conjunction with bibtex to produce a pdf.
-
-\item \textbf{Git:} \\     
-            A distributed version control system which provides version tracking capabilities. 
-            It has the benefit of providing a means of backing up, as-well as maintaining 
-            synchronisation of project files across multiple machines.
-\end{itemize}
-
 % --------------------------------------------------------- HYPOTH section????? FIXME 
 % TODO talk about the fact that work need not be queued because all that is needed is a start line and a stop line.
 The key difference to the Randomized Work-Stealing Algorithm (described in section \ref{sec:randscheme}) is that a \gls{worker-thread} 
@@ -587,7 +564,7 @@ as follows:
 
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{Tool Choices}
+\subsubsection*{Major Tool Choices}
 
 % C, pthreads, Colour PPM % justify these TODO
 The implementation is produced using the C programming language, the pthreads library, and PPM files for graphical output.
@@ -604,6 +581,30 @@ and nothing more.
 The text based PPM file format is chosen for its simplicity. Producing a graphical representation of the Mandelbrot set is not
 the primary purpose of this project, but is still a desirable feature for verification and demonstration purposes.
 
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\subsubsection*{Other Tools Used}
+
+Listed here are the major utility tools which have been used to make this project of a better over-all 
+quality. 
+
+\begin{itemize}
+\item \LaTeX: \\   
+            A document preparation markup language which produces professional and consistent 
+            documents. 
+
+\item \textbf{GNU Make:} \\ 
+            A tool to aid quick and easy building of a project. It uses a series of 
+            rules and dependancies to determine the order in which a project can be built 
+            which are described in an accompanying Makefile. 
+                         
+            This is useful for  producing an executable from source code as well
+            as compiling a \LaTeX  document in conjunction with bibtex to produce a pdf.
+
+\item \textbf{Git:} \\     
+            A distributed version control system which provides version tracking capabilities. 
+            It has the benefit of providing a means of backing up, as-well as maintaining 
+            synchronisation of project files across multiple machines.
+\end{itemize}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsubsection*{Coding Conventions}
@@ -624,6 +625,11 @@ All presented code follows strict conventions to ensure readability. Following i
 \item \textbf{Constants and Pre-Processor Directives: } \\
             Pre-processor directives are declared in the accompanying header file. All names are in upper-case
             with words seperated by an underscore.
+\item \textbf{Commenting} \\
+            Comments are used to describe code sections which are challenging to understand or 
+            where complicated constructs are used. 
+            Where code is simple enough to be self documenting comments are used sparingly.
+            In general the block style is used (i.e. /{}* ... *{}/).
 \end{itemize}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -639,7 +645,7 @@ module and builds a binary for each. This approach provides several benefits.
 \item It allows for alteration to the mandelbrot module to be made with ease.
 \end{itemize}
 
-\subsubsection*{Useful Language Features}
+%\subsubsection*{Useful Language Features}
 
 % TODO
 % talk about the static keyword in C for the array.
@@ -757,6 +763,8 @@ This implementation uses four threads, each maintaining its own \gls{ready-deque
 the scheme presented in \cite{circdeque}.
 
 \subsubsection*{The Deque Implementation}
+\label{sec:dequeimp}
+
 % general description
 Three key operation are made on a \gls{ready-deque}. These are de\_pop\_bottom, de\_push\_bottom, and de\_steal.
 
@@ -828,8 +836,19 @@ rather than some amount that is defined at compile-time.
 
 \subsubsection*{The Work-Stealing Mechanism}
 
-The design described bellow utilises the deque implementation to produce an effective work-stealing scheme.
+The design described here utilises the deque implementation to produce an effective work-stealing scheme.
 The algorithm is so called `randomised' because of the means to which a victim is selected.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{wsthreadactivity}
+% full caption
+\caption{
+    An activity diagram to describe the behaviour of a work-stealing thread which utilises 
+    the double ended queue outlined in section \ref{sec:dequeimp}. 
+}
+\label{fig:wsthreadactivity}
+\end{figure}
 
 % 4 key functions: 
 % * ws\_worker\_thread
@@ -921,13 +940,33 @@ by adding the outer for loop of the compute\_mandelbrot function.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsubsection*{A Naive Parallel Algorithm}
 
-\begin{figure}[h]
+This scheme is a simple parallel algorithm. It is so called naive because of its comparable unbalanced work distribution to
+the a run-time work balanced algorithm. It is a good example of a typical scheme used for composing a parallel program based on a 
+sequential implementation.
+
+The raster plane is divided into equal regions, which each thread computes independently.
+The regions are comprised of a set of contiguous \(y\) lines of the size \(height / threadcount\).
+Each region is assigned as follows where \(ystart\) is the first and \(yend - 1\) is the last member of the region: 
+
+\[regionsize = height / threadcount\]
+\[ystart = threadid * regionsize\]
+\[yend = (threadid + 1) * regionsize\]
+
+For the region with the thread id equal to \(threadcount - 1\) (i.e. the thread which computes the lower region) 
+\(yend = height\). This is to ensure that all lines are assigned when \(height\) is not integer divisible by \(threadcount\).
+This functionality is omitted from figure \ref{fig:naiveparactivity} as not to muddy the simple, demonstrative purpose of the diagram.
+
+Figure \ref{fig:naiveparactivity} illustrates how the design of the sequential version, documented in 
+figure \ref{fig:seqactivity}, is composed onto multiple threads to attain a parallel design.
+
+\begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{naiveparactivity}
 % full caption
 \caption{
-    An activity diagram which illustrates the simple use of concurrency employed by this 
-    scheme.
+    An activity diagram which illustrates the use of concurrency employed by this 
+    scheme. It is worth noting that the dashed lines near the fork and join bars 
+    are added to illustrate that more than one thread runs concurrently.
 }
 \label{fig:naiveparactivity}
 \end{figure}
@@ -940,16 +979,86 @@ by adding the outer for loop of the compute\_mandelbrot function.
 % * Talk about initial distribution of work.
 % * Talk about estimated completion time.
 
-\subsection{The User Interface}
+This scheme implements the approach described in the background research section \ref{sec:rendscheme}. 
+
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{Output}
+\label{sec:output}
+
+The system is capable of outputting PPM image files of the computed raster plane. 
+This can be enabled using command line options described in section \ref{sec:userint}.
+Output is made optional because the process of producing the file is computationally time 
+consuming, especially for large raster planes. It contributes to the code which 
+cannot be parallelised.
+
+\input{outmode}
+
+\subsubsection*{Output File Format}
+
+The specification for the PBM, PGM, and PPM formats is presented here \cite{ppmspec}.
+
+Each file contains data for one image presented in plain text. This consists of some header information, 
+followed by an entry for each pixel. 
+\\
+
+\input{ppmformat}
+
+The header consists of four fields. On line one the `magic number' determines the colour style used.
+P1 is used for monochrome (PBM), P2 for greyscale (PGM), and P3 for colour (PPM).
+On line two is the width and height as decimal numbers, separated by a space.
+On line three is the maximum colour value a pixel can be. For the PBM format this line is omitted.
+Each line is separated with a carriage return. 
+
+Pixel data is separated by spaces and arranged in lines ending in a carriage return. 
+Each line has exactly \(width\) entries and their are exactly \(height\) lines.
+For the PPM format each pixel has three entries representing red, green, and blue.
+
+\subsubsection*{Implementation of The Output Mechanism}
+
+% TODO Describe this process somehow. Pseudo code?
+There are three functions which handle output of the plane (one per implemented outmode),
+each using a nested for-loop approach. 
 
 
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Features for Demonstration}
+\subsection{Run-Time Tracing}
 
-%to cover:
-% * Colour mandelbrot image which demonstrates work-stealing activity throughout execution.
-% * Work-stealing trace mechanism.
+
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{User Interface}
+\label{sec:userint}
+
+A basic command line interface is implemented which offers a few options to control the output of the program.
+When the program is given no arguments it computes the mandelbrot set with no output.
+The available options are described in the following paragraphs.
+
+\subsubsection*{-{}-outmode=\textless mode\textgreater}
+
+Determines the appearance of the output PPM file.
+The mechanism for producind output is described in section \ref{sec:output} and
+examples of each mode are shown in figure \ref{fig:outmodes}.
+There are three possible modes implemented:
+\begin{itemize}
+\item \textbf{greyscale}
+            Gradient of black to white. 
+\item \textbf{redscale}
+            Gradient of black to red.
+\item \textbf{distribution}
+            Each thread is represented by a different gradient.
+\end{itemize}
+
+This option must be used in order for output to occur.
+
+\subsubsection*{-{}-outfile=\textless file\textgreater}
+
+This option is used to specify the name of the output file.
+It must be used in conjunction with the `outmode' option.
+If this option is omitted the output file takes the default name `out.ppm'.
+
+\subsubsection*{-{}-help}
+
+Displays a usage message which describes the options detailed above.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Validation and Verification}
@@ -959,11 +1068,16 @@ by adding the outer for loop of the compute\_mandelbrot function.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Discussion and Evaluation}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Cross Analysis of the Implemented Algorithms}
+\section{Analysis of the Implemented Algorithms}
 
+\subsection{Performance Analysis}
 \input{pcmatsize}
 \input{pcworksize}
+
+\subsection{Run-Time Analysis of the Randomised Work-Stealing Algorithm}
 \input{laptrace-stvti}
+\input{laptrace-st-vi}
+
 
 % Show colour work-stealing images.
 % Analyse trace output in graph form. i.e. Matrix size vs time for sequential, parallel, wsrandom, wsrenderthread.

@@ -9,8 +9,7 @@
   \def\ymax{1000}
 
   % grid
-  \draw[style=help lines, ystep=50, xstep=0.1] (\xmin,\ymin) grid
-  (\xmax,\ymax);
+  \draw[style=help lines, ystep=50, xstep=0.05] (\xmin,\ymin) grid (\xmax,\ymax);
 
   % axes
   \draw[->] (\xmin,\ymin) -- (\xmax,\ymin); % node[right] {$x$};
@@ -24,7 +23,7 @@
 
 
   % xticks and yticks
-  \foreach \x in {0,0.25,0.5,...,2}
+  \foreach \x in {0.25,0.5,...,2}
     \node at (\x, \ymin) [below] {\x};
   \foreach \y in {0,100,...,1000}
     \node at (\xmin,\y) [left] {\y};

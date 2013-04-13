@@ -27,8 +27,8 @@
 
 
 /* dimensions of the raster plane */
-#define HEIGHT 10000
-#define WIDTH  10000
+#define HEIGHT 5000
+#define WIDTH  5000
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 
@@ -64,9 +64,9 @@ void print_usage                ();
 void perhaps_print              ();
 
 void print_complex              ( complex_t *);
-void write_to_pgm               ();
 
-void write_to_ppm               ();
+void write_to_ppm_dist          ();
+void write_to_ppm_greyscale     ();
 void write_to_ppm_redscale      ();
 
 char get_red_val                ( pixel_t);

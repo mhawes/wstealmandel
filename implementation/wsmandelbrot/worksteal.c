@@ -5,6 +5,7 @@ pthread_t threads[WORKER_COUNT]; /* set of threads to execute the deques */
 
 #ifdef TRACE
 int steal_count[WORKER_COUNT];
+int victim_count[WORKER_COUNT];
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -30,7 +31,7 @@ void *ws_worker_thread( void *t_deq)
     } while(stealable == 1);
     
 #if TRACE >= 2
-    trace_event("T_id %d finished li: %d, sc: %d\n", deq->t_id, work_count, steal_count[deq->t_id]);
+    trace_event("T_id %d finished li: %d, sc: %d, vc: %d\n", deq->t_id, work_count, steal_count[deq->t_id], victim_count[deq->t_id]);
 #endif
 
     pthread_exit(NULL);
@@ -51,7 +52,12 @@ void ws_initialise_threads()
     ws_distribute_lines();
     
     /* set a seed for the rand function */
-    srand( 938672);
+//    srand( 938672);
+
+    /* seed from the current usec val */
+//    struct timeval tv_seed;
+//    gettimeofday(&tv_seed, NULL);
+//    srand( tv_seed.tv_usec);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -167,6 +173,8 @@ char ws_become_thief( deque_t *deq)
     }
     
 #if TRACE >= 2
+    /* increment the victimisation count */
+    victim_count[victim->t_id]++;
     /* report the failure count as the thread returns to do the work it stole */
     trace_event("T_id %d ret-work fc: %d\n", deq->t_id, ex_count - 1);
 #endif

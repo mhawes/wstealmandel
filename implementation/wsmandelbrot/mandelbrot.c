@@ -150,6 +150,12 @@ void compute_line( unsigned int y, char t_id)
             /* assign the resulting value to the pixel */
             plane[y][x].val= is_member( c_cur); 
         }
+        
+        #ifdef TRACE
+        if( x == WIDTH / 2 && y > 5 && y < HEIGHT - 5 && plane[y][x].val == 0){
+            trace_event("IDIOT line %d t_id %d\n",y,plane[y][x].t_id);
+        }
+        #endif
     }
 }
 
@@ -276,6 +282,11 @@ void write_to_ppm_greyscale()
     {
         for(x = 0; x < WIDTH; ++x)
         {
+            #ifdef TRACE
+            if( x == WIDTH / 2 && y > 5 && y < HEIGHT - 5 && plane[y][x].val == 0){
+                trace_event("IDIOT line %d t_id %d\n",y,plane[y][x].t_id);
+            }
+            #endif
             fprintf(fp, "%i ", plane[y][x].val);
         }
         fprintf(fp, "\n");
@@ -385,7 +396,6 @@ void trace_event( const char *mess, ...)
     va_end(args);
     
     pthread_mutex_unlock(&trace_mutex);
-    
 #endif
 }
 

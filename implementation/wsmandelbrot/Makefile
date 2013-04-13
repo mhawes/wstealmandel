@@ -14,7 +14,7 @@ VERS = wsmandelbrot rtmandelbrot semandelbrot nsmandelbrot inmandelbrot
 
 # Setup  the trace mode and add the -D to the cc flags
 ifeq ($(TRACE),0)
-	CCFLAGS=-I. -lm -lpthread -O3 
+	CCFLAGS=-I. -lm -lpthread 
 else
 	CCFLAGS=-I. -lm -lpthread -O3 -D TRACE=$(TRACE)
 endif

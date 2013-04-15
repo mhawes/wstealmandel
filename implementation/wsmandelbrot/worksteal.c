@@ -192,17 +192,19 @@ char ws_victimise( deque_t *deq, deque_t *victim)
     int steal_size;
     int fill_count = 0;
 
+    /* evaluate victim size to work out how much to steal */
+    steal_size = (victim->bot - victim->top) / 2;
+    
+    /* if there is nothing worth stealing return 0 */
+    if( steal_size == 0){
+        return 0;
+    }
+
+    /* steal a line */
     line = de_steal( victim);
     
     /* check if the victim is empty first */
     if( line.status == LINE_EMPTY ){
-        return 0;
-    }
-    
-    /* evaluate victim size to work out how much to steal */
-    steal_size = (victim->bot - victim->top) / 2;
-    
-    if( steal_size == 0){
         return 0;
     }
     
@@ -222,6 +224,7 @@ char ws_victimise( deque_t *deq, deque_t *victim)
                 steal_count[deq->t_id]++;
                 trace_event("T_id %d steal vi: %d, ws: %d\n", deq->t_id, victim->t_id, fill_count);
 #endif
+                /* push the stray line */
                 return 1;
             }
         }

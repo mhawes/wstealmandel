@@ -284,9 +284,10 @@ void write_to_ppm_greyscale()
         {
             #ifdef TRACE
             if( x == WIDTH / 2 && y > 5 && y < HEIGHT - 5 && plane[y][x].val == 0){
-                trace_event("IDIOT line %d t_id %d\n",y,plane[y][x].t_id);
+                trace_event("Missing Line %d t_id %d\n",y,plane[y][x].t_id);
             }
             #endif
+            
             fprintf(fp, "%i ", plane[y][x].val);
         }
         fprintf(fp, "\n");
@@ -308,6 +309,12 @@ void write_to_ppm_redscale()
     {
         for(x = 0; x < WIDTH; ++x)
         {
+            #ifdef TRACE
+            if( x == WIDTH / 2 && y > 5 && y < HEIGHT - 5 && plane[y][x].val == 0){
+                trace_event("Missing Line %d t_id %d\n",y,plane[y][x].t_id);
+            }
+            #endif
+            
             fprintf(fp, "%i 0 0 ", MAX_ITERATIONS - plane[y][x].val);
         }
         fprintf(fp, "\n");
@@ -329,6 +336,12 @@ void write_to_ppm_dist()
     {
         for(x = 0; x < WIDTH; ++x)
         {
+            #ifdef TRACE
+            if( x == WIDTH / 2 && y > 5 && y < HEIGHT - 5 && plane[y][x].val == 0){
+                trace_event("Missing Line %d t_id %d\n",y,plane[y][x].t_id);
+            }
+            #endif
+            
             fprintf(fp, "%i 0 %i ", get_red_val(plane[y][x]),
                                     get_blue_val(plane[y][x]));
         }

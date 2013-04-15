@@ -27,8 +27,8 @@
 
 
 /* dimensions of the raster plane */
-#define HEIGHT 5000
-#define WIDTH  5000
+#define HEIGHT 10000
+#define WIDTH  10000
 
 #define PPM_BLACK 0     /* the value of black in a grey-scale ppm file */
 

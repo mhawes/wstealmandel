@@ -105,7 +105,7 @@ report was produced.
         \hline
             6 & Complete \\
             7 & Partially Complete \\
-            8 & - \\
+            8 & Complete \\
         \hline
     \end{tabular}
     
@@ -117,7 +117,7 @@ report was produced.
 
 There are five remaining chapters in this report. 
 In chapter two a detailed review of the problem background is presented. 
-Chapter three details the practical implementation, which this report is based on, including validation and verification of the described software.
+Chapter three details the practical implementation, which this report is based on, and the manner in which it was carried out.
 Chapter four offers an evaluation of the project as a whole. This includes analysis of the implemented software and a comparison of the implemented
 schemes.
 Chapter five lists the resources referenced in this report.
@@ -219,7 +219,7 @@ It is important to note here that The Mandelbrot set does not quite show the sam
 form with each ``copy".
 
 It turns out there are many rather useful applications for fractals. To name a few; 
-computer graphics used in video games and films (notably Star Trek II: The Wrath of Khan \cite[p.~8]{fractimg}), 
+computer graphics used in video games and film (notably Star Trek II: The Wrath of Khan \cite[p.~8]{fractimg}), 
 military hardware design \cite{fractantenna}, and measuring the length of a coastline \cite{coastline}.
 
 \subsection*{Julia Sets}
@@ -411,8 +411,23 @@ which will be referred to as the \gls{victim}. The \gls{monitor-thread} waits fo
 Its workload is then halved, having the other half re-asigned to the thief. Both the victim and the thief are restarted and continue doing work.
 The monitor-thread returns to waiting for another work-completed signal and the process is repeated until no work remains.
 
+
+% --------------------------------------------------------- HYPOTH section????? FIXME 
+% TODO talk about the fact that work need not be queued because all that is needed is a start line and a stop line.
+\subsection*{Discussion of the Presented Schemes}
+The key difference between the Render-Thread Algorithm and the Randomized Work-Stealing Algorithm (described in section \ref{sec:randscheme}), 
+is that a \gls{worker-thread} does not maintain a queue of work but simply has a range of indices assigned. 
+This all but eliminates the overheads associated with initialising and 
+maintaining a potentially costly data-structure, but makes a \gls{non-blocking} implementation difficult. It also requires a monitor-thread to manage
+work migration which reduces the maximum number of threads performing work by one. 
+Another limiting factor is that only one thread may perform work-stealing at any given time. The Randomized Work-Stealing Algorithm has no such limitation.
+
+% Talk about scalability. i.e. the average estimated completion time vs randomly selected of victim
+
+
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Tools}
+\label{sec:restools}
 
 This section discusses some of the programming and general tools which were considered
 for use in the implementation and for the good of the project as a whole.
@@ -508,14 +523,6 @@ of the Mandelbrot set, a graphical representation of the plane is output.
               
 \end{itemize}
 
-% --------------------------------------------------------- HYPOTH section????? FIXME 
-% TODO talk about the fact that work need not be queued because all that is needed is a start line and a stop line.
-The key difference to the Randomized Work-Stealing Algorithm (described in section \ref{sec:randscheme}) is that a \gls{worker-thread} 
-does not maintain a queue of work but simply has a range of indices assigned. This all but eliminates the overheads associated with initialising and 
-maintaining a potentially costly data-structure, but makes a \gls{non-blocking} implementation difficult. It also requires a monitor-thread to manage
-work migration which reduces the maximum number of threads performing work by one.
-
-% Talk about scalability. i.e. the average estimated completion time vs randomly selected of victim
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -524,6 +531,9 @@ work migration which reduces the maximum number of threads performing work by on
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Implementation}
+
+%TODO Write something horrible here
+
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{General Design and Practices}
@@ -566,8 +576,8 @@ as follows:
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsubsection*{Major Tool Choices}
 
-% C, pthreads, Colour PPM % justify these TODO
-The implementation is produced using the C programming language, the pthreads library, and PPM files for graphical output.
+The implementation is realised using the C programming language, the pthreads library, and PPM files for graphical output.
+These choices are based on the tools examined in section \ref{sec:restools}.
 
 The C programming language is chosen for its relatively low-level of abstraction and level of control over memory management.
 It is preferable over C++ because features such as object oriented programming are deemed unnecessary for the purpose. 
@@ -841,11 +851,17 @@ The algorithm is so called `randomised' because of the means to which a victim i
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.5]{wsthreadactivity}
+\includegraphics[scale=0.4]{wsthreadactivity}
 % full caption
 \caption{
-    An activity diagram to describe the behaviour of a work-stealing thread which utilises 
-    the double ended queue outlined in section \ref{sec:dequeimp}. 
+An activity diagram to describe the behaviour of a work-stealing thread which utilises 
+the double ended queue outlined in section \ref{sec:dequeimp}. 
+\(L\) is the line popped from the threads deque. 
+\(SL\) (stolen line) is the line popped from the victim's deque.
+The \(victimsize\) is the is the amount of work currently in the victim's deque.
+The \(stealquota\) is the amount of work items to be stolen.
+The \(fillcount\) is the number of items that have been stolen so far.
+The \(failcount\) is the frequency of failed steal attempts.
 }
 \label{fig:wsthreadactivity}
 \end{figure}
@@ -902,11 +918,48 @@ The algorithm is so called `randomised' because of the means to which a victim i
                 The fill\_count is then incremented. 
                 The line is checked for the LINE\_ABORT status. If this is true de\_steal is called again.
                 Otherwise this entire process is repeated until the LINE\_EMPTY status is received or the allotted amount of work is stolen.
-
-%TODO Talk about the pros and cons of this design!!!!
-%TODO Talk about the problems I encountered 
-
 \end{itemize}
+%TODO Talk about the pros and cons of this design!!!!
+
+\subsubsection*{Problematic Characteristics}
+
+This scheme allows for multiple threads to perform work-stealing operations simultaneously. 
+Due to the random nature of victim selection, some problematic situations may arise at run-time.
+These situations are likely to be detrimental to the overall balance of work load.
+They are described as follows:
+
+\begin{itemize}
+\item \textbf{Double Victimisation:} \\
+        Where two threads concurrently victimise the same thread.
+        In this situation more than half of a victims deque is migrated.
+        It can result, under certain circumstances,
+        in almost all of the work in a victims deque being re-distributed in quick succession. 
+        
+        This is problematic because it can force unnecessary migration of work, which subsequently results 
+        in more frequent steal operations.
+        
+        Figure \ref{fig:doubvict} illustrates this phenomenon.
+\item \textbf{Victimisation of a Thief:} \\
+        When a thief is selecting a thread to victimise it does not discriminate between working threads 
+        and thief threads. Thus a `sub-thief' can steal work from a thread which is already stealing work from a 
+        victim.
+        
+        In this situation work is indirectly moved from a victim to the sub-theif, via 
+        another threads deque. The problem is the size of a thief thread's deque does not equal 
+        the total number of stolen items, until all items are migrated. As a result the sub-thief 
+        effectively steals less than half of the thief's eventual workload, as it evaluates its size
+        before all items are transferred. 
+        This could result in an unfair re-distribution of work and ultimately an unbalanced work load.
+        
+        The diagram in figure \ref{fig:victtheif} represents such a situation.
+\end{itemize}
+
+Both problems could potentially be mitigated by making work-stealing operations atomic using mutex locks. 
+In essence, this involves implementing a mechanism where a thread can only take the state of either worker, thief, or victim
+at any given time, where thieves may only victimise workers. 
+This would come at the cost of blocking execution of a thread in certain cases, and would add to the complexity of the algorithm.
+
+\input{problemsit}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -981,6 +1034,8 @@ figure \ref{fig:seqactivity}, is composed onto multiple threads to attain a para
 
 This scheme implements the approach described in the background research section \ref{sec:rendscheme}. 
 
+%TODO
+
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Output}
 \label{sec:output}
@@ -1013,17 +1068,98 @@ Pixel data is separated by spaces and arranged in lines ending in a carriage ret
 Each line has exactly \(width\) entries and their are exactly \(height\) lines.
 For the PPM format each pixel has three entries representing red, green, and blue.
 
-\subsubsection*{Implementation of The Output Mechanism}
-
-% TODO Describe this process somehow. Pseudo code?
-There are three functions which handle output of the plane (one per implemented outmode),
-each using a nested for-loop approach. 
-
-
-
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Run-Time Tracing}
+\label{sec:traceimp}
 
+A simple tracing mechanism is implemented allowing for run-time analysis of implemented scheduling modules.
+Any trace related code is not compiled by default, as it has a detrimental effect on performance. 
+Instead an option must be passed to `make' when the project is built to enable tracing.
+
+Related code is encased in preprocessor directives as follows:
+
+\begin{lstlisting}
+/* Tracing for all modes */
+#ifdef TRACE
+...
+trace_event("mode 1: %",123);
+#endif
+
+/* Mode specific tracing code */
+#if TRACE == 2
+...
+trace_event("mode 2: %d",456);
+#endif 
+\end{lstlisting}
+
+The trace\_event function prints a time-stamp in microseconds relative to the start of execution,
+followed by the desired message. A \gls{mutex} is locked to ensure each output message
+is completed and written in sequence.
+
+Currently two modes are in place.
+These can be built by passing the following arguments to `make':
+\subsubsection*{TRACE=1}
+            A completion message is printed when the scheduling module has completed execution.
+            This serves as a means of measuring the execution time of the program as a timestamp
+            relative to the start.
+            
+\begin{lstlisting}
+499066: complete
+\end{lstlisting}
+
+
+\subsubsection*{TRACE=2}
+            Traces thread activity in scheduler modules. 
+            All thread related traces specify a thread id using the T\_id field.
+            The following example shows a trace of the naive parallel algorithm.
+            
+\begin{lstlisting}
+242: T_id 1 started
+...
+754652: T_id 1 finished computing 1250 lines
+...
+754804: complete
+\end{lstlisting}
+
+\subsubsection*{Tracing the Randomised Work-Stealing Algorithm}
+
+The trace format for the Randomised Work Stealing algorithm requires some explanation.
+It is detailed as follow:
+\\
+
+\begin{lstlisting}[label = ls:wstraceeg,caption = Examples of the Four Traced Events for the Randomised Work-Stealing Scheme]
+1316: T_id 0 started
+...
+396334: T_id 0 steal vi: 3, ws: 10
+...
+1948938: T_id 3 ret-work fc: 1
+...
+1960169: T_id 3 finished li: 3237, sc: 4, vc: 4
+\end{lstlisting}
+
+\begin{itemize}
+\item \textbf{started:} \\
+        The thread specified by the T\_id field has started. Line one of listing \ref{ls:wstraceeg} shows an example.
+
+\item \textbf{steal:} \\
+        The thread specified by the T\_id field has successfully performed a steal
+        operation. The vi (victim) field indicates the thread id of the victim and ws (work stolen) field shows
+        the quantity of work items migrated. Line three of listing \ref{ls:wstraceeg} shows an example.
+
+\item \textbf{ret-work:} \\
+        The thread specified by the T\_id field has finished stealing work and is returning to compute its stolen 
+        lines. The fc (fail count) field shows how many times the thread victimised another unsuccessfully. 
+        Line five of listing \ref{ls:wstraceeg} shows an example.
+        
+\item \textbf{finished:} \\
+        The thread specified by the T\_id field has detected no available work and has fineshed. The li (lines) fields shows the
+        quantity of work items computed, the sc (steal count) field shows how many successful steal operations the thread carried out, 
+        and the vc (victimisation count) field indicates how many times the thread was victimised.
+        Line seven of listing \ref{ls:wstraceeg} shows an example.
+        
+\end{itemize}
+
+Some examples of full run-time traces are available in the appendices section \ref{sec:traceout}.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{User Interface}
@@ -1061,7 +1197,7 @@ If this option is omitted the output file takes the default name `out.ppm'.
 Displays a usage message which describes the options detailed above.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Validation and Verification}
+%\section{Validation and Verification}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1070,12 +1206,57 @@ Displays a usage message which describes the options detailed above.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Analysis of the Implemented Algorithms}
 
+This section discusses results gathered over a series of program runs and observations made based on these. 
+
 \subsection{Performance Analysis}
+
 \input{pcmatsize}
 \input{pcworksize}
 
-\subsection{Run-Time Analysis of the Randomised Work-Stealing Algorithm}
+\subsection{Analysis of the Randomised Work-Stealing Algorithm}
+
+\subsubsection*{Run-Time Analysis}
+
+The scatter plot shown in figure \ref{fig:tracelap1} and the bar charts shown in figure \ref{fig:stealvictbar} 
+bring to light some interesting properties of the algorithm.
+They also highlight some potential points of improvement.
+
 \input{laptrace-stvti}
+
+The following observations are based on the results presented in figure \ref{fig:tracelap1}:
+
+\begin{itemize}
+\item 
+    As less work items are available, steal-operations become more frequent, in which fewer work items are migrated. 
+    This trend continues until no work items are available and completion is detected, as is suggested by the data.
+
+    The result is that a high frequency of steal operations, where small amounts of work are
+    migrated, occur as processing nears termination. The benefit of migrating such small work-loads could
+    be seen to outweigh the cost of allowing the thread to continue computing the given region.
+    This could be alleviated by implementing a work migration threshold, which limits a steal operation 
+    to a minimum number of steal-able work. Should the 
+
+\item 
+    A situation where multiple threads perform a steal operation in close time proximity arises often.
+    Five clear examples of this are exposed at approximately \(0.4\),\(1.4\),\(1.6\),\(1.8\), and \(1.9\) seconds.
+    This outweighs the three instances in which a single steal operation occurs within \(0.1\) of a second.
+
+    The following trace excerpt corresponds to the data shown in the plots marked in black. 
+    It details the three points plotted at approximately \(1.6\) seconds.
+
+\begin{lstlisting}
+...
+1625982: T_id 0 steal vi: 1, ws: 429
+1626009: T_id 3 steal vi: 1, ws: 214
+1628855: T_id 2 steal vi: 3, ws: 106
+...
+\end{lstlisting}
+    
+    % TODO talk about the Double Victimisation and Vict of Theif
+    This example supports the ideas in section \ref{sec:randws}
+
+\end{itemize}
+
 \input{laptrace-st-vi}
 
 
@@ -1083,7 +1264,7 @@ Displays a usage message which describes the options detailed above.
 % Analyse trace output in graph form. i.e. Matrix size vs time for sequential, parallel, wsrandom, wsrenderthread.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Reflection on Project}
+\section{Reflection}
 \subsection{Further Work}
 
 %to cover:
@@ -1096,10 +1277,8 @@ Displays a usage message which describes the options detailed above.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Resources}
-
-\nocite{*}
-
 % refs\bibs:
+\nocite{*}
 \bibliography{refs}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1107,14 +1286,20 @@ Displays a usage message which describes the options detailed above.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 \chapter{Appendices}
-
 \appendix
-\chapter{Glossary of Terms}\label{sec:glosterm}
 
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\chapter{Glossary of Terms}\label{sec:glosterm}
 %\glsaddall
 \printglossaries
 
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \newpage
 \chapter{Source Code}\label{sec:srccode}
+
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\newpage
+\chapter{Trace Output}\label{sec:traceout}
+\input{append/traces}
 
 \end{document}

@@ -1,7 +1,7 @@
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 
-\begin{tikzpicture}[x=0.04\textwidth,y=1.5cm]
+\begin{tikzpicture}[x=0.035\textwidth,y=1.5cm]
 
   \def\xmin{1}
   \def\xmax{20}
@@ -20,7 +20,8 @@
     \draw (10,0) -- coordinate (x axis mid) (10,0);
 	\draw (0,2) -- coordinate (y axis mid) (0,2);
     \node[below=0.8cm] at (x axis mid) {Plane Size in Thousands Squared};
-    \node[rotate=90, above=0.8cm] at (y axis mid) {Performance Increase};
+    \node[rotate=90, above=0.8cm] at (y axis mid) {Average Performance Increase};
+    \node[rotate=90, above=0.4cm] at (y axis mid) {on Sequential Version};
 
 
   % xticks and yticks
@@ -39,7 +40,7 @@
 
 % full caption
 \caption{
-    A lovely lovely graph
+A plot 
 }
 \label{fig:perfmatsizepc}
 \end{figure}

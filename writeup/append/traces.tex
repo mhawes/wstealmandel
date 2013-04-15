@@ -1,0 +1,85 @@
+The trace examples here are produced using the following constants in mandelbrot.h:
+
+\begin{itemize}
+\item HEIGHT = 10000
+\item WIDTH = 10000
+\item MAX\_ITERATIONS = 70
+\end{itemize}
+
+\begin{lstlisting}[label=apptracese1,caption=An example trace produced by the `semandelbrot' binary. Trace mode is one.]
+2997274: complete
+\end{lstlisting}
+
+Other traces for mode one are omitted because they all take the same form.
+\\
+
+\begin{lstlisting}[label=apptracese,caption=An example trace produced by the `semandelbrot' binary. Trace mode is two.]
+4: Started
+6311056: Finished
+6311137: complete
+\end{lstlisting}
+
+\begin{lstlisting}[label=apptracens,caption=An example trace produced by the `nsmandelbrot' binary. Trace mode is two.]
+264: T_id 2 started
+270: T_id 1 started
+292: T_id 0 started
+315: T_id 3 started
+411214: T_id 0 finished computing 2500 lines
+432582: T_id 3 finished computing 2500 lines
+2956530: T_id 2 finished computing 2500 lines
+3002084: T_id 1 finished computing 2500 lines
+3002311: complete
+\end{lstlisting}
+
+\begin{lstlisting}[label=apptracews,caption=An example trace produced by the `wsmandelbrot' binary. Trace mode is two.]
+1289: T_id 1 started
+1289: T_id 0 started
+1318: T_id 2 started
+1418: T_id 3 started
+402418: T_id 3 steal vi: 2, ws: 818
+402426: T_id 3 ret-work fc: 0
+404182: T_id 0 steal vi: 2, ws: 408
+404185: T_id 0 ret-work fc: 0
+937474: T_id 2 steal vi: 3, ws: 277
+937483: T_id 2 ret-work fc: 0
+1090359: T_id 0 steal vi: 2, ws: 107
+1090368: T_id 0 ret-work fc: 0
+1362642: T_id 2 steal vi: 1, ws: 978
+1362648: T_id 2 ret-work fc: 0
+1375208: T_id 0 steal vi: 2, ws: 483
+1375211: T_id 0 ret-work fc: 0
+1544923: T_id 0 steal vi: 2, ws: 139
+1544931: T_id 0 ret-work fc: 0
+1625982: T_id 0 steal vi: 1, ws: 429
+1625989: T_id 0 ret-work fc: 0
+1626009: T_id 3 steal vi: 1, ws: 214
+1626012: T_id 3 ret-work fc: 0
+1628855: T_id 2 steal vi: 3, ws: 106
+1628857: T_id 2 ret-work fc: 0
+1805224: T_id 2 steal vi: 1, ws: 62
+1805232: T_id 2 ret-work fc: 0
+1815588: T_id 3 steal vi: 0, ws: 153
+1815592: T_id 3 ret-work fc: 0
+1922202: T_id 1 steal vi: 3, ws: 40
+1922211: T_id 1 ret-work fc: 1
+1922743: T_id 2 steal vi: 1, ws: 19
+1922746: T_id 2 ret-work fc: 0
+1946743: T_id 2 steal vi: 3, ws: 10
+1946746: T_id 2 ret-work fc: 0
+1948303: T_id 1 steal vi: 3, ws: 4
+1948305: T_id 1 ret-work fc: 0
+1954789: T_id 1 steal vi: 0, ws: 29
+1954791: T_id 1 ret-work fc: 0
+1955573: T_id 3 steal vi: 2, ws: 1
+1955576: T_id 3 ret-work fc: 0
+1958113: T_id 3 steal vi: 0, ws: 13
+1958114: T_id 3 ret-work fc: 1
+1958254: T_id 2 steal vi: 1, ws: 13
+1958255: T_id 2 ret-work fc: 0
+1978160: T_id 1 finished li: 855, sc: 3, vc: 6
+1978439: T_id 0 finished li: 3872, sc: 5, vc: 3
+1978493: T_id 2 finished li: 2010, sc: 7, vc: 6
+1978682: T_id 3 finished li: 3262, sc: 5, vc: 5
+1978762: complete
+\end{lstlisting}
+

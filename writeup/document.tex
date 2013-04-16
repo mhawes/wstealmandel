@@ -4,6 +4,7 @@
 
 % ------------------------------------------------------------------------------
 %title
+\begin{comment}
 \title{
 \huge Work-Stealing Scheduling Techniques Applied to Computing the Mandelbrot Set.
 }
@@ -16,15 +17,19 @@
   \\
   \textit{hawesmartin@googlemail.com}\\
 }
+\end{comment}
 
 % ------------------------------------------------------------------------------
 % - Document starts here
 % ------------------------------------------------------------------------------
 
 \begin{document}
-\maketitle
-\date{}
-\pagenumbering{Roman}
+
+\input{title}
+
+%\maketitle
+%\date{}
+%\pagenumbering{Roman}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section*{Abstract}
@@ -799,7 +804,7 @@ Three key operation are made on a \gls{ready-deque}. These are de\_pop\_bottom, 
                          In any other case an attempt to lock the top\_mutex is made. If this fails then a simultaneous pop\_bottom operation
                          has locked the deque item and a Line with the status LINE\_ABORT is returned. 
                          Otherwise the item at the top of the Deque is returned and the top counter is incremented.
-                       
+
 \item \textbf{de\_push\_bottom: } \\
                          Accepts a Deque pointer and a Line to push onto the bottom of the queue. 
                          
@@ -813,6 +818,20 @@ top index of the deque.
 This is achieved using the pthread\_mutex\_trylock function, which accepts a mutex and returns \textit{0} should lock be successful.
 Otherwise, for instance when the mutex is locked by another thread, an error value is returned. This allows the thread to test the 
 state of the mutex and continue execution without blocking (waiting for the mutex to become un-locked).
+
+\begin{lstlisting}[label=li:destrealtrylock,
+caption=This excerpt taken from the code for the de\_steal operation shows how the pthread\_mutex\_trylock funciton is used to avoid blocking when the mutex is already locked. If the function returns \(0\) the mutex is available otherwise the else clause is taken.]
+if( pthread_mutex_trylock(&d->top_mutex) == 0)
+{
+    l = d->queue[d->top % d->mem_size];
+    d->top++;
+    pthread_mutex_unlock (&d->top_mutex);
+}
+else{
+    l = abort_steal;
+}
+\end{lstlisting}
+
 This allows the thread to handle such a situation accordingly; in the case of the steal operation an abort signal, and in the case
 of the pop operation an empty signal. An empty signal is produced here because the only situation where a de\_steal operation will block 
 a de\_pop\_bottom operation is when there is only one item remaining in the deque, which has already been claimed by the steal operation.
@@ -1220,6 +1239,7 @@ This section discusses results gathered over a series of program runs and observ
 The scatter plot shown in figure \ref{fig:tracelap1} and the bar charts shown in figure \ref{fig:stealvictbar} 
 bring to light some interesting properties of the algorithm.
 They also highlight some potential points of improvement.
+\\
 
 \input{laptrace-stvti}
 
@@ -1233,8 +1253,10 @@ The following observations are based on the results presented in figure \ref{fig
     The result is that a high frequency of steal operations, where small amounts of work are
     migrated, occur as processing nears termination. The benefit of migrating such small work-loads could
     be seen to outweigh the cost of allowing the thread to continue computing the given region.
+    
     This could be alleviated by implementing a work migration threshold, which limits a steal operation 
-    to a minimum number of steal-able work. Should the 
+    to a minimum number of steal-able work. Should the projected work-load to be migrated fall under 
+    this threshold, the steal attempt would fail. 
 
 \item 
     A situation where multiple threads perform a steal operation in close time proximity arises often.
@@ -1252,26 +1274,123 @@ The following observations are based on the results presented in figure \ref{fig
 ...
 \end{lstlisting}
     
-    % TODO talk about the Double Victimisation and Vict of Theif
-    This example supports the ideas in section \ref{sec:randws}
-
+    % TODO Backup some of the points made here
+    This example highlights some possible instances of the problematic situations detailed in section \ref{sec:randws}. 
+    
+    A double victimisation is present where both thread zero and three steal from thread one. Notably thread three 
+    migrates roughly half the work items thread zero does. This suggests that thread one's work load has been reduced
+    by nearly three quarters in quick succession.
+    
+    In addition, closely after, thread two victimises thread three. This suggests that victimisation of a thread has occurred,
+    and again the transferred work-load is approximately half that stolen by the victim. It implies that work has indirectly 
+    been moved from thread zero, to thread two, via thread three.
+    
+    This behaviour is a side effect of using a randomised approach to victimisation. Other approaches, for example evaluating work
+    throughput metrics, could alleviate these problems.
 \end{itemize}
 
 \input{laptrace-st-vi}
 
+The following observations are based on the bar charts presented in figure \ref{fig:stealvictbar}:
 
+\begin{itemize}
+\item 
+    Each thread is victimised on average \(3.275\) times over twenty program runs. 
+    The lowest average victimisation count is \(2.9\) (for thread zero) and the highest is \(3.75\) (for thead one).
+    These results, which are visualised in figure \ref{fig:barstvvi}, suggest that randomly selecting a victim 
+    thread to steal from is a relatively fair mechanism.
+
+    It is worth noting that this is dependant on the qualities of the random number generator function.
+    This implementation uses the `rand' function provided the `stdlib' library with a static seed. This is done to 
+    produce more repeatable behaviour. 
+    A more effective approach may be to produce a random function in which the seed is based on a dynamic system property,
+    for instance the clock time. 
+
+\item 
+    The threads which are initially assigned the upper and lowermost quarters of the raster-plane compute, on average, roughly three times 
+    more work items than the inner threads. 
+    This demonstrates that the algorithm implicitly balances work-load at run-time, and is shown in 
+    figure \ref{fig:stealvictbar}.
+    
+    
+    
+\end{itemize}
 % Show colour work-stealing images.
 % Analyse trace output in graph form. i.e. Matrix size vs time for sequential, parallel, wsrandom, wsrenderthread.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Reflection}
+\subsection{Success of the Project}
+
+In general, the author feels that this project is a successful one. It has been an enlightening and thoroughly enjoyable experience
+to investigate the subject area. Here is an evaluation of each objective defined in the introduction section.
+
+% TODO complete these sections!!!!!
+\subsubsection*{Background Research}
+\subsubsection*{A Sequential Mandelbrot Set Algorithm}
+\subsubsection*{A Naive Parallel Mandelbrot Set Algorithm}
+\subsubsection*{A Random Work-Stealing Mandelbrot Set Algorithm}
+\subsubsection*{Cross Analysis of the Implemented Algorithms}
+\subsubsection*{Graphical Output}
+\subsubsection*{A Render Thread Work-Stealing Mandelbrot Set Algorithm}
+\subsubsection*{Work-Stealing Trace System}
+
+
 \subsection{Further Work}
 
-%to cover:
-% * Use a linked list instead of a circular array in the deque.
-% * Cluster computation.
-% * Adaption for use with more powerful architectures. 
-% * More tracing abilities. 
+Although all the core project objectives have been completed, as well as the majority of the additional objectives, 
+there are a number of interesting areas in which this work could be extended.
+
+\subsubsection*{Alternative Work-Stealing Schemes and Policies}
+To further investigate the work-stealing approach, other schemes could be implemented. 
+Areas which could be examined include:
+\begin{itemize}
+\item \textbf{Different Victimisation Policies: } 
+    Techniques for selecting a victim, for example choosing the thread which has the lowest work-throughput, could 
+    prove to more-fairly balance work-load. This would also serve as a point of comparison for the randomised approach.
+\item \textbf{Threshold Stealing: }
+    By enforcing a minimum limit for the amount of work a thief can steal, a number of unnecessary steal operations could be avoided.
+\item \textbf{Alternative Deque Implementations: }
+    The Deques implementation could be re-implemented using a different data structure design. For instance instead of a circular array,
+    a linked list could be put in place.
+\item \textbf{Different Multi-Thread Designs: }
+    Other approaches to parallel algorithm design could applied to produce other, perhaps more intuitive, designs.
+    A fully working implementation of the Render-Thread scheme would be a good starting point for this line of enquiry.
+\end{itemize}
+
+\subsubsection*{Computing Julia Sets}
+The existing code in the Mandelbrot module could be fairly easily adapted to support raster-plane generation for Julia sets.
+The algorithm could accept a parameter to specify the value of \(z\) for the function described in equation \ref{eq:julia1}.
+This would expose a huge set of new test cases for the randomised work-stealing algorithm implementation.
+
+\subsubsection*{Investigate Specific Multi-Processor Architectures}
+Parallel computing platforms such as cluster computing, cloud computing, cellular architectures, amongst many others 
+geared toward high performance computing, would provide a useful area for further study. 
+
+By focusing on a particular class of architecture the algorithm could be optimised, taking into consideration such 
+properties as cache and memory layout, locality of related work-items, and processor locality. 
+
+\subsubsection*{Production of A Parallel Programming Library}
+The themes explored in this report could be applied to a vast number of programs. 
+Producing a library which provides abstract programming directives, such as parallel data-structure iterators, or
+support for fully strict multi-threaded computations, could prove a useful general programming tool. 
+
+\subsubsection*{Expansion of the Capabilities of the Tracing Mechanism}
+A more concise tracing system could be implemented. The current mechanism provides only very limited run-time information
+of the implemented algorithms. 
+Features to calculate statistics such as work item throughput per thread, detection of detrimental situations, and running 
+tallies of thread status are desirable. These could provide vital debugging tools and could help to identify detrimental 
+properties of the algorithm.
+
+\subsubsection*{More Efficient Image Generation}
+Currently the output image takes a noticeably long time to write. This is due to the nature of the file format used.
+
+The program could be adapted to use a run-time graphics library, such as OpenGL, to display the image as it is generated.
+In adition, this could be used to illustrate the work-stealing scheme in action. As each thread completes a work item its corresponding
+line would appear on the screen in its assigned colour gradient. This would show how work items are migrated throughout runtime and serve
+to demonstrate the workings of the algorithm.
+
+\section{Conclusion}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------

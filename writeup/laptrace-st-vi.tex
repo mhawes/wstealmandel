@@ -32,6 +32,7 @@
 \legend{Steals,Victimisations}
 \end{axis}
 \end{tikzpicture}
+\caption{Steal count and victimisation count per thread.}
 \label{fig:barstvvi}
 \end{subfigure}
 ~ %spacer
@@ -57,16 +58,17 @@
         (2,18.7375)
         (3,35.929) 
     };
-\legend{Percentage of Work}
+\legend{Percentage of Work Computed}
 \end{axis}
 \end{tikzpicture}
+\caption{Percentage of total work-load computed per thread.}
 \label{fig:barworkperthread}
 \end{subfigure}
 % full caption
 \caption{
-    On the left: A bar chart to display the average frequency of steal operations and the average 
+    Sub-figure \ref{fig:barstvvi} shows a bar chart to display the average frequency of steal operations and the average 
     frequency of victimisations, per thread id, over twenty test runs.
-    On the right: A bar chart to show the average percentage of the raster-plane computed
+    Sub-figure \ref{fig:barworkperthread} shows a bar chart to show the average percentage of the raster-plane computed
     by each thread over the same twenty test runs.
 }
 \label{fig:stealvictbar}

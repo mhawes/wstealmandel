@@ -2,22 +2,6 @@
 % includes preamble stuff
 \input{pre}
 
-% ------------------------------------------------------------------------------
-%title
-\begin{comment}
-\title{
-\huge Work-Stealing Scheduling Techniques Applied to Computing the Mandelbrot Set.
-}
-
-\author{
-  Martin J Hawes\\
-  \\
-  Department of Computer Science, \\
-  The University of Hertfordshire \\ 
-  \\
-  \textit{hawesmartin@googlemail.com}\\
-}
-\end{comment}
 
 % ------------------------------------------------------------------------------
 % - Document starts here
@@ -27,19 +11,21 @@
 
 \input{title}
 
-%\maketitle
-%\date{}
-%\pagenumbering{Roman}
+%setup initial roman numeral page numbering
+\pagenumbering{Roman}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section*{Abstract}
 
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\newpage
 \section*{Acknowledgements}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \clearpage
+
+% set numbering back to arabic
 \pagenumbering{arabic}
 \setcounter{page}{1}
 \tableofcontents
@@ -78,9 +64,9 @@ Core objectives are primary and more vital, advanced objectives are additional i
 \begin{enumerate}
 \item \textbf{Background Research}
 \item \textbf{A Sequential Mandelbrot Set Algorithm}
-\item \textbf{A Naive Parallel Mandelbrot Set Algorithm}
+\item \textbf{A Na\"{\i}ve Parallel Mandelbrot Set Algorithm}
 \item \textbf{A Random Work-Stealing Mandelbrot Set Algorithm}
-\item \textbf{Cross Analysis of the Implemented Algorithms}
+\item \textbf{Analysis of the Implemented Algorithms}
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
 
@@ -106,7 +92,7 @@ report was produced.
             \textbf{2} & Complete \\
             \textbf{3} & Complete \\
             \textbf{4} & Complete \\
-            \textbf{5} & - \\
+            \textbf{5} & Complete \\
         \hline
             6 & Complete \\
             7 & Partially Complete \\
@@ -130,6 +116,7 @@ In chapter six the appendices are presented.
 
 A glossary of terms is presented as Appendix A. 
 This consists of a list describing major concepts surrounding the field of study, and directs the reader to their pages of occurrence. 
+Words highlighted by bold face indicate the first appearance of a glossary term.
 
 The source code for all software developed to fulfil the objectives described above is presented as Appendix B.
 
@@ -154,6 +141,7 @@ The source code for all software developed to fulfil the objectives described ab
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \chapter{Background Research}
+\label{ch:backres}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 \section{Run-Time Scheduling Techniques for Multi-Threaded Computations}
@@ -322,6 +310,7 @@ which is visually pleasing.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Work-Stealing Technique - Described in Depth}
+\label{sec:resworkdepth}
 
 As described above, \gls{work-stealing} is a \gls{load-balancing} technique which allows work starved processors to acquire scheduled work from other processors. 
 
@@ -532,30 +521,17 @@ of the Mandelbrot set, a graphical representation of the plane is output.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\chapter{Main Sections}
+%\chapter{Main Sections}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{The Implementation}
-
-%TODO Write something horrible here
+\chapter{The Implementation}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{General Design and Practices}
+\section{General Design and Practices}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{Development Process Model}
-
-\begin{comment}
-% THIS? or Feature Driven Development?
-An extreme programming (XP) style approach to development is adopted for this project. 
-Extreme programming is a branch of project management derived from the school of agile process models. 
-It is almost ideal for this project due to the small scale, very small development team
-(in-fact the team only has one member!), and the flexibility to changing requirements as
-the project transpires.
-
-Certain features of the XP approach are not applicable for this project. For example there is no opportunity for 
-\end{comment}
+\subsection*{Development Process Model}
 
 % Try writing about feature driven development and see if it turns out better....
 A feature driven development (FDD) style approach to development is adopted for this project. 
@@ -579,15 +555,16 @@ as follows:
 
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{Major Tool Choices}
+\subsection*{Major Tool Choices}
 
 The implementation is realised using the C programming language, the pthreads library, and PPM files for graphical output.
 These choices are based on the tools examined in section \ref{sec:restools}.
 
-The C programming language is chosen for its relatively low-level of abstraction and level of control over memory management.
+The C programming language is chosen for its relatively low-level of abstraction and level of control over memory management\footnote{
+This decision is contrary to the choice (i.e. C++) documented in the project proposal.}.
 It is preferable over C++ because features such as object oriented programming are deemed unnecessary for the purpose. 
 The implementation is relatively small-scale so C will suffice in terms of managing the project.
-This decision is contrary to the choice documented in the detailed project proposal. 
+
 
 The pthreads library is selected again for its low-level control compared to the likes of OpenMP and Java Threads.
 The implementation of the Randomised Work-Stealing algorithm only requires simple control of simple locks (i.e. mutexes)
@@ -604,12 +581,12 @@ quality.
 
 \begin{itemize}
 \item \LaTeX: \\   
-            A document preparation markup language which produces professional and consistent 
+            A document preparation mark-up language which produces professional and consistent 
             documents. 
 
 \item \textbf{GNU Make:} \\ 
             A tool to aid quick and easy building of a project. It uses a series of 
-            rules and dependancies to determine the order in which a project can be built 
+            rules and dependencies to determine the order in which a project can be built 
             which are described in an accompanying Makefile. 
                          
             This is useful for  producing an executable from source code as well
@@ -622,7 +599,7 @@ quality.
 \end{itemize}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{Coding Conventions}
+\subsection*{Coding Conventions}
 
 All presented code follows strict conventions to ensure readability. Following is a list of conventions used.
 \begin{itemize}
@@ -639,7 +616,7 @@ All presented code follows strict conventions to ensure readability. Following i
                         
 \item \textbf{Constants and Pre-Processor Directives: } \\
             Pre-processor directives are declared in the accompanying header file. All names are in upper-case
-            with words seperated by an underscore.
+            with words separated by an underscore.
 \item \textbf{Commenting} \\
             Comments are used to describe code sections which are challenging to understand or 
             where complicated constructs are used. 
@@ -648,10 +625,10 @@ All presented code follows strict conventions to ensure readability. Following i
 \end{itemize}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{Modular Design}
+\subsection*{Modular Design}
 
 The implementation takes the form of a modular design. The module which has the functionality to compute the Mandelbrot set
-has an interface to which a seperate `scheduling' module can be attached. The Makefile holds a rule for each scheduling 
+has an interface to which a separate `scheduling' module can be attached. The Makefile holds a rule for each scheduling 
 module and builds a binary for each. This approach provides several benefits. 
 
 \begin{itemize}
@@ -669,7 +646,7 @@ module and builds a binary for each. This approach provides several benefits.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{An Algorithm to Compute the Mandelbrot Set}
+\section{An Algorithm to Compute the Mandelbrot Set}
 \label{sec:mandmod}
 
 This section describes the Mandelbrot module which provides an interface for run-time scheduler implementations to 
@@ -681,14 +658,14 @@ The former should be used for any set-up processing (for example distributing th
 work load) and the latter is used to start processing the raster plane.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{The Mandelbrot Module}
+\subsection{The Mandelbrot Module}
 
 % TODO Expand on these points.
 The key functions used in the mandelbrot module are described as follows:
 
 \begin{itemize}
 \item \textbf{compute\_line:} \\
-            Iterates a single line of the X axis on the raster plane, specified by a perameter \(y\), and assigns the result to the corresponding
+            Iterates a single line of the X axis on the raster plane, specified by a parameter \(y\), and assigns the result to the corresponding
             members of the plane matrix.
             It also accepts a `t\_id' (thread id) parameter which is used for visualising regions of work completed per thread.
             This is used as a point of interface for the attached scheduler module, which is responsible for iteration of the Y axis. 
@@ -765,7 +742,7 @@ this. Several parameters are used by the algorithm to construct the raster plane
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{A Randomised Work-Stealing Algorithm}
+\section{A Randomised Work-Stealing Algorithm}
 \label{sec:randws}
 
 %to cover:
@@ -777,7 +754,7 @@ This section describes the implementation of the Randomised Work-Stealing algori
 This implementation uses four threads, each maintaining its own \gls{ready-deque}. The implemented \gls{ready-deque} is based on
 the scheme presented in \cite{circdeque}.
 
-\subsubsection*{The Deque Implementation}
+\subsection{The Deque Implementation}
 \label{sec:dequeimp}
 
 % general description
@@ -863,7 +840,7 @@ attempts until the mutex is un-locked.
 The benefits of this approach are that the deque is more scalable and only memory that is likely to be used is allocated, 
 rather than some amount that is defined at compile-time.
 
-\subsubsection*{The Work-Stealing Mechanism}
+\subsection{The Work-Stealing Mechanism}
 
 The design described here utilises the deque implementation to produce an effective work-stealing scheme.
 The algorithm is so called `randomised' because of the means to which a victim is selected.
@@ -983,7 +960,8 @@ This would come at the cost of blocking execution of a thread in certain cases, 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-\subsection{Additional Scheduling Modules}
+\section{Additional Schemes}
+\label{sec:addscheme}
 
 This section describes three additional modules which make use of different programming 
 techniques than those described in section \ref{sec:randws}. 
@@ -992,7 +970,7 @@ They interface with the Mandelbrot module in the same fashion as described in se
 These schemes are primarily used as a benchmark for the randomized work stealing algorithm but also 
 serve to verify the Mandelbrot module.
 
-\subsubsection*{A Sequential Algorithm}
+\subsection*{A Sequential Algorithm}
 
 This is the simplest algorithm presented and utilizes no concurrency.
 It iterates each line (i.e. \(y\) index) of the raster plane in sequence, calling compute\_line for each value of \(y\).
@@ -1010,9 +988,9 @@ by adding the outer for loop of the compute\_mandelbrot function.
 \end{figure}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{A Naive Parallel Algorithm}
+\subsection*{A Na\"{\i}ve Parallel Algorithm}
 
-This scheme is a simple parallel algorithm. It is so called naive because of its comparable unbalanced work distribution to
+This scheme is a simple parallel algorithm. It is so called na\"{\i}ve because of its comparable unbalanced work distribution to
 the a run-time work balanced algorithm. It is a good example of a typical scheme used for composing a parallel program based on a 
 sequential implementation.
 
@@ -1040,11 +1018,11 @@ figure \ref{fig:seqactivity}, is composed onto multiple threads to attain a para
     scheme. It is worth noting that the dashed lines near the fork and join bars 
     are added to illustrate that more than one thread runs concurrently.
 }
-\label{fig:naiveparactivity}
+\label{fig:naveparactivity}
 \end{figure}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsubsection*{A Render-Thread Work-Stealing Algorithm}
+\subsection*{A Render-Thread Work-Stealing Algorithm}
 %to cover:
 % * algorithm architecture: i.e. render threads, monitor thread.
 % * Describe a steal operation.
@@ -1053,10 +1031,24 @@ figure \ref{fig:seqactivity}, is composed onto multiple threads to attain a para
 
 This scheme implements the approach described in the background research section \ref{sec:rendscheme}. 
 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{rtdiagram}
+% full caption
+\caption{
+    A diagram which illustrates a typical steal operation for the Render-Thread Algorithm. 
+    It illustrates how steal operations require thread synchronisation.
+    Grey shaded boxes, with dashed borders, represent 
+    regions of time in which the corresponding thread must wait for a signal. White boxes indicate that a thread 
+    is performing some task. Arrows between threads indicates inter-thread communication.
+}
+\label{fig:rtdiagram}
+\end{figure}
+
 %TODO
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{Output}
+\section{Output}
 \label{sec:output}
 
 The system is capable of outputting PPM image files of the computed raster plane. 
@@ -1067,7 +1059,7 @@ cannot be parallelised.
 
 \input{outmode}
 
-\subsubsection*{Output File Format}
+\subsection*{Output File Format}
 
 The specification for the PBM, PGM, and PPM formats is presented here \cite{ppmspec}.
 
@@ -1078,7 +1070,7 @@ followed by an entry for each pixel.
 \input{ppmformat}
 
 The header consists of four fields. On line one the `magic number' determines the colour style used.
-P1 is used for monochrome (PBM), P2 for greyscale (PGM), and P3 for colour (PPM).
+P1 is used for monochrome (PBM), P2 for grey-scale (PGM), and P3 for colour (PPM).
 On line two is the width and height as decimal numbers, separated by a space.
 On line three is the maximum colour value a pixel can be. For the PBM format this line is omitted.
 Each line is separated with a carriage return. 
@@ -1088,7 +1080,7 @@ Each line has exactly \(width\) entries and their are exactly \(height\) lines.
 For the PPM format each pixel has three entries representing red, green, and blue.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{Run-Time Tracing}
+\section{Run-Time Tracing}
 \label{sec:traceimp}
 
 A simple tracing mechanism is implemented allowing for run-time analysis of implemented scheduling modules.
@@ -1130,7 +1122,7 @@ These can be built by passing the following arguments to `make':
 \subsubsection*{TRACE=2}
             Traces thread activity in scheduler modules. 
             All thread related traces specify a thread id using the T\_id field.
-            The following example shows a trace of the naive parallel algorithm.
+            The following example shows a trace of the na\"{\i}ve parallel algorithm.
             
 \begin{lstlisting}
 242: T_id 1 started
@@ -1140,7 +1132,7 @@ These can be built by passing the following arguments to `make':
 754804: complete
 \end{lstlisting}
 
-\subsubsection*{Tracing the Randomised Work-Stealing Algorithm}
+\subsection*{Tracing the Randomised Work-Stealing Algorithm}
 
 The trace format for the Randomised Work Stealing algorithm requires some explanation.
 It is detailed as follow:
@@ -1181,7 +1173,7 @@ It is detailed as follow:
 Some examples of full run-time traces are available in the appendices section \ref{sec:traceout}.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{User Interface}
+\section{User Interface}
 \label{sec:userint}
 
 A basic command line interface is implemented which offers a few options to control the output of the program.
@@ -1224,6 +1216,7 @@ Displays a usage message which describes the options detailed above.
 \chapter{Discussion and Evaluation}
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Analysis of the Implemented Algorithms}
+\label{sec:analysis}
 
 This section discusses results gathered over a series of program runs and observations made based on these. 
 
@@ -1309,40 +1302,147 @@ The following observations are based on the bar charts presented in figure \ref{
 \item 
     The threads which are initially assigned the upper and lowermost quarters of the raster-plane compute, on average, roughly three times 
     more work items than the inner threads. 
-    This demonstrates that the algorithm implicitly balances work-load at run-time, and is shown in 
-    figure \ref{fig:stealvictbar}.
+    This demonstrates that the algorithm implicitly balances work-load at run-time, and is shown in figure \ref{fig:stealvictbar}.
     
+    The behaviour exhibited here is expected as the majority of the computational load lies in the central regions. 
+    Put more concisely; when a point is deemed a member of the set, exactly the maximum number of iterations will have occurred, thus 
+    involving more work. In general, the closer a point lies to the set, the more costly it becomes to process.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|r|}
+        \hline
+            \textbf{Thread ID} & \textbf{Completion Time} (\(\mu\)secs) \\
+        \hline \hline
+            \textbf{0} & 410922 \\
+            \hline
+            \textbf{1} & 3001814 \\
+            \textbf{2} & 2956266 \\
+            \hline
+            \textbf{3} & 432267 \\
+            \hline
+    \end{tabular}
+    \label{tab:npartab}
+    \caption{The time taken from thread start to finish, for each thread in the na\"{\i}ve parallel algorithm to compute its assigned region.
+The data presented here is sourced from the trace presented in appendices figure \ref{apptracens}.}
+\end{table}
+
+    As the rendering of the set has symmetry on the horizontal axis it is expected that each half should represent an equal 
+    proportion of the work-load. 
+    This can be illustrated by analysing a trace of the na\"{\i}ve parallel algorithm. Table \ref{tab:npartab} shows that the 
+    central regions take longer to compute when no run-time load balancing is employed.
     
-    
+    Split into four initial, equally sized regions the randomised work-stealing algorithm should ideally redistribute work 
+    to alleviate the exhibited behaviour of the na\"{\i}ve-parallel algorithm.
+    For the outermost regions (i.e. threads zero and three) this is true, as can be seen in figure \ref{fig:stealvictbar},
+    where these ultimately compute approximately the same proportion of the plane.
+    However, a discrepancy arises for the innermost threads (one and two) where thread one, on average, computes much fewer lines
+    than its counterpart two. 
+
+    This could be attributed to a number of aspects of the design. For instance, the phenomena of double victimisation and 
+    victimisation of a thief could be responsible for the unfairly balanced work load. Further investigation is
+    required to determine a more evident cause.
+        
 \end{itemize}
 % Show colour work-stealing images.
 % Analyse trace output in graph form. i.e. Matrix size vs time for sequential, parallel, wsrandom, wsrenderthread.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Reflection}
-\subsection{Success of the Project}
+\section{Evaluation of Success}
 
 In general, the author feels that this project is a successful one. It has been an enlightening and thoroughly enjoyable experience
-to investigate the subject area. Here is an evaluation of each objective defined in the introduction section.
+to investigate the subject area. Here is an evaluation of each objective defined in the introduction section, as well as some aspects 
+of the project which apply in general.
 
 % TODO complete these sections!!!!!
+\subsection{Core Objectives}
 \subsubsection*{Background Research}
+    Background research is presented in chapter \ref{ch:backres}. To start; a broad range of areas related to scheduling parallel algorithms is explored 
+    and explained. The work-stealing approach is introduced here, however the discussion is further developed in section \ref{sec:resworkdepth}. 
+    A concise explanation of the Mandelbrot set, and its surrounding themes, is offered between these. 
+    Finally, an overview of considered tools is added to show the extensive range of relevant development resources available.
+    
+    The studied areas provide the reader with a sufficient overview of the themes explored in the main project. To further 
+    bolster the readers understanding, a glossary of terms is presented in appendix \ref{sec:glosterm}. 
+    This gives a brief definition for some of the major concepts discussed which go slightly beyond the scope of this body of work.
+    
 \subsubsection*{A Sequential Mandelbrot Set Algorithm}
-\subsubsection*{A Naive Parallel Mandelbrot Set Algorithm}
+    Although the sequential algorithm described in section \ref{sec:addscheme} appears trivial, it relies almost entirely
+    on the mandelbrot module described in section \ref{sec:mandmod}. This objective encompasses the implementation of this
+    module, as this separation is derived from a sound design decision to encapsulate in order to reduce code complexity. 
+    It also improves code re-usability, of which is exploited extensively elsewhere throughout the project. 
+    
+    This body of work also demonstrates good use of the C programming language.
+    
+    This objective is met with a high degree of quality, and forms a well-grounded foundation for the following objectives
+    to build on.
+    
+\subsubsection*{A Na\"{\i}ve Parallel Mandelbrot Set Algorithm}
+    A basic understanding of composing parallel programs is effectively demonstrated by completion of this objective.
+    The described implementation in section \ref{sec:addscheme} shows effective use of the pthreads library and its functionality. 
+
 \subsubsection*{A Random Work-Stealing Mandelbrot Set Algorithm}
-\subsubsection*{Cross Analysis of the Implemented Algorithms}
+    This objective forms a significant proportion of the work carried out during this project. It is the central focus of the 
+    project and exhibits more advanced programming and design techniques. 
+    This is described in great depth in section \ref{sec:randws}.
+    
+    The implemented scheme demonstrates a strong grasp of concepts discovered through research of the subject area (see section \ref{sec:resworkdepth}),
+    and utilises these in a proficient and competent fashion. The design is both elegant and simple, as-well as effective in practice.
+    Some advanced techniques demonstrated here include; production of a non-blocking double ended queue, use of more pthreads mutex locks, and
+    design of a sophisticated work-load balancing algorithm.
+
+    Constructive criticism of the scheme is also offered, giving commentary on the implications of certain properties and possible
+    remedies for problematic behaviour.
+    
+    Overall, this portion of the project represents the majority of the technical and theoretical learning achievements made.
+    
+\subsubsection*{Analysis of the Implemented Algorithms}
+    Technical analysis of the end product is offered in section \ref{sec:analysis}.
+    Observations made, based on data collected from traced run-time activity, are offered.
+    
+    These provide some insight into the performance of the end product, as well as some explanation for
+    undesirable behaviour.
+
+    This assesses how effective the randomised work-stealing algorithm is and identifies room for improvement.
+    It also serves as validation to show that the product does what is intended, as well as to verify that it functions correctly.
+
+\subsection{Advanced Objectives}
 \subsubsection*{Graphical Output}
+    The program produces output images in various styles. These are detailed in section \ref{sec:output}.
+    This proves that the product produces a correct approximation of the mandelbrot set (seeing is believing) and, in the 
+    case of distribution mode, gives evidence of the work-stealing algorithm's effectiveness. 
+    
+    The image format used is text based, thus inefficient and slow to write. The solution used to achieve this objective is basic, but serves 
+    the purpose.
+    
 \subsubsection*{A Render Thread Work-Stealing Mandelbrot Set Algorithm}
+    This objective is incomplete as of the compilation of this report. 
+    Areas explored in an attempt to complete this additional objective include
+    a design for the scheme, and a working but unstable implementation.
+    
 \subsubsection*{Work-Stealing Trace System}
+    This objective is completed and provides an effective means for gathering 
+    and analysing run-time characteristics of an implemented scheme.
+    
+    Although the objective is met a number of improvements could be made to record 
+    a more detailed set of information. 
 
+%\subsection{Other Notable Contributions}
+%\subsubsection*{Project Management}
 
-\subsection{Further Work}
+% TODO?
 
-Although all the core project objectives have been completed, as well as the majority of the additional objectives, 
+% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Further Work}
+
+Although the core project objectives have been completed, as well as the majority of the additional objectives, 
 there are a number of interesting areas in which this work could be extended.
 
+Some of these suggestions could form whole BSc Computer Science projects in their own right. The author hopes they 
+may at least invoke some inspiration for those planning to embark on such a task.
+
 \subsubsection*{Alternative Work-Stealing Schemes and Policies}
-To further investigate the work-stealing approach, other schemes could be implemented. 
+To further investigate the work-stealing approach un-explored configurations could be implemented. 
 Areas which could be examined include:
 \begin{itemize}
 \item \textbf{Different Victimisation Policies: } 
@@ -1365,12 +1465,12 @@ This would expose a huge set of new test cases for the randomised work-stealing 
 
 \subsubsection*{Investigate Specific Multi-Processor Architectures}
 Parallel computing platforms such as cluster computing, cloud computing, cellular architectures, amongst many others 
-geared toward high performance computing, would provide a useful area for further study. 
+geared toward high performance computing, would be a relevant  area for further study. 
 
 By focusing on a particular class of architecture the algorithm could be optimised, taking into consideration such 
 properties as cache and memory layout, locality of related work-items, and processor locality. 
 
-\subsubsection*{Production of A Parallel Programming Library}
+\subsubsection*{Development of A Parallel Programming Library}
 The themes explored in this report could be applied to a vast number of programs. 
 Producing a library which provides abstract programming directives, such as parallel data-structure iterators, or
 support for fully strict multi-threaded computations, could prove a useful general programming tool. 

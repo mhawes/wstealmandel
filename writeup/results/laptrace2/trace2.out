@@ -1,0 +1,31 @@
+1324: T_id 1 started
+1339: T_id 2 started
+1326: T_id 0 started
+1505: T_id 3 started
+394627: T_id 3 steal vi: 2, ws: 829
+394635: T_id 3 ret-work fc: 0
+397228: T_id 0 steal vi: 1, ws: 1176
+397231: T_id 0 ret-work fc: 0
+1185201: T_id 0 steal vi: 3, ws: 225
+1185210: T_id 0 ret-work fc: 0
+1607346: T_id 2 steal vi: 1, ws: 333
+1607355: T_id 2 ret-work fc: 0
+1735264: T_id 3 steal vi: 2, ws: 127
+1735274: T_id 3 ret-work fc: 0
+1764348: T_id 0 steal vi: 1, ws: 126
+1764350: T_id 0 ret-work fc: 0
+1924129: T_id 3 steal vi: 1, ws: 20
+1924137: T_id 3 ret-work fc: 0
+1938838: T_id 2 steal vi: 3, ws: 6
+1938842: T_id 2 ret-work fc: 0
+1950333: T_id 3 steal vi: 0, ws: 10
+1950335: T_id 3 ret-work fc: 1
+1952052: T_id 2 steal vi: 0, ws: 4
+1952054: T_id 2 ret-work fc: 0
+1960362: T_id 2 steal vi: 3, ws: 1
+1960364: T_id 2 ret-work fc: 1
+1960648: T_id 0 finished li: 4014, sc: 3, vc: 2
+1961284: T_id 1 finished li: 840, sc: 0, vc: 4
+1961792: T_id 2 finished li: 1889, sc: 4, vc: 2
+1961799: T_id 3 finished li: 3253, sc: 4, vc: 3
+1961822: complete

@@ -52,7 +52,7 @@ numbers=left,                   % where to put the line-numbers
 numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
 stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
 numbersep=5pt,                  % how far the line-numbers are from the code
-backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+backgroundcolor=\color{black!10!white},  % choose the background color. You must add \usepackage{color}
 showspaces=false,               % show spaces adding particular underscores
 showstringspaces=false,         % underline spaces within strings
 showtabs=false,                 % show tabs within strings adding particular underscores
@@ -83,6 +83,16 @@ breakatwhitespace=true,    % sets if automatic breaks should only happen at whit
 \renewcommand{\thesubfigure}{\roman{subfigure}}
 \captionsetup[subfigure]{labelformat=simple, labelsep=colon}
 
+% Caption stuff
+\begin{comment}
+\DeclareCaptionFormat{myformat}{%
+  \colorbox{lightgray!30}{\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}{#1#2#3}}
+} 
+\captionsetup[figure]{format=myformat}
+\captionsetup[lstlisting]{format=myformat}
+\captionsetup[table]{format=myformat}
+\end{comment}
+
 % ------------------------------------------------------------------------------
 % Maths packages
 \usepackage{amsmath}
@@ -91,8 +101,9 @@ breakatwhitespace=true,    % sets if automatic breaks should only happen at whit
 % Glossary packages
 \newcommand*{\glossfirstformat}[1]{\textbf{#1}}
 
-\usepackage{glossaries}
-\glossarystyle{altlist}
+\usepackage[]{glossaries}
+\renewcommand*{\glspostdescription}{}
+\glossarystyle{list}
 \makeglossaries
 
 \renewcommand{\glsdisplayfirst}[4]{\glossfirstformat{#1#4}}

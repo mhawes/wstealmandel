@@ -4,7 +4,7 @@
     description={
         An array in which the element indexed directly after the last element 
         is effectively the first element, giving the effect of the 
-        data-structure ``wrapping around"
+        data-structure ``wrapping around".
     },
     plural={circular arrays}
 }
@@ -14,7 +14,7 @@
     name={thread},
     description={
         A strand of execution which operates independently from the main flow of
-        control in a process
+        control in a process.
     },
     plural={threads}
 }
@@ -24,7 +24,7 @@
     name={multi-threaded algorithm},
     description={
         A program which utilises more than one thread to achieve its desired 
-        result
+        result.
     },
     plural={multi-threaded algorithms}
 }
@@ -34,179 +34,219 @@
     name={scheduling},
     description={
         The process of determining the order in which parts of a program access
-        system resources
+        system resources.
     }
 }
 
 \newglossaryentry{dead-lock}
 {
     name={dead-lock},
-    description={}
+    description={
+        A situation in which two or more threads are waiting for each other to 
+        give up exclusive access to a resource required to continue execution.
+    }
 }
 
 \newglossaryentry{worker-thread}
 {
     name={worker-thread},
-    description={},
+    description={
+        A thread which, in general, performs tasks that work towards achieving 
+        the purpose of the program.
+    },
     plural={worker-threads}
 }
 
 \newglossaryentry{monitor-thread}
 {
     name={monitor-thread},
-    description={},
+    description={
+        A thread which performs administrative tasks such as maintaining worker-threads
+        and controlling synchronisation.},
     plural={monitor-threads}
 }
 
 \newglossaryentry{mutex}
 {
     name={mutex},
-    description={},
+    description={
+        In the context of pthreads, a mutex is a mechanism
+        for acquiring exclusive lock on a resource. Short for mutual exclusion.
+    },
     plural={mutexes}
 }
 
 \newglossaryentry{barrier}
 {
     name={barrier},
-    description={},
+    description={
+        A thread synchronisation technique in which a specified number of threads 
+        must reach an explicit point in execution before any may continue.    
+    },
     plural={barriers}
 }
 
-\newglossaryentry{conditional-variable}
+\newglossaryentry{condition-variable}
 {
-    name={conditional-variable},
-    description={},
-    plural={conditional-variables}
+    name={condition-variable},
+    description={
+        A thread synchronisation technique which allows conditional lock of a resource dependant
+        on the state of some value.
+    },
+    plural={condition-variables}
 }
 \newglossaryentry{load-balancing}
 {
     name={load-balancing},
-    description={}
+    description={
+        A method in which work-load is distributed across multiple resources in an 
+        attempt to optimise utilisation of such resources.
+    }
 }
 
 \newglossaryentry{work-stealing}
 {
     name={work-stealing},
     description={A processor which is starved of work attempts to ``steal'' 
-                 work from other processors}
+                 work from other processors.}
 }
 
 \newglossaryentry{thief}
 {
     name={thief},
-    description={},
+    description={
+        A thread which has the work-load of some other thread re-assigned to its own.
+    },
     plural={thieves}
 }
 
 \newglossaryentry{victim}
 {
     name={victim},
-    description={},
+    description={
+        A thread which has a portion of its work-load re-assigned to some other thread.
+    },
     plural={victims}
 }
 
 \newglossaryentry{ready-deque}
 {
     name={ready-deque},
-    description={},
+    description={
+        A queue data-structure which allows access to both the top and bottom elements.
+    },
     plural={ready-deques}
 }
 
 \newglossaryentry{non-blocking}
 {
     name={non-blocking},
-    description={}
+    description={
+        A property of a multi-threaded algorithm in which shared resources are not
+        locked, allowing threads to operate without being stopped.
+    }
 }
 
 \newglossaryentry{steal-operation}
 {
     name={steal-operation},
-    description={}
+    description={
+        The process of re-distributing work-load from a victim to a thief.
+    }
 }
 
 \newglossaryentry{work-sharing}
 {
     name={work-sharing},
-    description={A processor which creates new work attempts to migrate it to 
-                 another underutilised processor at creation time}
+    description={
+        A processor which creates new work attempts to migrate it to 
+        another underutilised processor at creation time.
+    }
 }
 
 \newglossaryentry{locality}
 {
     name={locality},
-    description={}
-}
-
-\newglossaryentry{julia-set}
-{
-    name={julia-set},
-    description={},
-    plural={julia-sets}
-}
-
-\newglossaryentry{filled julia-set}
-{
-    name={filled julia-set},
-    description={},
-    plural={filled julia-sets}
+    description={
+        The amount to which a value, or set of related values, is utilised by a resource.
+    }
 }
 
 \newglossaryentry{critical-orbit}
 {
     name={critical-orbit},
-    description={},
-    plural={critical-orbits}
+    plural={critical-orbits},
+    description={
+        The orbit of point \(0\) for a set of complex numbers.
+    }
 }
 
 \newglossaryentry{fractal}
 {
     name={fractal},
-    description={},
-    plural={fractals}
+    plural={fractals},
+    description={
+        A set which has a fractional dimension.
+    }
 }
 
 \newglossaryentry{complex-number}
 {
     name={complex-numer},
-    description={},
-    plural={complex-numbers}
+    plural={complex-numbers},
+    description={
+        A number which is expressed in two parts; real and imaginary \((a + b_i)\).
+    }
 }
 
 \newglossaryentry{real-world-fractal}
 {
     name={real-world-fractal},
-    description={},
+    description={
+        Fractals which do not exhibit the property of scale invariance. 
+    },
     plural={real-world-fractals}
 }
 
 \newglossaryentry{mathematical-fractal}
 {
     name={mathematical-fractal},
-    description={},
+    description={
+        Fractals which could exhibit the property of infinite scale invariance or
+        quasi-self similarity.
+    },
     plural={mathematical-fractals}
 }
 
 \newglossaryentry{scale-invariance}
 {
     name={scale-invariance},
-    description={}
+    description={
+        A property of a shape which is identical at magnifications of a common factor.
+    }
 }
 
 \newglossaryentry{self-similarity}
 {
     name={self-similarity},
-    description={}
+    description={
+        A property of a shape which is comprised of part of itself.
+    }
 }
 
 \newglossaryentry{exact self-similarity}
 {
     name={exact self-similarity},
-    description={}
+    description={
+        A property of a shape which is comprised of an exact copy of part of itself.
+    }
 }
 
 \newglossaryentry{quasi self-similarity}
 {
     name={quasi self-similarity},
-    description={},
+    description={
+        A property of a shape which is comprised of an approximate copy of part of itself.
+    },
     plural={quasi self-similar}
 }

@@ -39,20 +39,35 @@
     % * state of the field. 
     % * Talk about highly parallel computing and its applications. Be broad.
 
-Multi-processor computers are now commonplace in the world of computing, for both consumers and scientists alike. 
+Multi-processor computers are now commonplace for both consumers and scientists alike. 
 This shift in architectural design demands a drastic shift in how programs for such architectures are constructed, 
 from the standpoint of both the programmer and the language designer. 
-This is problematic because efficient parallel algorithms are inherently difficult to implement.
+Designing effective programs to utilise such hardware, using well established traditionally sequential programming tools,
+is often difficult and riddled with pitfalls. Popular languages such as C, Java, and C++ require a good knowledge of multi-threaded 
+algorithms, as well as a deeper understanding of the problem domain, to produce a highly effective design.
+The programmer may be forced to sacrifice potential performance gain for a more manageable level of design complexity,
+or worse still, avoid writing parallel code all-together in the interest of robustness.
 
-%TODO
+Techniques to implicitly optimise run-time performance, with a minimum impact on complexity of parallel program design, 
+are useful for more easily producing robust implementations. One aspect which allows for such optimisation is run-time work-load balancing.
+
+This project explores a branch of load balancing techniques known as work-stealing. This is applied to an algorithm which
+computes an approximation of the infinite mathematical set known as the Mandelbrot set.
 
 \section*{Motivation}
 
-%TODO
+The author has a strong interest in high performance computing and tools which provide powerful, abstract interfaces with 
+underlying multi-processor architectures. Previous work involving the Single Assignment C~\cite{sachome} and 
+S-Net~\cite{snethome} programming languages has served to inspire, and further the desire for knowledge in the subject area.
+
+This project is motivated by the aspiration to better understand how modern computer architectures can be utilised,
+and communicate these findings in a concise, comprehensive report.
+
+In addition the author wishes to gain valuable experience in the project development and management process.
 
 \section*{Aim}
 
-To investigate, through research and practical implementation, the effectiveness of work-stealing run-time scheduling on
+To investigate, through research and practical implementation, the effectiveness of work-stealing on
 a parallel algorithm which computes an approximation of the Mandelbrot set.
 
 \section*{Objectives}
@@ -99,7 +114,6 @@ report was produced.
             8 & Complete \\
         \hline
     \end{tabular}
-    
     \label{tab:ach}
     \caption{Table of Achievements}
 \end{table}
@@ -114,11 +128,11 @@ schemes.
 Chapter five lists the resources referenced in this report.
 In chapter six the appendices are presented.
 
-A glossary of terms is presented as Appendix A. 
+A glossary of terms is presented as Appendix \ref{sec:glosterm}. 
 This consists of a list describing major concepts surrounding the field of study, and directs the reader to their pages of occurrence. 
-Words highlighted by bold face indicate the first appearance of a glossary term.
+Words emphasised in bold typeface indicate the first appearance of a glossary term.
 
-The source code for all software developed to fulfil the objectives described above is presented as Appendix B.
+The source code for all software developed to fulfil the objectives described above is presented as Appendix \ref{sec:srccode}.
 
 
 
@@ -179,7 +193,7 @@ stays with the same processor until stolen.
 The Mandelbrot set is a set of complex numbers which when plotted produce a spectacular and recognisable shape as illustrated in figure~\ref{fig:mandelimg}.
 It is often presented as a colourful and striking image and has been described by some as the most beautiful object in all of mathematics 
 \cite[p.~234]{chaosfract}.
-The \glspl{complex-number} that comprise the set are closely related to \glspl{julia-set}. 
+The \glspl{complex-number} that comprise the set are closely related to julia-sets. 
 In-fact the Mandelbrot set can be described as a catalogue of Julia Sets which, when plotted, all points are connected 
 forming a single unbroken shape \cite[p.~177]{fractimg}.
 
@@ -217,19 +231,18 @@ military hardware design \cite{fractantenna}, and measuring the length of a coas
 
 \subsection*{Julia Sets}
 
-To understand the basis of the Mandelbrot set it is first necessary to understand it's relation to \glspl{julia-set}.
+To understand the basis of the Mandelbrot set it is first necessary to understand it's relation to julia-sets.
 The function in equation~\ref{eq:julia1} is iterated infinitely where \(c\) is fixed.
-The \gls{filled julia-set} is comprised of all values of \(z_0\) where the result is bounded and does not tend towards infinity.
-The \gls{julia-set} is comprised of those members of the \gls{filled julia-set} which lie on the boundary \cite{chaosfract}.
-In the interest of keeping this report readable, and because filled Julia Sets are more relevant, \glspl{filled julia-set} will be 
-referred to simply as \glspl{julia-set}.
+The filled julia-set is comprised of all values of \(z_0\) where the result is bounded and does not tend towards infinity.
+The julia-set is comprised of those members of the filled julia-set which lie on the boundary \cite{chaosfract}.
+In the interest of keeping this report readable, and because filled Julia Sets are more relevant, filled julia-sets will be 
+referred to simply as julia-sets.
 
-% express the set notation for f(x) -> infinity.???? TODO
 \begin{equation}\label{eq:julia1}
 f(z) = z^2 + c
 \end{equation}
 
-With regards to the Mandelbrot Set I am interested in \glspl{julia-set} in which the values \(c\) and \(z\) used are expressed as a 
+With regards to the Mandelbrot Set I am interested in julia-sets in which the values \(c\) and \(z\) used are expressed as a 
 \gls{complex-number}. Figure~\ref{fig:juliaimgs} illustrates some examples of such sets. 
 
 \begin{figure}[h]
@@ -238,7 +251,7 @@ With regards to the Mandelbrot Set I am interested in \glspl{julia-set} in which
   \centering    
   \includegraphics[width=\textwidth]{julia-con}
   \caption{
-    \tiny The \gls{julia-set} where \(c = -0.1 + 0.649i\)
+    \tiny The julia-set where \(c = -0.1 + 0.649i\)
   }
   \label{fig:juliaimgcon}
 \end{subfigure}
@@ -247,7 +260,7 @@ With regards to the Mandelbrot Set I am interested in \glspl{julia-set} in which
   \centering
   \includegraphics[width=\textwidth]{julia-ncon}
   \caption{
-    \tiny The \gls{julia-set} where \(c = -0.75 + 0.03i\)
+    \tiny The julia-set where \(c = -0.75 + 0.03i\)
   }
   \label{fig:juliaimgncon}
 \end{subfigure}
@@ -262,7 +275,7 @@ With regards to the Mandelbrot Set I am interested in \glspl{julia-set} in which
 
 \subsection*{Computing the Mandelbrot Set}
 
-The set is comprised of those \glspl{julia-set} which are connected. In order to determine whether a Julia Set possesses this property,
+The set is comprised of those julia-sets which are connected. In order to determine whether a Julia Set possesses this property,
 we need only compute the result for \(z_0\). If this tends towards infinity the value \(c\) is not a member of the Mandelbrot Set. If the result
 is bounded, then it is a member. This is known as the \gls{critical-orbit} and is useful because it means we do not have to compute
 the entire Julia Set for each value of \(c\).
@@ -351,7 +364,6 @@ of work from \textit{p0's} work list to its own. %do more here.
 \label{fig:stealoperation}
 \end{figure}
 
-% TODO
 Research has been conducted to explore its application in programming languages such as Cilk \cite{blumleis}, 
 parallel programming libraries such as Hood \cite{hoodlib} and Factory \cite{factorylib}, 
 and large scale heterogeneous systems such as computational clouds \cite{scalesthesis}.
@@ -407,7 +419,6 @@ The monitor-thread returns to waiting for another work-completed signal and the 
 
 
 % --------------------------------------------------------- HYPOTH section????? FIXME 
-% TODO talk about the fact that work need not be queued because all that is needed is a start line and a stop line.
 \subsection*{Discussion of the Presented Schemes}
 The key difference between the Render-Thread Algorithm and the Randomized Work-Stealing Algorithm (described in section \ref{sec:randscheme}), 
 is that a \gls{worker-thread} does not maintain a queue of work but simply has a range of indices assigned. 
@@ -477,14 +488,17 @@ with a suitable level of control is required.
 \item \textbf{POSIX Threads (pthreads):} \\ 
               Provides low level manipulation of threads for the C programming language \cite{pthreadover}. 
               It is a library based on IEEE standard 1003.1. Thread programming is achieved through use of a set of functions and data
-              structures provided; such as \glspl{mutex}, \glspl{barrier}, and \glspl{conditional-variable}. %TODO
+              structures provided; such as \glspl{mutex}, \glspl{barrier}, and \glspl{condition-variable}. 
              
 \item \textbf{Open Multiprocessing (OpenMP):} \\ 
               Provides abstract thread programming interfaces for C, C++, and fortran.
-              In general OpenMP only allows coarse grained manipulation of threads through features such as parallel loops %TODO
+              In general OpenMP only allows coarse grained manipulation of threads through features such as parallel loops 
               \cite{ompvspthr}.
 
-\item \textbf{Java Threads:} \\ %TODO
+\item \textbf{Java Threads:} \\
+              An object oriented approach to multi-threaded programming. Java provides a Thread class which
+              the programmer can specialise to perform the desired task.
+              Synchronisation is generally done using implicit locks through use of the synchronised modifier.
 \end{itemize}
 
 \subsection*{Graphical Output}
@@ -660,7 +674,6 @@ work load) and the latter is used to start processing the raster plane.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{The Mandelbrot Module}
 
-% TODO Expand on these points.
 The key functions used in the mandelbrot module are described as follows:
 
 \begin{itemize}
@@ -723,7 +736,7 @@ this. Several parameters are used by the algorithm to construct the raster plane
             \(y\) and \(x\) respectively.
             
             
-\item \textbf{MAX\_ITERATIONS:} \\ %TODO
+\item \textbf{MAX\_ITERATIONS:} \\
             A constant iteration limit which is used to determine if a point lies within the set.
             This is used by the is\_member function.
             
@@ -915,7 +928,6 @@ The \(failcount\) is the frequency of failed steal attempts.
                 The line is checked for the LINE\_ABORT status. If this is true de\_steal is called again.
                 Otherwise this entire process is repeated until the LINE\_EMPTY status is received or the allotted amount of work is stolen.
 \end{itemize}
-%TODO Talk about the pros and cons of this design!!!!
 
 \subsubsection*{Problematic Characteristics}
 
@@ -1008,6 +1020,8 @@ This functionality is omitted from figure \ref{fig:naiveparactivity} as not to m
 
 Figure \ref{fig:naiveparactivity} illustrates how the design of the sequential version, documented in 
 figure \ref{fig:seqactivity}, is composed onto multiple threads to attain a parallel design.
+This is one by introducing a fork point which starts the threads, and a join point which 
+returns program control to the main thread.
 
 \begin{figure}[H]
 \centering
@@ -1018,7 +1032,7 @@ figure \ref{fig:seqactivity}, is composed onto multiple threads to attain a para
     scheme. It is worth noting that the dashed lines near the fork and join bars 
     are added to illustrate that more than one thread runs concurrently.
 }
-\label{fig:naveparactivity}
+\label{fig:naiveparactivity}
 \end{figure}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1030,6 +1044,23 @@ figure \ref{fig:seqactivity}, is composed onto multiple threads to attain a para
 % * Talk about estimated completion time.
 
 This scheme implements the approach described in the background research section \ref{sec:rendscheme}. 
+One monitor thread and three worker-threads are used. 
+
+The monitor thread is delegated the responsibility 
+of controlling steal operations, and synchronising the thief and victim threads in order to complete
+this operation.
+Each render thread computes its work-load until it has no more to do. At this point it produces a thief
+signal which the monitor thread detects. 
+A worker thread can be made a victim while it is working. It is allowed to finish its current line 
+before becoming a victim.
+
+The expected completion time of a render thread is evaluated to determine a victim. This means 
+such a metric needs to be maintained, and regularly updated, in order to make this approach fair.
+The time taken to complete a work item is multiplied by the amount of work remaining for that thread. 
+This is re-calculated after each line is computed.
+
+Figure \ref{fig:rtdiagram} shows a graphical representation of a typical, happy-day scenario steal operation. 
+It highlights the amount of inter-thread communication which occurs in order to complete such an operation.  
 
 \begin{figure}[H]
 \centering
@@ -1045,7 +1076,12 @@ This scheme implements the approach described in the background research section
 \label{fig:rtdiagram}
 \end{figure}
 
-%TODO
+This approach blocks working threads in order to achieve work-stealing. This comes with the added complication
+that such a scheme needs to be carefully considered in implementation. 
+
+Unfortunately, due to time constraints, there is no fully complete implementation for this scheme in place.
+It is worth noting that this is area alone is a significant body of work and represents a good portion
+of the future work this project could lead to. 
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Output}
@@ -1065,9 +1101,6 @@ The specification for the PBM, PGM, and PPM formats is presented here \cite{ppms
 
 Each file contains data for one image presented in plain text. This consists of some header information, 
 followed by an entry for each pixel. 
-\\
-
-\input{ppmformat}
 
 The header consists of four fields. On line one the `magic number' determines the colour style used.
 P1 is used for monochrome (PBM), P2 for grey-scale (PGM), and P3 for colour (PPM).
@@ -1078,6 +1111,8 @@ Each line is separated with a carriage return.
 Pixel data is separated by spaces and arranged in lines ending in a carriage return. 
 Each line has exactly \(width\) entries and their are exactly \(height\) lines.
 For the PPM format each pixel has three entries representing red, green, and blue.
+
+\input{ppmformat}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Run-Time Tracing}
@@ -1218,9 +1253,37 @@ Displays a usage message which describes the options detailed above.
 \section{Analysis of the Implemented Algorithms}
 \label{sec:analysis}
 
-This section discusses results gathered over a series of program runs and observations made based on these. 
+This section discusses some observations made based on results gathered over a series of program runs.
+It also serves to asses the validity of the implemented schemes, ensuring that the code does what is expected.
+
+\subsection{The Test Setup}
+
+Here is a brief description of the test environment used when gathering the results for this section.
+
+% TODO: Get PC specs from home.
+\subsubsection*{Test System}
+\begin{itemize}
+\item CPU: Quad Core Intel Core I5
+\item Memory: 8GB DDR-3
+\item Operating System: Linux Mint 14
+\item C-Compiler: GCC Version ...
+\end{itemize}
 
 \subsection{Performance Analysis}
+
+The following observations relate to performance of the implemented schemes.
+The collected performance data, for both figure \ref{fig:perfmatsizepc} and \ref{fig:perfworksizepc},
+are calculated using an average time of five runs of the labelled version of the program per plot.
+These are presented in relation to the sequential version of the program. 
+
+The following equation is used to calculate the performance increases presented:
+
+\[ sequentialruntime=\]
+
+\begin{itemize}
+\item Figure \ref{fig:perfmatsizepc} suggests that the Randomised Work-stealing Algorithm scales as 
+      well as the na\"{\i}ve Parallel Algorithm. 
+\end{itemize}
 
 \input{pcmatsize}
 \input{pcworksize}
@@ -1267,7 +1330,6 @@ The following observations are based on the results presented in figure \ref{fig
 ...
 \end{lstlisting}
     
-    % TODO Backup some of the points made here
     This example highlights some possible instances of the problematic situations detailed in section \ref{sec:randws}. 
     
     A double victimisation is present where both thread zero and three steal from thread one. Notably thread three 
@@ -1344,11 +1406,9 @@ The data presented here is sourced from the trace presented in appendices figure
     required to determine a more evident cause.
         
 \end{itemize}
-% Show colour work-stealing images.
-% Analyse trace output in graph form. i.e. Matrix size vs time for sequential, parallel, wsrandom, wsrenderthread.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Evaluation of Success}
+\section{Reflection}
 
 In general, the author feels that this project is a successful one. It has been an enlightening and thoroughly enjoyable experience
 to investigate the subject area. Here is an evaluation of each objective defined in the introduction section, as well as some aspects 
@@ -1427,10 +1487,23 @@ of the project which apply in general.
     Although the objective is met a number of improvements could be made to record 
     a more detailed set of information. 
 
-%\subsection{Other Notable Contributions}
-%\subsubsection*{Project Management}
+\subsection{Other Notable Points of Reflection}
+\subsubsection*{Project Management}
+    The major objectives for this project where completed comfortably in the time-scale provided.
+    These achievements roughly correspond with the planned time allocation described in the Gantt chart
+    provided in the detailed project proposal.
+    
+    A major factor which streamlined the entire process is the decision to use a Git repository.
+    It provided a vital means of tracking progress through regular commit messages and the ability
+    to easily revert back to more old revisions. All the work related to this project can be found 
+    here: \textit{https://github.com/mhawes/wstealmandel}.
 
-% TODO?
+\subsubsection*{Professional Presentation of Material}
+    All material delivered in a highly professional manner.
+    
+    In particular, the decision to produce this entire report using \LaTeX~has been pivotal
+    to the clarity and good structure of this report. It has also provided the learning outcome 
+    of acquiring proficient skill when using the language, which will be taken forward to future projects.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Further Work}

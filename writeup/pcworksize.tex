@@ -1,7 +1,7 @@
 \begin{figure}[H]
 \centering
 
-\begin{tikzpicture}[x=0.0065\textwidth,y=1.5cm]
+\begin{tikzpicture}[x=0.0065\textwidth,y=1.3cm]
 
   \def\xmin{10}
   \def\xmax{120}
@@ -35,11 +35,14 @@
     \draw[color=red] plot[smooth,mark=*,mark size=0pt] file {results/pcworksize-ws.data}
     node [right] {rand-ws};
 
+    \draw[color=black] (\xmin,1) -- (\xmax,1) node[right] {sequential};
+
 \end{tikzpicture}
 
 % full caption
 \caption{
-    Another lovely lovely graph
+    Average performance increase, relative to the sequential version of the program, against maximum number of iterations taken
+    to determine the result of a single point. The raster-plane is ten-thousand squared in size for each sample.
 }
 \label{fig:perfworksizepc}
 \end{figure}

@@ -17,10 +17,13 @@
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section*{Abstract}
 
+% TODO
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \newpage
 \section*{Acknowledgements}
+
+% TODO
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \clearpage
@@ -58,7 +61,7 @@ computes an approximation of the infinite mathematical set known as the Mandelbr
 
 The author has a strong interest in high performance computing and tools which provide powerful, abstract interfaces with 
 underlying multi-processor architecture. Previous work on the Single Assignment C~\cite{sachome} and 
-S-Net~\cite{snethome} programming languages has served to inspire, and further the desire for knowledge in the subject area.
+S-Net~\cite{snethome} programming languages has served to inspire, and further the desire for knowledge of the subject area.
 
 This project is motivated by the aspiration to better understand how modern computer architectures can be optimally utilised,
 and communicate these findings in a concise, comprehensive report.
@@ -270,7 +273,7 @@ The Mandelbrot Set is related to julia-sets in which the values \(c\) and \(z\) 
 \label{fig:juliaimgs}
 \end{figure}
 
-\subsection*{Computing the Mandelbrot Set}
+\subsection*{The Mandelbrot Set and How it is Computed}
 
 The set is comprised of those julia-sets which are connected. In order to determine whether a Julia Set possesses this property,
 we need only compute the result for \(z_0\). If this tends towards infinity the value \(c\) is not a member of the Mandelbrot Set. If the result
@@ -283,7 +286,12 @@ set needs to be approximated. This can be done using a raster plane which takes 
 
 There are many algorithms including the Level set method \cite[p.~188]{fractimg} and Continuous Potential Method \cite[p.~191]{fractimg}.
 The former uses a raster plane to produce an approximation as described above, and the latter produces a smooth surface representation.
-\\
+
+Listing \ref{li:mandelalgo} describes a variation of the level set method in pseudo code. 
+The algorithm is simple and provides a gradient effect of equipotential curves on the output image
+which is visually pleasing.
+
+\newpage
 
 \begin{lstlisting}[label = li:mandelalgo, caption = A sequential algorithm to compute the Mandelbrot Set]
 compute_mandelbrot()
@@ -313,10 +321,6 @@ level_set(c_re,c_im,max_iterations)
     RETURN max_iterations
 END
 \end{lstlisting}
-
-Listing \ref{li:mandelalgo} describes a variation of the level set method in pseudo code. 
-The algorithm is simple and provides a gradient effect of equipotential curves on the output image
-which is visually pleasing.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{The Work-Stealing Technique - Described in Depth}
@@ -655,13 +659,6 @@ module and builds a binary for each. This approach provides several benefits.
 \item It allows for a common user-interface for each executable, independent of the scheduler back-end.
 \item It allows for alteration to the mandelbrot module to be made with ease.
 \end{itemize}
-
-%\subsubsection*{Useful Language Features}
-
-% TODO
-% talk about the static keyword in C for the array.
-% talk about inlining some functions
-% Describe ppm output
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1110,13 +1107,13 @@ cannot be parallelised.
 
 The specification for the PBM, PGM, and PPM formats is presented here \cite{ppmspec}.
 
-Each file contains data for one image presented in plain text. This consists of some header information, 
+Each file contains data for one image encoded in plain text. This consists of some header information, 
 followed by an entry for each pixel. 
 
-The header consists of four fields. On line one the `magic number' determines the colour style used.
-P1 is used for monochrome (PBM), P2 for grey-scale (PGM), and P3 for colour (PPM).
+The header is comprised of four fields. On line one the `magic number' determines the colour style used.
+P1/P4 is used for monochrome (PBM), P2/P5 for grey-scale (PGM), and P3/P6 for RGB colour (PPM).
 On line two is the width and height as decimal numbers, separated by a space.
-On line three is the maximum colour value a pixel can be. For the PBM format this line is omitted.
+On line three is the maximum value of a pixel. For the PBM format this line is omitted because it is redundant.
 Each line is separated with a carriage return. 
 
 Pixel data is separated by spaces and arranged in lines ending in a carriage return. 
@@ -1129,9 +1126,9 @@ For the PPM format each pixel has three entries representing red, green, and blu
 \section{Run-Time Tracing}
 \label{sec:traceimp}
 
-A simple tracing mechanism is implemented allowing for run-time analysis of implemented scheduling modules.
+A simple tracing mechanism is implemented allowing for more detailed run-time analysis of the program.
 Any trace related code is not compiled by default, as it has a detrimental effect on performance. 
-Instead an option must be passed to `make' when the project is built to enable tracing.
+To enable this feature an option must be passed to `make' when the project is built.
 
 Related code is encased in preprocessor directives as follows:
 
@@ -1158,7 +1155,7 @@ These can be built by passing the following arguments to `make':
 \subsubsection*{TRACE=1}
             A completion message is printed when the scheduling module has completed execution.
             This serves as a means of measuring the execution time of the program as a timestamp
-            relative to the start.
+            relative to the start in \(\mu\)~seconds.
             
 \begin{lstlisting}
 499066: complete
@@ -1182,8 +1179,7 @@ These can be built by passing the following arguments to `make':
 
 The trace format for the Randomised Work Stealing algorithm requires some explanation.
 It is detailed as follow:
-\\
-
+\newpage
 \begin{lstlisting}[label = ls:wstraceeg,caption = Examples of the Four Traced Events for the Randomised Work-Stealing Scheme]
 1316: T_id 0 started
 ...
@@ -1222,7 +1218,7 @@ Some examples of full run-time traces are available in the appendices section \r
 \section{User Interface}
 \label{sec:userint}
 
-A basic command line interface is implemented which offers a few options to control the output of the program.
+A basic command line interface is implemented which offers options to control the output of the program.
 When the program is given no arguments it computes the mandelbrot set with no output.
 The available options are described in the following paragraphs.
 
@@ -1267,17 +1263,16 @@ Displays a usage message which describes the options detailed above.
 This section discusses some observations made based on results gathered over a series of program runs.
 It also serves to asses the validity of the implemented schemes, ensuring that the code does what is expected.
 
-\subsection{The Test Setup}
+\subsection*{The Test Setup}
 
 Here is a brief description of the environment used when gathering the results to support this section.
 
-% TODO: Get PC specs from home.
 \subsubsection*{Test System}
 \begin{itemize}
-\item CPU: Quad Core Intel Core I5
+\item CPU: Quad Core Intel Core I5 750 - 2.67GHz.
 \item Memory: 8GB DDR-3
-\item Operating System: Linux Mint 14
-\item C-Compiler: GCC Version ...
+\item Operating System: Linux Mint 14 - Kernel 3.5.0-17 generic.
+\item C-Compiler: GCC Version 4.7.2
 \end{itemize}
 
 \subsection{Performance Analysis}
@@ -1287,21 +1282,42 @@ The collected performance data, for both figure \ref{fig:perfmatsizepc} and \ref
 are calculated using an average time of five runs of the labelled version of the program per plot.
 These are presented in relation to the sequential version of the program. 
 
-The following equation is used to calculate the performance increases presented:
+The following equation is used to calculate the performance increases shown:
 
-\[ RelativePerformance_a = \frac{ExecutionTime_a}{ExecutionTime_{sequntial}}\]
+\[ RelativePerformanceIncrease_a = \frac{ExecutionTime_a}{ExecutionTime_{sequntial}}\]
 
 \begin{itemize}
-\item Figure \ref{fig:perfmatsizepc} suggests that the Randomised Work-stealing Algorithm scales as 
-      well as the na\"{\i}ve Parallel Algorithm. 
+\item 
+    An average speed-up of \(3.49\) times is achieved for the randomised work-stealing algorithm. The na\"{\i}ve Parallel Algorithm
+    achieves an average speed-up of \(2.13\) times. 
+
+    This observation suggests that by simply adding work-stealing techniques to a parallel scheme which employs no 
+    load balancing can increase its performance by an average of \(1.66\) times.
+    
+    Although both schemes make use of four threads, a speed up of four times is unlikely to be possible.
+    This is due to factors such as thread scheduling overheads, portions of code which cannot be
+    parallelised, and imperfect load-balancing. 
+    This is associated with Amdahl's law, which states that such a speed-up is limited by the time taken for the sequential 
+    portion of the code to execute \cite{pathen}.
+
+\item
+    According to figure \ref{fig:perfworksizepc}, the performance of the Randomised work-stealing algorithm is unaffected 
+    by the maximum iterations parameter. 
+    The na\"{\i}ve Parallel Algorithm exhibits a performance decrease as the value is increased.
+    
+    As the maximum iterations is increased the work required to compute a point in, or close to, the mandelbrot set 
+    is amplified. As a result the initially distributed work-load becomes further unbalanced.
+
+    These results suggest that the Randomised Work-Stealing algorithm exhibits good scalability because of its 
+    load-balancing capabilities when considering the maximum iterations. This point is also true for the 
+    plane size as shown in figure \ref{fig:perfmatsizepc}.
+
 \end{itemize}
 
 \input{pcmatsize}
 \input{pcworksize}
 
-\subsection{Analysis of the Randomised Work-Stealing Algorithm}
-
-\subsubsection*{Run-Time Analysis}
+\subsection{Run-Time Analysis of the Randomised Work-Stealing Algorithm}
 
 The scatter plot shown in figure \ref{fig:tracelap1} and the bar charts shown in figure \ref{fig:stealvictbar} 
 bring to light some interesting properties of the algorithm.
@@ -1317,7 +1333,7 @@ The following observations are based on the results presented in figure \ref{fig
     As less work items are available, steal-operations become more frequent, in which fewer work items are migrated. 
     This trend continues until no work items are available and completion is detected, as is suggested by the data.
 
-    The result is that a high frequency of steal operations, where small amounts of work are
+    The result is that a high frequency of steal operations, where very small amounts of work are
     migrated, occur as processing nears termination. The benefit of migrating such small work-loads could
     be seen to outweigh the cost of allowing the thread to continue computing the given region.
     
@@ -1364,7 +1380,7 @@ The following observations are based on the bar charts presented in figure \ref{
     Each thread is victimised on average \(3.275\) times over twenty program runs. 
     The lowest average victimisation count is \(2.9\) (for thread zero) and the highest is \(3.75\) (for thead one).
     These results, which are visualised in figure \ref{fig:barstvvi}, suggest that randomly selecting a victim 
-    thread to steal from is a relatively fair mechanism.
+    thread to steal from is a reasonably fair mechanism.
 
     It is worth noting that this is dependant on the qualities of the random number generator function.
     This implementation uses the `rand' function provided the `stdlib' library with a static seed. This is done to 
@@ -1375,9 +1391,9 @@ The following observations are based on the bar charts presented in figure \ref{
 \item 
     The threads which are initially assigned the upper and lowermost quarters of the raster-plane compute, on average, roughly three times 
     more work items than the inner threads. 
-    This demonstrates that the algorithm implicitly balances work-load at run-time, and is shown in figure \ref{fig:stealvictbar}.
+    This demonstrates that the algorithm implicitly balances work-load at run-time, and is shown in figure \ref{fig:barworkperthread}.
     
-    The behaviour exhibited here is expected as the majority of the computational load lies in the central regions. 
+    The behaviour exhibited here is expected, as the majority of the computational load lies in the central regions. 
     Put more concisely; when a point is deemed a member of the set, exactly the maximum number of iterations will have occurred, thus 
     involving more work. In general, the closer a point lies to the set, the more costly it becomes to process.
 
@@ -1400,14 +1416,14 @@ The following observations are based on the bar charts presented in figure \ref{
 The data presented here is sourced from the trace presented in appendices figure \ref{apptracens}.}
 \end{table}
 
-    As the rendering of the set has symmetry on the horizontal axis it is expected that each half should represent an equal 
+    As the set has symmetry on the horizontal axis it is expected that each half should represent an equal 
     proportion of the work-load. 
     This can be illustrated by analysing a trace of the na\"{\i}ve parallel algorithm. Table \ref{tab:npartab} shows that the 
     central regions take longer to compute when no run-time load balancing is employed.
     
     Split into four initial, equally sized regions the randomised work-stealing algorithm should ideally redistribute work 
     to alleviate the exhibited behaviour of the na\"{\i}ve-parallel algorithm.
-    For the outermost regions (i.e. threads zero and three) this is true, as can be seen in figure \ref{fig:stealvictbar},
+    For the outermost regions (i.e. threads zero and three) this is true, as can be seen in figure \ref{fig:barworkperthread},
     where these ultimately compute approximately the same proportion of the plane.
     However, a discrepancy arises for the innermost threads (one and two) where thread one, on average, computes much fewer lines
     than its counterpart two. 
@@ -1425,17 +1441,16 @@ In general, the author feels that this project is a successful one. It has been 
 to investigate the subject area. Here is an evaluation of each objective defined in the introduction section, as well as some aspects 
 of the project which apply in general.
 
-% TODO complete these sections!!!!!
-\subsection{Core Objectives}
+\subsection*{Core Objectives}
 \subsubsection*{Background Research}
     Background research is presented in chapter \ref{ch:backres}. To start; a broad range of areas related to scheduling parallel algorithms is explored 
     and explained. The work-stealing approach is introduced here, however the discussion is further developed in section \ref{sec:resworkdepth}. 
     A concise explanation of the Mandelbrot set, and its surrounding themes, is offered between these. 
     Finally, an overview of considered tools is added to show the extensive range of relevant development resources available.
     
-    The studied areas provide the reader with a sufficient overview of the themes explored in the main project. To further 
+    The studied areas provide the reader with a sufficient overview of the themes explored in the subsequent chapters. To further 
     bolster the readers understanding, a glossary of terms is presented in appendix \ref{sec:glosterm}. 
-    This gives a brief definition for some of the major concepts discussed which go slightly beyond the scope of this body of work.
+    This gives a brief definition for some of the major concepts discussed, which go slightly beyond the scope of this body of work.
     
 \subsubsection*{A Sequential Mandelbrot Set Algorithm}
     Although the sequential algorithm described in section \ref{sec:addscheme} appears trivial, it relies almost entirely
@@ -1443,7 +1458,7 @@ of the project which apply in general.
     module, as this separation is derived from a sound design decision to encapsulate in order to reduce code complexity. 
     It also improves code re-usability, of which is exploited extensively elsewhere throughout the project. 
     
-    This body of work also demonstrates good use of the C programming language.
+    This body of work also demonstrates good application of the C programming language.
     
     This objective is met with a high degree of quality, and forms a well-grounded foundation for the following objectives
     to build on.
@@ -1459,7 +1474,7 @@ of the project which apply in general.
     
     The implemented scheme demonstrates a strong grasp of concepts discovered through research of the subject area (see section \ref{sec:resworkdepth}),
     and utilises these in a proficient and competent fashion. The design is both elegant and simple, as-well as effective in practice.
-    Some advanced techniques demonstrated here include; production of a non-blocking double ended queue, use of more pthreads mutex locks, and
+    Some advanced techniques demonstrated here include; production of a non-blocking double ended queue, more advanced use of pthreads mutex locks, and
     design of a sophisticated work-load balancing algorithm.
 
     Constructive criticism of the scheme is also offered, giving commentary on the implications of certain properties and possible
@@ -1477,7 +1492,7 @@ of the project which apply in general.
     This assesses how effective the randomised work-stealing algorithm is and identifies room for improvement.
     It also serves as validation to show that the product does what is intended, as well as to verify that it functions correctly.
 
-\subsection{Advanced Objectives}
+\subsection*{Advanced Objectives}
 \subsubsection*{Graphical Output}
     The program produces output images in various styles. These are detailed in section \ref{sec:output}.
     This proves that the product produces a correct approximation of the mandelbrot set (seeing is believing) and, in the 
@@ -1495,26 +1510,28 @@ of the project which apply in general.
     This objective is completed and provides an effective means for gathering 
     and analysing run-time characteristics of an implemented scheme.
     
-    Although the objective is met a number of improvements could be made to record 
+    Although the objective is met a number of improvements could be made to allow tracing of 
     a more detailed set of information. 
 
-\subsection{Other Notable Points of Reflection}
+\subsection*{Further Points of Reflection}
 \subsubsection*{Project Management}
     The major objectives for this project where completed comfortably in the time-scale provided.
-    These achievements roughly correspond with the planned time allocation described in the Gantt chart
-    provided in the detailed project proposal.
+    These achievements closely correspond with the planned time allocation described in the Gantt chart,
+    which accompanies the detailed project proposal.
     
-    A major factor which streamlined the entire process is the decision to use a Git repository.
-    It provided a vital means of tracking progress through regular commit messages and the ability
-    to easily revert back to more old revisions. All the work related to this project can be found 
+    A major factor which streamlined the process is the decision to use a Git repository.
+    It provided a vital means of tracking progress through regular commit messages, and the ability
+    to easily revert back to older revisions. All the work related to this project can be found 
     here: \textit{https://github.com/mhawes/wstealmandel}.
+    The available punch-card graph gives an idea of how frequently used the repository is, as well
+    as an insight into the authors sleeping pattern over the past twelve weeks.
 
 \subsubsection*{Professional Presentation of Material}
     All material delivered in a highly professional manner.
     
     In particular, the decision to produce this entire report using \LaTeX~has been pivotal
-    to the clarity and good structure of this report. It has also provided the learning outcome 
-    of acquiring proficient skill when using the language, which will be taken forward to future projects.
+    to the clarity and good structure of this report. It has also provided a useful new skill set, 
+    which will be taken forward to future projects.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Further Work}
@@ -1554,8 +1571,11 @@ geared toward high performance computing, would be a relevant  area for further 
 By focusing on a particular class of architecture the algorithm could be optimised, taking into consideration such 
 properties as cache and memory layout, locality of related work-items, and processor locality. 
 
+An implementation which utilizes a cluster architecture, using message passing protocols, is of particular interest
+to the author.
+
 \subsubsection*{Development of A Parallel Programming Library}
-The themes explored in this report could be applied to a vast number of programs. 
+The work-stealing techniques explored in this project could be applied to a vast number of programs. 
 Producing a library which provides abstract programming directives, such as parallel data-structure iterators, or
 support for fully strict multi-threaded computations, could prove a useful general programming tool. 
 
@@ -1569,12 +1589,15 @@ properties of the algorithm.
 \subsubsection*{More Efficient Image Generation}
 Currently the output image takes a noticeably long time to write. This is due to the nature of the file format used.
 
-The program could be adapted to use a run-time graphics library, such as OpenGL, to display the image as it is generated.
+The program could be adapted to use a dynamic graphics library, such as OpenGL, to display the image as it is generated.
 In adition, this could be used to illustrate the work-stealing scheme in action. As each thread completes a work item its corresponding
 line would appear on the screen in its assigned colour gradient. This would show how work items are migrated throughout runtime and serve
 to demonstrate the workings of the algorithm.
 
 \section{Conclusion}
+
+% TODO
+
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------

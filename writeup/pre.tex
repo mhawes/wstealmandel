@@ -22,6 +22,7 @@
 % \usepackage{setspace}           
 % \onehalfspacing               % Sets the line spacing to 1.5
 
+
 % ------------------------------------------------------------------------------
 % provides comment functionality
 \usepackage{verbatim}
@@ -119,4 +120,13 @@ breakatwhitespace=true,    % sets if automatic breaks should only happen at whit
 % Appendix packages
 \usepackage[toc,page]{appendix}
 
-
+\makeatletter
+    \def\thebibliography#1{\chapter*{References\@mkboth
+      {REFERENCES}{REFERENCES}}\list
+      {[\arabic{enumi}]}{\settowidth\labelwidth{[#1]}\leftmargin\labelwidth
+	\advance\leftmargin\labelsep
+	\usecounter{enumi}}
+	\def\newblock{\hskip .11em plus .33em minus .07em}
+	\sloppy\clubpenalty4000\widowpenalty4000
+	\sfcode`\.=1000\relax}
+    \makeatother

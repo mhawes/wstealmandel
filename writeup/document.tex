@@ -117,8 +117,8 @@ report was produced.
             8 & Complete \\
         \hline
     \end{tabular}
-    \label{tab:ach}
     \caption{Table of Achievements}
+    \label{tab:ach}
 \end{table}
 
 \section*{Report Structure}
@@ -132,8 +132,9 @@ Chapter five lists the resources referenced in this report.
 
 In chapter six the appendices are presented.
 A glossary of terms is presented as Appendix \ref{sec:glosterm}. 
-This consists of a list describing major concepts surrounding the field of study, and directs the reader to their pages of occurrence. 
+This consists of a list describing major concepts surrounding the field of study, and directs the reader to their page of first occurrence. 
 Words emphasised in bold typeface indicate the first appearance of a glossary term.
+Some example trace output is listed in Appendix \ref{sec:traceout}.
 The source code for all software developed to fulfil the objectives described above is presented as Appendix \ref{sec:srccode}.
 
 % Identify some of the key pieces of literature or applications for the subject area I have chosen.
@@ -184,7 +185,7 @@ Both techniques intend to promote balanced work-load across all processors, howe
 the frequency of work migrations is lower. When all processors have a 
 high work-load and no need to ``steal" this becomes useful because threads need not get 
 migrated at all. With \gls{work-sharing} work migration occurs each time new work is created \cite{blumleis}.
-This also suggests that \gls{work-stealing} promotes better \gls{locality} and grouping of sub-tasks, as spawned work 
+This also suggests that work-stealing promotes better \gls{locality} and grouping of sub-tasks, as spawned work 
 stays with the same processor until stolen.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -243,7 +244,7 @@ f(z) = z^2 + c
 \end{equation}
 
 The Mandelbrot Set is related to julia-sets in which the values \(c\) and \(z\) used are expressed as a 
-\gls{complex-number}. Figure~\ref{fig:juliaimgs} illustrates some examples of such sets. 
+complex-number. Figure~\ref{fig:juliaimgs} illustrates some examples of such sets. 
 
 \begin{figure}[h]
 \centering
@@ -326,7 +327,7 @@ END
 \section{The Work-Stealing Technique - Described in Depth}
 \label{sec:resworkdepth}
 
-As described above, \gls{work-stealing} is a \gls{load-balancing} technique which allows work starved processors to acquire scheduled work from other processors. 
+As described above, work-stealing is a load-balancing technique which allows work starved processors to acquire scheduled work from other processors. 
 
 Each processor has a number of assigned tasks to complete. In general, a processor acquires its work from here.
 However, once these tasks are exhausted, the processor becomes a \gls{thief} and a \gls{victim} is chosen to steal from. 
@@ -381,7 +382,7 @@ programming language and its runtime system \cite{blumleis}.
 Each thread maintains a \gls{ready-deque}; a double-ended queue of work waiting to be processed. 
 Accesses to this queue are made either at the top (for a steal operation), or at the bottom (for a push operation
 or when the next piece of work is required).
-A thread becomes a \gls{thief} when its ready-deque is empty and randomly selects a \gls{victim}; a thread
+A thread becomes a thief when its ready-deque is empty and randomly selects a victim; a thread
 to attempt to steal work from. If this \gls{steal-operation} is successful it pushes the stolen work 
 onto the bottom of its ready-deque and becomes a worker again. If not it tries, at random, to find another victim.
 
@@ -406,14 +407,14 @@ The algorithm uses a set of \glspl{worker-thread} (referred to by McGuiness as r
 and a single \gls{monitor-thread}, to control the distribution of work. Each \gls{worker-thread} is
 initially given an equal share of the overall work-load before starting.
 
-Each \gls{worker-thread} maintains an estimated completion time for its assigned work-load. This is initially set to the maximum possible value and
+Each worker-thread maintains an estimated completion time for its assigned work-load. This is initially set to the maximum possible value and
 is iteratively refined by calculating the average time taken to complete a piece of work. This metric is used as a policy for deciding which
 thread is the most suitable candidate for the victim of a work-stealing operation.
 
 When a worker-thread completes its assigned work a work-completed signal is generated, its estimated
-completion time is set to \textit{0}, and the thread is stopped. This thread will be referred to as the \gls{thief}.
+completion time is set to \textit{0}, and the thread is stopped. This thread will be referred to as the thief.
 When the monitor thread detects this signal, it searches for the worker-thread with the longest estimated completion time, 
-which will be referred to as the \gls{victim}. The \gls{monitor-thread} waits for the victim to complete its current piece of work before stopping it.
+which will be referred to as the victim. The \gls{monitor-thread} waits for the victim to complete its current piece of work before stopping it.
 Its workload is then halved, having the other half re-asigned to the thief. Both the victim and the thief are restarted and continue doing work.
 The monitor-thread returns to waiting for another work-completed signal and the process is repeated until no work remains.
 
@@ -421,9 +422,9 @@ The monitor-thread returns to waiting for another work-completed signal and the 
 % --------------------------------------------------------- HYPOTH section????? FIXME 
 \subsection*{Discussion of the Presented Schemes}
 The key difference between the Render-Thread Algorithm and the Randomized Work-Stealing Algorithm 
-is that a \gls{worker-thread} does not maintain a queue of work, but simply has a range of indices assigned. 
+is that a worker-thread does not maintain a queue of work, but simply has a range of indices assigned. 
 This all but eliminates the overheads associated with initialising and 
-maintaining a potentially costly data-structure, but makes a \gls{non-blocking} implementation difficult. It also requires a monitor-thread to manage
+maintaining a potentially costly data-structure, but makes a non-blocking implementation difficult. It also requires a monitor-thread to manage
 work migration which reduces the maximum number of threads performing work by one. 
 Another limiting factor is that only one thread may perform work-stealing at any given time. The Randomized Work-Stealing Algorithm has no such limitation.
 
@@ -544,10 +545,7 @@ of the Mandelbrot set, a graphical representation of the plane is output.
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-%\chapter{Main Sections}
-
-% ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-\chapter{The Implementation}
+\chapter{The Development and Implementation}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -768,14 +766,14 @@ Several parameters are used by the algorithm to construct the raster plane.
 % * Describe how the algorithm starts and detects completion of thread i.e. initial distribution, exclude set.
 
 This section describes the implementation of the Randomised Work-Stealing algorithm based on the scheme described in section \ref{sec:randscheme}.
-This implementation uses four threads, each maintaining its own \gls{ready-deque}. The implemented \gls{ready-deque} is based on
+This implementation uses four threads, each maintaining its own ready-deque. The implemented ready-deque is based on
 the scheme presented in \cite{circdeque}.
 
 \subsection{The Deque Implementation}
 \label{sec:dequeimp}
 
 % general description
-Three key operations are made on a \gls{ready-deque}. These are de\_pop\_bottom, de\_push\_bottom, and de\_steal.
+Three key operations are made on a ready-deque. These are de\_pop\_bottom, de\_push\_bottom, and de\_steal.
 
 \begin{itemize}
 \item \textbf{de\_pop\_bottom: } \\
@@ -836,7 +834,7 @@ The benefit of using this approach, rather than a pthread\_mutex\_lock based met
 \input{circ}
 
 % cicular array
-The deque makes use of a \gls{circular array} which automatically grows and shrinks.
+The deque makes use of a circular array which automatically grows and shrinks.
 This approach is memory efficient and intuitive. 
 It also allows for the top counter to remain unchanged unless a steal operation occurs (in most cases), reducing the frequency of locks occurring.
 Figure \ref{fig:circ-demo} illustrates some of its mechanics. For instance figure \ref{fig:circ-5} shows that the array is indeed circular, in that it
@@ -889,14 +887,14 @@ The \(failcount\) is the frequency of failed steal attempts.
 
 \begin{itemize}
 \item \textbf{ws\_worker\_thread: } \\
-                The function which is passed to pthread\_create. This acts as the point of entry for each \gls{thread}.
+                The function which is passed to pthread\_create. This acts as the point of entry for each thread.
                 It accepts a pointer to the deque which is associated with the given thread. This is passed 
                 in the form of a void pointer which has to be cast due to the interface provided by the pthreads
                 library.
               
-                This function makes use of a do-while loop which breaks when there is no work remaining in any \glspl{worker-thread} \gls{ready-deque}. 
+                This function makes use of a do-while loop which breaks when there is no work remaining in any worker-threads ready-deque. 
                 Each iteration of the loop sets the thread to work by calling the ws\_compute\_deque function, which returns when 
-                no work remains in the \gls{ready-deque}. Then, the thread becomes a \gls{thief} and must attempt to acquire work
+                no work remains in the ready-deque. Then, the thread becomes a thief and must attempt to acquire work
                 from other threads by calling ws\_become\_thief. If more work is acquired the thread becomes a worker and calls ws\_compute\_deque
                 again. If no work is found the conditions of the loop are broken and the thread exits.
               
@@ -1147,7 +1145,7 @@ trace_event("mode 2: %d",456);
 \end{lstlisting}
 
 The trace\_event function prints a time-stamp in microseconds relative to the start of execution,
-followed by the desired message. A \gls{mutex} is locked to ensure each output message
+followed by the desired message. A mutex is locked to ensure each output message
 is completed and written in sequence.
 
 Currently two modes are in place.
@@ -1411,9 +1409,9 @@ The following observations are based on the bar charts presented in figure \ref{
             \textbf{3} & 432267 \\
             \hline
     \end{tabular}
-    \label{tab:npartab}
     \caption{The time taken from thread start to finish, for each thread in the na\"{\i}ve parallel algorithm to compute its assigned region.
 The data presented here is sourced from the trace presented in appendices figure \ref{apptracens}.}
+    \label{tab:npartab}
 \end{table}
 
     As the set has symmetry on the horizontal axis it is expected that each half should represent an equal 
@@ -1594,10 +1592,29 @@ In adition, this could be used to illustrate the work-stealing scheme in action.
 line would appear on the screen in its assigned colour gradient. This would show how work items are migrated throughout runtime and serve
 to demonstrate the workings of the algorithm.
 
+\newpage
 \section{Conclusion}
 
 % TODO
+This study highlights a simple, yet effective, work-stealing scheme for computing problems which exhibit unbalanced work-load when parallelised. 
+It is applied to a parallel program which computes an approximation of the Mandelbrot set. This is compared and contrasted with both a sequential,
+and na\"{\i}ve parallel approach to the same problem. These deliverables are supported and guided by an extensive review of relevant literature.
 
+The investigation finds that by applying the Randomised Work-Stealing Algorithm, a significant speed-up is made over a similar design which 
+neglects run-time load-balancing techniques. A further benefit is found in that the algorithm scales well with an increase in raster-place size and 
+maximum iterations. Randomisation is also shown to be a fair method for victimisation. The analysis serves to identify some problematic situations
+in the form of double victimisation and victimisation of a thief, which could have an impact on the fairness of work-load redistribution. 
+
+All core objectives and all bar one advanced objectives are complete. The work done towards producing a Render-Thread Work-Stealing Algorithm, although incomplete
+in the time-scale, still offers some insight into an alternative approach to Work-Stealing.
+
+The project as a whole is reflected upon in great depth and a number of avenues for future work are laid out. Over-all the author considers the project 
+a great success in the respect that the proposed work is complete, and a great deal of valuable knowledge has been acquired.
+The pursuit of this projects completion has allowed the author to hone his skills in many useful programming tools and techniques.
+The learning outcomes have not only been technical, good project and time management skills have also been gained. 
+
+The main and most valuable contribution is the implementation and design of the Randomised Work-Stealing algorithm. This demonstrates 
+the technical ability of the author, as well as a strong understanding of programming and computer science theory.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1621,11 +1638,13 @@ to demonstrate the workings of the algorithm.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \newpage
-\chapter{Source Code}\label{sec:srccode}
+\chapter{Trace Output}\label{sec:traceout}
+\input{append/traces}
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \newpage
-\chapter{Trace Output}\label{sec:traceout}
-\input{append/traces}
+\chapter{Source Code}\label{sec:srccode}
+%\input{append/source}
+
 
 \end{document}

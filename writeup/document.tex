@@ -17,8 +17,8 @@
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section*{Abstract}
 
-Load-balancing of parallel computer programs is a useful means of improving 
-performance. It also serves to remove some of the burden of designing a fairly distributed work-load
+Load-balancing of parallel computer programs is a key technique for improving 
+performance. It also serves to displace some of the burden of fairly distributing work-load
 from the programmer. Work-stealing is a technique used to implicitly balance work-load across
 multiple processors throughout run-time. In this report the technique is explored
 and applied to an algorithm to compute a raster plane of the Mandelbrot set. 
@@ -27,23 +27,21 @@ A Randomised Work-Stealing Algorithm which utilises a non-blocking double ended 
 is implemented and successfully applied to a variation of the level-set approach to
 computing the Mandelbrot Algorithm.
 
+The investigation also encompasses some exploration into fractals and the Mandelbrot Set as a means
+of defining part of the problem domain.
+
 The report concludes with a number of findings which suggest that the work-stealing 
 approach offers significant benefits such as; a performance increase versus an un-balanced
 parallel approach, good scalability as problem size increases, and a fair approach to 
 choosing where work to be migrated is sourced. In addition a number of weaknesses
-of the approach are identified.
-
-The investigation also encompasses some exploration into fractals and the Mandelbrot Set as a means
-of further understanding the problem domain.
+of the approach are identified and discussed.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \newpage
 \section*{Acknowledgements}
 
 The author would like to acknowledge Colin Egan for his invaluable guidance throughout this project, 
-and also for his encouragement and great enthusiasm. He has been a resource for both inspiration and the ideas
-explored in this report, as well as a patron for sound technical and academic advice.
-Thank you for all the enlightening weekly chats about all things computer science and beyond.
+and for his sound technical and academic advice. 
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \clearpage
@@ -1290,7 +1288,7 @@ Here is a brief description of the environment used when gathering the results t
 \item CPU: Quad Core Intel Core I5 750 - 2.67GHz.
 \item Memory: 8GB DDR-3
 \item Operating System: Linux Mint 14 - Kernel 3.5.0-17 generic.
-\item C-Compiler: GCC Version 4.7.2
+\item C-Compiler: GCC Version 4.7.2 - Level 3 Optimisations
 \end{itemize}
 
 \subsection{Performance Analysis}
@@ -1302,15 +1300,15 @@ These are presented in relation to the sequential version of the program.
 
 The following equation is used to calculate the performance increases shown:
 
-\[ RelativePerformanceIncrease_a = \frac{ExecutionTime_a}{ExecutionTime_{sequntial}}\]
+\[ RelativePerformanceIncrease_a = \frac{AverageExecutionTime_a}{AverageExecutionTime_{sequntial}}\]
 
 \begin{itemize}
 \item 
     An average speed-up of \(3.49\) times is achieved for the randomised work-stealing algorithm. The na\"{\i}ve Parallel Algorithm
     achieves an average speed-up of \(2.13\) times. 
 
-    This observation suggests that by simply adding work-stealing techniques to a parallel scheme which employs no 
-    load balancing can increase its performance by an average of \(1.66\) times.
+    This observation shows that by adding work-stealing techniques to a parallel scheme, which employs no 
+    load balancing, increases its performance by an average of \(1.66\) times.
     
     Although both schemes make use of four threads, a speed up of four times is unlikely to be possible.
     This is due to factors such as thread scheduling overheads, portions of code which cannot be
@@ -1326,8 +1324,8 @@ The following equation is used to calculate the performance increases shown:
     As the maximum iterations is increased the work required to compute a point in, or close to, the mandelbrot set 
     is amplified. As a result the initially distributed work-load becomes further unbalanced.
 
-    These results suggest that the Randomised Work-Stealing algorithm exhibits good scalability because of its 
-    load-balancing capabilities when considering the maximum iterations. This point is also true for the 
+    These results suggest that the Randomised Work-Stealing algorithm exhibits good scalability, because of its 
+    load-balancing capabilities, when considering the maximum iterations setting. This point is also true for the 
     plane size as shown in figure \ref{fig:perfmatsizepc}.
 
 \end{itemize}
@@ -1353,7 +1351,7 @@ The following observations are based on the results presented in figure \ref{fig
 
     The result is that a high frequency of steal operations, where very small amounts of work are
     migrated, occur as processing nears termination. The benefit of migrating such small work-loads could
-    be seen to outweigh the cost of allowing the thread to continue computing the given region.
+    be seen to outweigh the cost of simply allowing the thread to continue computing the given region.
     
     This could be alleviated by implementing a work migration threshold, which limits a steal operation 
     to a minimum number of steal-able work. Should the projected work-load to be migrated fall under 
@@ -1362,7 +1360,7 @@ The following observations are based on the results presented in figure \ref{fig
 \item 
     A situation where multiple threads perform a steal operation in close time proximity arises often.
     Five clear examples of this are exposed at approximately \(0.4\),\(1.4\),\(1.6\),\(1.8\), and \(1.9\) seconds.
-    This outweighs the three instances in which a single steal operation occurs within \(0.1\) of a second.
+    This outweighs the three instances in which a single steal operation occurs within any \(0.1\) second time-frame.
 
     The following trace excerpt corresponds to the data shown in the plots marked in black. 
     It details the three points plotted at approximately \(1.6\) seconds.
@@ -1447,8 +1445,9 @@ The data presented here is sourced from the trace presented in appendices figure
     than its counterpart two. 
 
     This could be attributed to a number of aspects of the design. For instance, the phenomena of double victimisation and 
-    victimisation of a thief could be responsible for the unfairly balanced work load. Further investigation is
-    required to determine a more evident cause.
+    victimisation of a thief, compounded by an unsuitable pseudo random number generator, could be responsible for the 
+    unfairly balanced work load. 
+    Further investigation is required to determine a more evident cause.
         
 \end{itemize}
 
@@ -1456,8 +1455,8 @@ The data presented here is sourced from the trace presented in appendices figure
 \section{Reflection}
 
 In general, the author feels that this project is a successful one. It has been an enlightening and thoroughly enjoyable experience
-to investigate the subject area. Here is an evaluation of each objective defined in the introduction section, as well as some aspects 
-of the project which apply in general.
+to investigate the subject area. Here is an evaluation of each objective defined in the introduction section, as well as some other aspects 
+of the project which are of notable merit.
 
 \subsection*{Core Objectives}
 \subsubsection*{Background Research}
@@ -1469,6 +1468,8 @@ of the project which apply in general.
     The studied areas provide the reader with a sufficient overview of the themes explored in the subsequent chapters. To further 
     bolster the readers understanding, a glossary of terms is presented in appendix \ref{sec:glosterm}. 
     This gives a brief definition for some of the major concepts discussed, which go slightly beyond the scope of this body of work.
+    
+    These factors combined communicate a well researched background to the problem domain.
     
 \subsubsection*{A Sequential Mandelbrot Set Algorithm}
     Although the sequential algorithm described in section \ref{sec:addscheme} appears trivial, it relies almost entirely
@@ -1510,6 +1511,10 @@ of the project which apply in general.
     This assesses how effective the randomised work-stealing algorithm is and identifies room for improvement.
     It also serves as validation to show that the product does what is intended, as well as to verify that it functions correctly.
 
+    This area proved challenging because of a lack of experience in such an exercise. This made making concise
+    and well founded observations much more difficult.
+    The work could be improved by producing better refined and well thought out test data sets. 
+
 \subsection*{Advanced Objectives}
 \subsubsection*{Graphical Output}
     The program produces output images in various styles. These are detailed in section \ref{sec:output}.
@@ -1545,10 +1550,11 @@ of the project which apply in general.
     as an insight into the authors sleeping pattern over the past twelve weeks.
 
 \subsubsection*{Professional Presentation of Material}
-    All material delivered in a highly professional manner.
+    All material is presented in a highly professional manner. This can be attributed to 
+    choosing the right tools for the job.
     
     In particular, the decision to produce this entire report using \LaTeX~has been pivotal
-    to the clarity and good structure of this report. It has also provided a useful new skill set, 
+    to the clarity and good structure exhibited. It has also provided a useful new skill set, 
     which will be taken forward to future projects.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1561,7 +1567,7 @@ Some of these suggestions could form whole BSc Computer Science projects in thei
 may at least invoke some inspiration for those planning to embark on such a task.
 
 \subsubsection*{Alternative Work-Stealing Schemes and Policies}
-To further investigate the work-stealing approach un-explored configurations could be implemented. 
+To further investigate the work-stealing approach, configurations left un-explored by this report could be implemented. 
 Areas which could be examined include:
 \begin{itemize}
 \item \textbf{Different Victimisation Policies: } 
@@ -1573,7 +1579,7 @@ Areas which could be examined include:
     The Deques implementation could be re-implemented using a different data structure design. For instance instead of a circular array,
     a linked list could be put in place.
 \item \textbf{Different Multi-Thread Designs: }
-    Other approaches to parallel algorithm design could applied to produce other, perhaps more intuitive, designs.
+    Other approaches to parallel algorithm design could be explored to seek a more intuitive design.
     A fully working implementation of the Render-Thread scheme would be a good starting point for this line of enquiry.
 \end{itemize}
 
@@ -1615,11 +1621,11 @@ to demonstrate the workings of the algorithm.
 \newpage
 \section{Conclusion}
 
-This study highlights a simple, yet effective, work-stealing scheme for computing a problem which statically exhibits unbalanced work-load when parallelised. 
+This study highlights a simple, yet effective, work-stealing scheme for computing a problem which exhibits unbalanced work-load when decomposed. 
 It is applied to a parallel program which computes an approximation of the Mandelbrot set. This is compared and contrasted with both a sequential,
 and na\"{\i}ve parallel approach to the same problem. These deliverables are supported and guided by an extensive review of relevant literature.
 
-The investigation finds that by applying the Randomised Work-Stealing Algorithm, a significant speed-up is made over a similar design which 
+The investigation finds that by applying the Randomised Work-Stealing Algorithm a significant speed-up is made over a similarly structured design, which 
 neglects run-time load-balancing techniques. A further benefit is found in that the algorithm scales well with an increase in raster-place size and 
 maximum iterations. Randomisation is also shown to be a fair method for victimisation. The analysis serves to identify some problematic situations
 in the form of double victimisation and victimisation of a thief, which could have an impact on the fairness of work-load redistribution. 
@@ -1627,13 +1633,15 @@ in the form of double victimisation and victimisation of a thief, which could ha
 All core objectives and all bar one advanced objectives are complete. The work done towards producing a Render-Thread Work-Stealing Algorithm, although incomplete
 in the time-scale, still offers some insight into an alternative approach to Work-Stealing.
 
-The project as a whole is reflected upon in great depth and a number of avenues for future work are laid out. Over-all the author considers the project 
+The project as a whole is reflected upon in great depth and a good number of avenues for future work are laid out. 
+Over-all the author considers the project 
 a great success in the respect that the proposed work is complete, and a great deal of valuable knowledge has been acquired.
 The pursuit of this projects completion has allowed the author to hone his skills in many useful programming tools and techniques.
 The learning outcomes have not only been technical, good project and time management skills have also been gained. 
 
-The main and most valuable contribution is the implementation and design of the Randomised Work-Stealing algorithm. This demonstrates 
+The main and most valuable contribution is the implementation and design of a Randomised Work-Stealing algorithm. This demonstrates 
 the technical ability of the author, as well as a strong understanding of programming and computer science theory.
+It also puts forward an intuitive and simple technique for improving a vast range of multi-threaded programs.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1663,7 +1671,7 @@ the technical ability of the author, as well as a strong understanding of progra
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \newpage
 \chapter{Source Code}\label{sec:srccode}
-%\input{append/source}
+\input{append/source}
 
 
 \end{document}

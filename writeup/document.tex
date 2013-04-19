@@ -17,13 +17,33 @@
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section*{Abstract}
 
-% TODO
+Load-balancing of parallel computer programs is a useful means of improving 
+performance. It also serves to remove some of the burden of designing a fairly distributed work-load
+from the programmer. Work-stealing is a technique used to implicitly balance work-load across
+multiple processors throughout run-time. In this report the technique is explored
+and applied to an algorithm to compute a raster plane of the Mandelbrot set. 
+
+A Randomised Work-Stealing Algorithm which utilises a non-blocking double ended queue
+is implemented and successfully applied to a variation of the level-set approach to
+computing the Mandelbrot Algorithm.
+
+The report concludes with a number of findings which suggest that the work-stealing 
+approach offers significant benefits such as; a performance increase versus an un-balanced
+parallel approach, good scalability as problem size increases, and a fair approach to 
+choosing where work to be migrated is sourced. In addition a number of weaknesses
+of the approach are identified.
+
+The investigation also encompasses some exploration into fractals and the Mandelbrot Set as a means
+of further understanding the problem domain.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \newpage
 \section*{Acknowledgements}
 
-% TODO
+The author would like to acknowledge Colin Egan for his invaluable guidance throughout this project, 
+and also for his encouragement and great enthusiasm. He has been a resource for both inspiration and the ideas
+explored in this report, as well as a patron for sound technical and academic advice.
+Thank you for all the enlightening weekly chats about all things computer science and beyond.
 
 % ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 \clearpage
@@ -1595,8 +1615,7 @@ to demonstrate the workings of the algorithm.
 \newpage
 \section{Conclusion}
 
-% TODO
-This study highlights a simple, yet effective, work-stealing scheme for computing problems which exhibit unbalanced work-load when parallelised. 
+This study highlights a simple, yet effective, work-stealing scheme for computing a problem which statically exhibits unbalanced work-load when parallelised. 
 It is applied to a parallel program which computes an approximation of the Mandelbrot set. This is compared and contrasted with both a sequential,
 and na\"{\i}ve parallel approach to the same problem. These deliverables are supported and guided by an extensive review of relevant literature.
 

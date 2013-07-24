@@ -1,2 +1,13 @@
-The two subdirectories of implementation house the serial implementation (mandelbrot)
+The two subdirectories of implementation house the (OLD) serial implementation (mandelbrot)
 and the work stealing implementation (wsmandelbrot).
+
+To Compile:
+run make in the wsmandelbrot directory.
+
+All binaries are places in the `bin' sub-directory. These are as follows:
+* wsmandelbrot: Random Work-Stealing Algorithm is Applied. This is the main focus of the project.
+* semandelbrot: A serial version of the level set mandelbrot algorithm.
+* rtmandelbrot: An alternative Work-Stealing Scheme (unfinished)
+* nsmandelbrot: A `Naive' parallel scheme is employed.
+* inmandelbrot: A `Naive' parallel scheme is employed where work is distributed in an 
+                interleaved fashion. (Not relevent to the report or Scope of the Project)
